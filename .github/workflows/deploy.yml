@@ -39,6 +39,6 @@ jobs:
         with:
           project: "sagar-waha-86"
           entrypoint: "src/main.ts"
-          root: "src/"
+          root: ""
           
           
