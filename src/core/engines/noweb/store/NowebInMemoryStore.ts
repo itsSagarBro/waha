@@ -1,17 +1,17 @@
-import makeWASocket, {
-  Chat,
-  Contact,
-  GroupMetadata,
-  makeInMemoryStore,
-  proto,
-} from '@adiwajshing/baileys';
-import { Label } from '@adiwajshing/baileys/lib/Types/Label';
+import type { Chat, Contact, GroupMetadata, proto } from '@adiwajshing/baileys';
+import type makeWASocket from '@adiwajshing/baileys';
+import type { Label } from '@adiwajshing/baileys/lib/Types/Label';
 import { BadRequestException } from '@nestjs/common';
 import { GetChatMessagesFilter } from '@waha/structures/chats.dto';
-import { PaginationParams } from '@waha/structures/pagination.dto';
+import { LidToPhoneNumber } from '@waha/structures/lids.dto';
+import {
+  LimitOffsetParams,
+  PaginationParams,
+} from '@waha/structures/pagination.dto';
 import { PaginatorInMemory } from '@waha/utils/Paginator';
 
 import { INowebStore } from './INowebStore';
+import makeInMemoryStore from './memory/make-in-memory-store';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const logger = require('pino')();
@@ -26,6 +26,10 @@ export class NowebInMemoryStore implements INowebStore {
 
   constructor() {
     this.store = makeInMemoryStore({ logger: logger });
+    const presences = {};
+    this.store.presences = presences;
+    // Adjust inline even handler
+    this.store.setPresences(presences);
   }
 
   init(): Promise<void> {
@@ -65,6 +69,10 @@ export class NowebInMemoryStore implements INowebStore {
     throw new BadRequestException(this.errorMessage);
   }
 
+  getChat(jid: string): Promise<Chat | null> {
+    return null;
+  }
+
   getContacts(pagination: PaginationParams): Promise<Contact[]> {
     throw new BadRequestException(this.errorMessage);
   }
@@ -91,12 +99,31 @@ export class NowebInMemoryStore implements INowebStore {
 
   async getGroups(pagination: PaginationParams): Promise<GroupMetadata[]> {
     const response = await this.socket?.groupFetchAllParticipating();
-    const groups = Object.values(response);
+    const groups: any[] = Object.values(response);
     const paginator = new PaginatorInMemory(pagination);
     return paginator.apply(groups);
   }
 
   resetGroupsCache() {
     return;
+  }
+
+  //
+  // Lids methods
+  //
+  getAllLids(pagination?: LimitOffsetParams): Promise<LidToPhoneNumber[]> {
+    throw new BadRequestException(this.errorMessage);
+  }
+
+  findLidByPN(pn: string): Promise<string | null> {
+    throw new BadRequestException(this.errorMessage);
+  }
+
+  findPNByLid(lid: string): Promise<string | null> {
+    throw new BadRequestException(this.errorMessage);
+  }
+
+  getLidsCount(): Promise<number> {
+    throw new BadRequestException(this.errorMessage);
   }
 }

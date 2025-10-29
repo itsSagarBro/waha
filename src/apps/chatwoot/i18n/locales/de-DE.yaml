@@ -1,0 +1,385 @@
+# German translations for ChatWoot integration
+locale.name: '🇩🇪 Deutsch (German)'
+
+# Basis-Gebietsschema-Code - muss eine gültige BCP 47 Locale sein
+# https://en.wikipedia.org/wiki/IETF_language_tag
+# WAHA nutzt ihn zur Darstellung von Zahlen, Währungen sowie Datum und Uhrzeit
+locale.base: 'de-DE'
+
+app.inbox.contact.name: 'WhatsApp Integration'
+app.inbox.contact.avatar.url: 'https://raw.githubusercontent.com/devlikeapro/waha/core/logo.png'
+
+# "Optionen" von date.toLocaleString
+# https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+datetime:
+  locales: de-DE
+  day: 2-digit
+  month: 2-digit
+  year: numeric
+  hour: 2-digit
+  minute: 2-digit
+  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
+  timeZoneName: shortGeneric
+  # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  # timeZone: 'Europe/Berlin'
+
+job.report.error: |-
+  ⚠️ **{{{header}}}**
+  {{#attempts.nextDelay}}
+  🔄 Wiederholung in {{attempts.nextDelay}} Sekunden...
+  {{/attempts.nextDelay}}
+  {{^attempts.nextDelay}}
+  ❌ Keine weiteren Versuche übrig. Bitte versuchen Sie es später erneut.
+  {{/attempts.nextDelay}}
+  Versuch: {{{attempts.current}}} / {{{attempts.max}}}
+  Details: [{{{details.text}}}]({{{details.url}}})
+  {{#error}}
+  ```
+
+  {{{error}}}
+  ```
+  {{/error}}
+
+job.report.succeeded: |-
+  ✅ **Erfolgreich**
+  Versuch: {{{attempts.current}}} / {{{attempts.max}}}
+  Details: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.message.sending.error:
+  Nachricht konnte nicht über WhatsApp gesendet werden.
+whatsapp.message.receiving.error:
+  Nachricht konnte nicht von WhatsApp empfangen werden
+whatsapp.message.removing.error:
+  Nachricht konnte nicht von WhatsApp entfernt werden
+job.scheduled.error.header: Geplante Aufgabe konnte nicht ausgeführt werden
+
+message.from.whatsapp: |-
+  {{{text}}}
+
+  📱 *Von WhatsApp gesendet*
+
+message.from.api: |-
+  {{{text}}}
+
+  📱 *Über API gesendet*
+
+message.removed.in.whatsapp: |-
+  ❌ *Diese Nachricht wurde in WhatsApp gelöscht*
+
+message.edited.in.whatsapp: |-
+  {{{text}}}
+
+  ✏️ *In WhatsApp bearbeitet*
+
+whatsapp.group.message: |-
+  👥 *{{{participant}}}*
+
+  {{{text}}}
+
+whatsapp.reaction.added: |-
+  *Reagiert mit* {{{emoji}}}
+
+whatsapp.reaction.removed: |-
+  *Reaktion entfernt*
+
+whatsapp.contact.group.suffix: 'Gruppe'
+whatsapp.contact.channel.suffix: 'Kanal'
+whatsapp.contact.broadcast.suffix: 'Broadcast-Liste'
+# Aka Stories
+whatsapp.contact.status.name: 'Status'
+
+app.connected.message: |-
+  🔗 **VERBUNDEN: WhatsApp-Sitzung mit ChatWoot Inbox**
+
+  ✅ WhatsApp-Sitzung **{{{name}}}** wurde erfolgreich mit dieser ChatWoot Inbox verbunden.
+
+  Diese Inbox ist jetzt mit Ihrem **WhatsApp-Konto** verknüpft. Sie können Nachrichten direkt von hier senden und empfangen — genau wie bei WhatsApp, aber innerhalb von ChatWoot.
+
+  Sie können auch die mit dieser Inbox verknüpfte WhatsApp-Sitzung verwalten. Um verfügbare Aktionen anzuzeigen, senden Sie **help** an diesen Chat.
+
+  📋 Häufige Aktionen, die Sie durchführen können:
+  - Überprüfen, ob die WhatsApp-Sitzung aktiv ist
+  - Die WhatsApp-Sitzung neu starten oder stoppen
+  - Abmelden und durch Scannen eines neuen QR-Codes wieder verbinden
+
+  Wenn alles funktioniert, können Sie frei chatten. Wenn Sie Warnungen sehen, müssen Sie möglicherweise Ihr WhatsApp-Konto neu verbinden.
+
+  Lassen Sie uns beginnen! 🚀
+
+app.disconnected.message: |-
+  🔌 **GETRENNT: WhatsApp-Sitzung von ChatWoot Inbox**
+
+  ❌ WhatsApp-Sitzung **{{{name}}}** wurde von dieser ChatWoot Inbox getrennt.
+
+  Sie können keine Nachrichten mehr von WhatsApp senden oder empfangen.
+
+  Um eine erneute Verbindung herzustellen, wenden Sie sich bitte an Ihren Administrator.
+
+app.updated.message: |-
+  🔄 **AKTUALISIERT: WhatsApp-Sitzungseinstellungen**
+
+  ✅ Einstellungen für WhatsApp-Sitzung **{{{name}}}** wurden aktualisiert.
+
+app.commands.list: |-
+  Sie können die **WhatsApp Integration** verwalten, indem Sie einen der folgenden Befehle senden:
+
+  🖥️ **Sitzung**:
+  1. **status** - den aktuellen Sitzungsstatus abrufen.
+  2. **restart** - die Sitzung neu starten - dies versucht, Ihr WhatsApp-Konto neu zu verbinden.
+  3. **start** - die Sitzung starten.
+  4. **stop** - die Sitzung stoppen.
+  5. **logout** - von der Sitzung abmelden, damit Sie den QR-Code scannen und die Sitzung reparieren können.
+  6. **qr** - den QR-Code für die Sitzung abrufen.
+  7. **screenshot** - einen Screenshot der Sitzung erhalten (nur in der **WEBJS**-Engine verfügbar).
+  8. **help** - verfügbare Befehle.
+
+  {{#commands.server}}
+  ⚙️ Server:
+  - **server status** - Serverversion und Statusinformationen abrufen.
+  - **server reboot** - Server ordnungsgemäß neu starten.
+  - **server reboot force** - Server erzwungen neu starten.
+  {{/commands.server}}
+
+  Senden Sie einen **Befehl** (Groß-/Kleinschreibung wird nicht beachtet) oder eine **Befehlsnummer** an diese Konversation.
+
+app.commands.server.disabled: ⛔ **Serverbefehle sind deaktiviert**.
+
+  Bitte wenden Sie sich an Ihren Administrator.
+
+  Senden Sie **help**, um die Liste der verfügbaren Befehle zu erhalten.
+
+app.help.reminder: |-
+  Senden Sie **help**, um die Liste der verfügbaren Befehle zu erhalten.
+
+app.session.status.change: |-
+  {{{emoji}}} Sitzung "{{{session}}}" hat den Status zu {{{status}}} gewechselt
+
+app.session.current.status: |-
+  {{{emoji}}} **{{{session}}}** Sitzungsstatus ist **{{{status}}}**
+  **WhatsApp-Konto:**
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.working: |-
+  ✅ Diese ChatWoot Inbox ist mit dem **WhatsApp-Konto** verknüpft und bereit zum Senden und Empfangen von Nachrichten!
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.error: |-
+  ⚠️ **Diese ChatWoot Inbox ist mit dem WhatsApp-Konto verknüpft, aber NICHT bereit zum Senden und Empfangen von Nachrichten!**
+
+  Bitte überprüfen Sie den Sitzungsstatus und versuchen Sie, sie neu zu starten oder melden Sie sich ab und scannen Sie den QR-Code erneut.
+
+app.session.scan.qr.code: |-
+  ⚠️ **Scannen Sie den QR-Code auf Ihrem Telefon, um das WhatsApp-Konto mit dieser ChatWoot Inbox zu verknüpfen!**
+
+app.server.version.and.status: |-
+  **Version:**
+  ```
+  {{{version}}}
+  ```
+
+  **Status:**
+  ```
+  {{{status}}}
+  ```
+
+app.server.reboot: |-
+  Server wird ordnungsgemäß neu gestartet...
+
+app.server.reboot.force: |-
+  Server wird erzwungen neu gestartet...
+
+app.logout.success: |-
+  ✅ Konto erfolgreich abgemeldet!
+
+waha.new.version.available: |-
+  🔄 **Neue Version verfügbar!**
+
+  Aktuelle Version: **{{{currentVersion}}}**
+  Neue Version: **{{{newVersion}}}**
+
+  👉 Sehen Sie, was neu ist im [**🆕 Änderungsprotokoll**]({{{changelogUrl}}})
+
+waha.core.version.used: |-
+  ❤️ **Unterstützen Sie WAHA!**
+
+  Sie verwenden die kostenlose **WAHA Core** Version. Wenn Sie dieses Projekt nützlich finden, erwägen Sie bitte, seine Entwicklung zu unterstützen.
+
+  Ihre Unterstützung ist der einzige Weg, wie wir weiterhin an Updates, Fehlerbehebungen und neuen Funktionen arbeiten können.
+
+  [**🎁 Unterstützen Sie uns**]({{{supportUrl}}})
+
+chatwoot.to.whatsapp.message.text: |-
+  {{{ content }}}
+
+chatwoot.to.whatsapp.message.media.caption: |-
+  {{#singleAttachment}}
+  {{#content}}
+  {{{ content }}}
+  {{/content}}
+  {{/singleAttachment}}
+
+whatsapp.to.chatwoot.message: |-
+  {{{payload.body}}}
+
+whatsapp.to.chatwoot.message.contacts: |-
+  👤 **Geteilte Kontakte**
+
+  {{#contacts}}
+  🪪 Name: **{{fullName}}**
+  {{#phoneNumbers}}
+  - 📞 Telefon: **{{.}}**
+  {{/phoneNumbers}}
+
+  {{/contacts}}
+
+whatsapp.to.chatwoot.message.location: |-
+  {{#message}}
+  {{#locationMessage}}
+  📍 **Geteilter Standort**
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **Adresse:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **Webseite:** {{url}}
+  {{/url}}
+
+  🔗 **Auf Karte ansehen:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/locationMessage}}
+
+  {{#liveLocationMessage}}
+  📍📡 **Live-Standort wird geteilt**
+  Öffne **WhatsApp**, um Aktualisierungen in Echtzeit zu sehen.
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **Adresse:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **Webseite:** {{url}}
+  {{/url}}
+
+  🔗 **Auf Karte ansehen:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/liveLocationMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.poll: |-
+  {{#poll}}
+  📊 **Umfrage**
+
+  **{{name}}**
+  {{#options}}
+  - {{optionName}}
+  {{/options}}
+  {{/poll}}
+
+whatsapp.to.chatwoot.message.list: |-
+  {{#message.listMessage}}
+  {{#title}}
+  *{{{title}}}*
+  {{/title}}
+  {{#description}}
+  {{{description}}}
+  {{/description}}
+  {{#footerText}}
+  {{{footerText}}}
+  {{/footerText}}
+
+  {{#buttonText}}
+  {{{buttonText}}}
+  {{/buttonText}}
+  {{#sections}}
+  {{#title}}
+  {{{title}}}:
+  {{/title}}
+  {{#rows}}
+  {{#title}}
+  - {{{title}}}
+  {{/title}}
+  {{/rows}}
+
+  {{/sections}}
+  {{/message.listMessage}}
+
+whatsapp.to.chatwoot.message.event: |-
+  {{#message}}
+  {{#eventMessage}}
+  📅 **Veranstaltung**
+
+  **{{name}}**
+  {{#description}}
+  {{description}}
+  {{/description}}
+
+  {{#location.name}}
+  📍 **Ort:** {{location.name}}
+  {{/location.name}}
+  {{#startTime}}
+  🕐 **Beginn:** {{startTime}}
+  {{/startTime}}
+  {{#endTime}}
+  🕐 **Ende:** {{endTime}}
+  {{/endTime}}
+  {{#joinLink}}
+  🔗 **Teilnahmelink:** [{{joinLink}}]({{joinLink}})
+  {{/joinLink}}
+  {{/eventMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.pix: |-
+  💳 **PIX - Kopieren und Einfügen**
+
+  {{#pixData}}
+  {{#merchantName}}
+  **{{merchantName}}**
+  {{/merchantName}}
+
+  {{#key}}
+  **PIX-Schlüssel:** {{key}}
+  {{/key}}
+  {{#keyType}}
+  **Typ:** {{keyType}}
+  {{/keyType}}
+  {{#totalAmount}}
+  **Betrag:** {{totalAmountFormatted}}
+  {{/totalAmount}}
+  {{#referenceId}}
+  **Referenz:** {{referenceId}}
+  {{/referenceId}}
+
+  💳 **PIX Kopieren und Einfügen gesendet**
+  {{/pixData}}
+
+whatsapp.to.chatwoot.message.unsupported: |-
+  ⚠️ **Dieser Nachrichtentyp wird in ChatWoot nicht unterstützt.**
+  📱 Bitte öffne **WhatsApp**, um ihn anzusehen.
+
+  Details: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.to.chatwoot.message.facebook.ad: |-
+  📢 **FACEBOOK-ANZEIGE**
+
+  **Titel:** {{{adData.title}}}
+
+  **Beschreibung:**
+  {{{adData.body}}}
+
+  **Anzeigenlink:** [Auf Facebook ansehen]({{{adData.sourceUrl}}})
+  **Anzeigen-ID:** {{{adData.sourceId}}}
+
+  ---
+  💬 **Kundennachricht:**
+  {{{payload.body}}}

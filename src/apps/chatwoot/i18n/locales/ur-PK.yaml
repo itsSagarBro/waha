@@ -1,0 +1,382 @@
+# Urdu translations for ChatWoot integration
+locale.name: '🇵🇰 اردو (Urdu)'
+
+# بنیادی لوکل کوڈ - یہ ایک معتبر BCP 47 لوکل ہونا چاہیے
+# https://en.wikipedia.org/wiki/IETF_language_tag
+# WAHA اسے نمبرز، کرنسی اور تاریخ/وقت کی نمائندگی کے لیے استعمال کرتا ہے۔
+locale.base: 'ur-PK'
+
+app.inbox.contact.name: 'واٹس ایپ انٹیگریشن'
+app.inbox.contact.avatar.url: 'https://raw.githubusercontent.com/devlikeapro/waha/core/logo.png'
+
+# date.toLocaleString کی "options"
+# https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+datetime:
+  locales: ur-PK
+  day: 2-digit
+  month: 2-digit
+  year: numeric
+  hour: 2-digit
+  minute: 2-digit
+  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
+  timeZoneName: shortGeneric
+  # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  # timeZone: 'Asia/Karachi'
+
+job.report.error: |-
+  ⚠️ **{{{header}}}**
+  {{#attempts.nextDelay}}
+  🔄 {{attempts.nextDelay}} سیکنڈ میں دوبارہ کوشش کر رہا ہے...
+  {{/attempts.nextDelay}}
+  {{^attempts.nextDelay}}
+  ❌ مزید کوششیں نہیں بچی ہیں۔ براہ کرم بعد میں دوبارہ کوشش کریں۔
+  {{/attempts.nextDelay}}
+  کوشش: {{{attempts.current}}} / {{{attempts.max}}}
+  تفصیلات: [{{{details.text}}}]({{{details.url}}})
+  {{#error}}
+  ```
+
+  {{{error}}}
+  ```
+  {{/error}}
+
+job.report.succeeded: |-
+  ✅ **کامیاب ہوا**
+  کوشش: {{{attempts.current}}} / {{{attempts.max}}}
+  تفصیلات: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.message.sending.error: واٹس ایپ پر پیغام نہیں بھیج سکا۔
+whatsapp.message.receiving.error: واٹس ایپ سے پیغام موصول نہیں کر سکا
+whatsapp.message.removing.error: واٹس ایپ سے پیغام ہٹا نہیں سکا
+job.scheduled.error.header: شیڈول کردہ کام انجام دینے میں ناکام رہا
+
+message.from.whatsapp: |-
+  {{{text}}}
+
+  📱 *واٹس ایپ سے بھیجا گیا*
+
+message.from.api: |-
+  {{{text}}}
+
+  📱 *API کے ذریعے بھیجا گیا*
+
+message.removed.in.whatsapp: |-
+  ❌ *یہ پیغام واٹس ایپ میں حذف کر دیا گیا تھا*
+
+message.edited.in.whatsapp: |-
+  {{{text}}}
+
+  ✏️ *واٹس ایپ میں ترمیم کی گئی*
+
+whatsapp.group.message: |-
+  👥 *{{{participant}}}*
+
+  {{{text}}}
+
+whatsapp.reaction.added: |-
+  *ردعمل دیا* {{{emoji}}}
+
+whatsapp.reaction.removed: |-
+  *ردعمل ہٹا دیا گیا*
+
+whatsapp.contact.group.suffix: 'گروپ'
+whatsapp.contact.channel.suffix: 'چینل'
+whatsapp.contact.broadcast.suffix: 'براڈکاسٹ فہرست'
+# Aka Stories
+whatsapp.contact.status.name: 'سٹیٹس'
+
+app.connected.message: |-
+  🔗 **منسلک: واٹس ایپ سیشن ChatWoot انبکس سے**
+
+  ✅ واٹس ایپ سیشن **{{{name}}}** کامیابی سے اس ChatWoot انبکس سے منسلک ہو گیا ہے۔
+
+  یہ انبکس اب آپ کے **واٹس ایپ اکاؤنٹ** سے منسلک ہے۔ آپ یہاں سے براہ راست پیغامات بھیج اور موصول کر سکتے ہیں — بالکل واٹس ایپ استعمال کرنے کی طرح، لیکن ChatWoot کے اندر۔
+
+  آپ اس انبکس سے منسلک واٹس ایپ سیشن کا انتظام بھی کر سکتے ہیں۔ دستیاب اقدامات دیکھنے کے لیے، اس چیٹ میں **help** بھیجیں۔
+
+  📋 عام اقدامات جو آپ کر سکتے ہیں:
+  - چیک کریں کہ آیا واٹس ایپ سیشن فعال ہے
+  - واٹس ایپ سیشن کو دوبارہ شروع کریں یا روکیں
+  - لاگ آؤٹ کریں اور نیا QR کوڈ اسکین کر کے دوبارہ منسلک ہوں
+
+  اگر سب کچھ کام کر رہا ہے، تو آپ آزادانہ طور پر چیٹ کر سکیں گے۔ اگر آپ کو انتباہات نظر آتے ہیں، تو آپ کو اپنے واٹس ایپ اکاؤنٹ کو دوبارہ منسلک کرنے کی ضرورت ہو سکتی ہے۔
+
+  آئیے شروع کریں! 🚀
+
+app.disconnected.message: |-
+  🔌 **منقطع: واٹس ایپ سیشن ChatWoot انبکس سے**
+
+  ❌ واٹس ایپ سیشن **{{{name}}}** اس ChatWoot انبکس سے منقطع ہو گیا ہے۔
+
+  آپ اب واٹس ایپ سے پیغامات بھیجنے یا موصول کرنے کے قابل نہیں ہوں گے۔
+
+  دوبارہ منسلک ہونے کے لیے، براہ کرم اپنے منتظم سے رابطہ کریں۔
+
+app.updated.message: |-
+  🔄 **اپڈیٹ شدہ: واٹس ایپ سیشن کی ترتیبات**
+
+  ✅ واٹس ایپ سیشن **{{{name}}}** کی ترتیبات اپڈیٹ کر دی گئی ہیں۔
+
+app.commands.list: |-
+  آپ درج ذیل کمانڈز میں سے ایک بھیج کر **واٹس ایپ انٹیگریشن** کا انتظام کر سکتے ہیں:
+
+  🖥️ **سیشن**:
+  1. **status** - موجودہ سیشن کی حالت حاصل کریں۔
+  2. **restart** - سیشن کو دوبارہ شروع کریں - یہ آپ کے واٹس ایپ اکاؤنٹ کو دوبارہ منسلک کرنے کی کوشش کرے گا۔
+  3. **start** - سیشن شروع کریں۔
+  4. **stop** - سیشن روکیں۔
+  5. **logout** - سیشن سے لاگ آؤٹ کریں، تاکہ آپ QR کوڈ اسکین کر سکیں اور سیشن کی مرمت کر سکیں۔
+  6. **qr** - سیشن کے لیے QR کوڈ حاصل کریں۔
+  7. **screenshot** - سیشن کا اسکرین شاٹ حاصل کریں (صرف **WEBJS** انجن میں دستیاب)۔
+  8. **help** - دستیاب کمانڈز۔
+
+  {{#commands.server}}
+  ⚙️ سرور:
+  - **server status** - سرور ورژن اور حالت کی معلومات حاصل کریں۔
+  - **server reboot** - سرور کو آرام سے دوبارہ شروع کریں۔
+  - **server reboot force** - سرور کو زبردستی دوبارہ شروع کریں۔
+  {{/commands.server}}
+
+  اس گفتگو میں **کمانڈ** (کیس سے غیر حساس) یا **کمانڈ نمبر** بھیجیں۔
+
+app.commands.server.disabled: ⛔ **سرور کمانڈز غیر فعال ہیں**۔
+
+  براہ کرم اپنے منتظم سے رابطہ کریں۔
+
+  دستیاب کمانڈز کی فہرست حاصل کرنے کے لیے **help** بھیجیں۔
+
+app.help.reminder: |-
+  دستیاب کمانڈز کی فہرست حاصل کرنے کے لیے **help** بھیجیں۔
+
+app.session.status.change: |-
+  {{{emoji}}} "{{{session}}}" سیشن {{{status}}} حالت میں تبدیل ہو گیا
+
+app.session.current.status: |-
+  {{{emoji}}} **{{{session}}}** سیشن کی حالت **{{{status}}}** میں ہے
+  **واٹس ایپ اکاؤنٹ:**
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.working: |-
+  ✅ یہ ChatWoot انبکس **واٹس ایپ اکاؤنٹ** سے منسلک ہے اور پیغامات بھیجنے اور موصول کرنے کے لیے تیار ہے!
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.error: |-
+  ⚠️ **یہ ChatWoot انبکس واٹس ایپ اکاؤنٹ سے منسلک ہے لیکن پیغامات بھیجنے اور موصول کرنے کے لیے تیار نہیں ہے!**
+
+  براہ کرم سیشن کی حالت چیک کریں اور اسے دوبارہ شروع کرنے کی کوشش کریں یا لاگ آؤٹ کریں اور QR کوڈ دوبارہ اسکین کریں۔
+
+app.session.scan.qr.code: |-
+  ⚠️ **اس ChatWoot انبکس کے ساتھ واٹس ایپ اکاؤنٹ کو منسلک کرنے کے لیے اپنے فون پر QR کوڈ اسکین کریں!**
+
+app.server.version.and.status: |-
+  **ورژن:**
+  ```
+  {{{version}}}
+  ```
+
+  **حالت:**
+  ```
+  {{{status}}}
+  ```
+
+app.server.reboot: |-
+  سرور آرام سے دوبارہ شروع ہو رہا ہے...
+
+app.server.reboot.force: |-
+  سرور زبردستی دوبارہ شروع ہو رہا ہے...
+
+app.logout.success: |-
+  ✅ اکاؤنٹ کامیابی سے غیر مجاز ہو گیا!
+
+waha.new.version.available: |-
+  🔄 **نیا ورژن دستیاب ہے!**
+
+  موجودہ ورژن: **{{{currentVersion}}}**
+  نیا ورژن: **{{{newVersion}}}**
+
+  👉 [**🆕 تبدیلیوں کی فہرست**]({{{changelogUrl}}}) میں نیا کیا ہے دیکھیں
+
+waha.core.version.used: |-
+  ❤️ **WAHA کی حمایت کریں!**
+
+  آپ مفت **WAHA Core** ورژن استعمال کر رہے ہیں۔ اگر آپ کو یہ پروجیکٹ مفید لگتا ہے، تو براہ کرم اس کی ترقی کی حمایت کرنے پر غور کریں۔
+
+  آپ کی حمایت ہی وہ واحد طریقہ ہے جس سے ہم اپڈیٹس، فکسز، اور نئی خصوصیات پر کام جاری رکھ سکتے ہیں۔
+
+  [**🎁 ہماری حمایت کریں**]({{{supportUrl}}})
+
+chatwoot.to.whatsapp.message.text: |-
+  {{{ content }}}
+
+chatwoot.to.whatsapp.message.media.caption: |-
+  {{#singleAttachment}}
+  {{#content}}
+  {{{ content }}}
+  {{/content}}
+  {{/singleAttachment}}
+
+whatsapp.to.chatwoot.message: |-
+  {{{payload.body}}}
+
+whatsapp.to.chatwoot.message.contacts: |-
+  👤 **شیئر کیے گئے رابطہ(رابطے)**
+
+  {{#contacts}}
+  🪪 نام: **{{fullName}}**
+  {{#phoneNumbers}}
+  - 📞 فون: **{{.}}**
+  {{/phoneNumbers}}
+
+  {{/contacts}}
+
+whatsapp.to.chatwoot.message.location: |-
+  {{#message}}
+  {{#locationMessage}}
+  📍 **شیئر کی گئی لوکیشن**
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **پتہ:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **ویب سائٹ:** {{url}}
+  {{/url}}
+
+  🔗 **نقشے پر دیکھیں:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/locationMessage}}
+
+  {{#liveLocationMessage}}
+  📍📡 **لائیو لوکیشن شیئر کی جا رہی ہے**
+  حقیقی وقت کی تازہ کاریوں کے لیے **WhatsApp** کھولیں۔
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **پتہ:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **ویب سائٹ:** {{url}}
+  {{/url}}
+
+  🔗 **نقشے پر دیکھیں:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/liveLocationMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.poll: |-
+  {{#poll}}
+  📊 **رائے شماری**
+
+  **{{name}}**
+  {{#options}}
+  - {{optionName}}
+  {{/options}}
+  {{/poll}}
+
+whatsapp.to.chatwoot.message.list: |-
+  {{#message.listMessage}}
+  {{#title}}
+  *{{{title}}}*
+  {{/title}}
+  {{#description}}
+  {{{description}}}
+  {{/description}}
+  {{#footerText}}
+  {{{footerText}}}
+  {{/footerText}}
+
+  {{#buttonText}}
+  {{{buttonText}}}
+  {{/buttonText}}
+  {{#sections}}
+  {{#title}}
+  {{{title}}}:
+  {{/title}}
+  {{#rows}}
+  {{#title}}
+  - {{{title}}}
+  {{/title}}
+  {{/rows}}
+
+  {{/sections}}
+  {{/message.listMessage}}
+
+whatsapp.to.chatwoot.message.event: |-
+  {{#message}}
+  {{#eventMessage}}
+  📅 **ایونٹ**
+
+  **{{name}}**
+  {{#description}}
+  {{description}}
+  {{/description}}
+
+  {{#location.name}}
+  📍 **مقام:** {{location.name}}
+  {{/location.name}}
+  {{#startTime}}
+  🕐 **آغاز:** {{startTime}}
+  {{/startTime}}
+  {{#endTime}}
+  🕐 **اختتام:** {{endTime}}
+  {{/endTime}}
+  {{#joinLink}}
+  🔗 **شمولیت کا لنک:** [{{joinLink}}]({{joinLink}})
+  {{/joinLink}}
+  {{/eventMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.pix: |-
+  💳 **PIX - کاپی اور پیسٹ**
+
+  {{#pixData}}
+  {{#merchantName}}
+  **{{merchantName}}**
+  {{/merchantName}}
+
+  {{#key}}
+  **PIX کلید:** {{key}}
+  {{/key}}
+  {{#keyType}}
+  **قسم:** {{keyType}}
+  {{/keyType}}
+  {{#totalAmount}}
+  **رقم:** {{totalAmountFormatted}}
+  {{/totalAmount}}
+  {{#referenceId}}
+  **حوالہ:** {{referenceId}}
+  {{/referenceId}}
+
+  💳 **PIX کاپی اور پیسٹ بھیج دیا گیا**
+  {{/pixData}}
+
+whatsapp.to.chatwoot.message.unsupported: |-
+  ⚠️ **ChatWoot میں اس قسم کا پیغام معاونت یافتہ نہیں ہے۔**
+  📱 اسے دیکھنے کے لیے براہ کرم **WhatsApp** کھولیں۔
+
+  تفصیلات: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.to.chatwoot.message.facebook.ad: |-
+  📢 **فیس بک اشتہار**
+
+  **عنوان:** {{{adData.title}}}
+
+  **تفصیل:**
+  {{{adData.body}}}
+
+  **اشتہار کا لنک:** [فیس بک پر دیکھیں]({{{adData.sourceUrl}}})
+  **اشتہار کا شناختی نمبر:** {{{adData.sourceId}}}
+
+  ---
+  💬 **گاہک کا پیغام:**
+  {{{payload.body}}}

@@ -7,6 +7,7 @@ import {
   IsBoolean,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
   ValidateNested,
 } from 'class-validator';
@@ -88,6 +89,49 @@ export class NowebConfig {
   markOnline: boolean = true;
 }
 
+export class WebjsConfig {
+  @ApiProperty({
+    description:
+      "Enable emission of special 'tag:*' engine events required for presence.update and message.ack.\n" +
+      'WARNING: Enabling this may have performance and stability impact. Disabled by default.',
+    required: false,
+    default: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+  tagsEventsOn?: boolean = false;
+}
+
+export class IgnoreConfig {
+  @ApiProperty({
+    description: 'Ignore a status@broadcast (stories) events',
+  })
+  @IsBoolean()
+  @IsOptional()
+  status?: boolean;
+
+  @ApiProperty({
+    description: 'Ignore groups events',
+  })
+  @IsBoolean()
+  @IsOptional()
+  groups?: boolean;
+
+  @ApiProperty({
+    description: 'Ignore channels events',
+  })
+  @IsBoolean()
+  @IsOptional()
+  channels?: boolean;
+
+  @ApiProperty({
+    description: 'Ignore broadcast events (broadcast list and status)',
+  })
+  @IsBoolean()
+  @IsOptional()
+  broadcast?: boolean;
+}
+
 export class SessionConfig {
   @ValidateNested({ each: true })
   @Type(() => WebhookConfig)
@@ -106,7 +150,7 @@ export class SessionConfig {
   })
   @IsDynamicObject()
   @IsOptional()
-  metadata?: Map<string, string>;
+  metadata?: Record<string, string>;
 
   @ApiProperty({
     example: null,
@@ -122,7 +166,20 @@ export class SessionConfig {
   })
   @IsBoolean()
   @IsOptional()
-  debug: boolean;
+  debug?: boolean;
+
+  @ApiProperty({
+    example: {
+      status: null,
+      groups: null,
+      channels: null,
+    },
+    description: 'Ignore some events related to specific chats',
+  })
+  @ValidateNested()
+  @Type(() => IgnoreConfig)
+  @IsOptional()
+  ignore?: IgnoreConfig;
 
   @ApiProperty({
     example: {
@@ -136,6 +193,15 @@ export class SessionConfig {
   @Type(() => NowebConfig)
   @IsOptional()
   noweb?: NowebConfig;
+
+  @ApiProperty({
+    description: 'WebJS-specific settings.',
+    required: false,
+  })
+  @ValidateNested()
+  @Type(() => WebjsConfig)
+  @IsOptional()
+  webjs?: WebjsConfig;
 }
 
 export class SessionDTO {
@@ -153,6 +219,17 @@ export class SessionDTO {
 export class MeInfo {
   @ChatIdProperty()
   id: string;
+
+  @ApiProperty({
+    example: '123123@lid',
+  })
+  lid?: string;
+
+  @ApiProperty({
+    example: '123123:123@s.whatsapp.net',
+    description: 'Your id with device number',
+  })
+  jid?: string;
 
   pushName: string;
 }
@@ -179,6 +256,10 @@ export class SessionCreateRequest {
   @IsString()
   @IsOptional()
   @MaxLength(DB_NAME_LIMIT - DB_NAME_MAX_PREFIX_LEN)
+  @Matches(/^[a-zA-Z0-9_-]*$/, {
+    message:
+      'Session name can only contain alphanumeric characters, hyphens, and underscores (a-z, A-Z, 0-9, -, _) or be empty',
+  })
   name: string | undefined;
 
   @ValidateNested()

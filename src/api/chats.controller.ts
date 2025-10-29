@@ -29,8 +29,13 @@ import {
   GetChatMessageQuery,
   GetChatMessagesFilter,
   GetChatMessagesQuery,
+  OverviewBodyRequest,
+  OverviewFilter,
   OverviewPaginationParams,
   PinMessageRequest,
+  ReadChatMessagesQuery,
+  ReadChatMessagesResponse,
+  transformAck,
 } from '../structures/chats.dto';
 import { EditMessageRequest } from '../structures/chatting.dto';
 
@@ -61,8 +66,23 @@ class ChatsController {
   getChatsOverview(
     @WorkingSessionParam session: WhatsappSession,
     @Query() pagination: OverviewPaginationParams,
+    @Query() filter: OverviewFilter,
   ): Promise<ChatSummary[]> {
-    return session.getChatsOverview(pagination);
+    return session.getChatsOverview(pagination, filter);
+  }
+
+  @Post('overview')
+  @SessionApiParam
+  @ApiOperation({
+    summary:
+      'Get chats overview. Use POST if you have too many "ids" params - GET can limit it',
+  })
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  postChatsOverview(
+    @WorkingSessionParam session: WhatsappSession,
+    @Body() body: OverviewBodyRequest,
+  ): Promise<ChatSummary[]> {
+    return session.getChatsOverview(body.pagination, body.filter);
   }
 
   @Delete(':chatId')
@@ -100,7 +120,21 @@ class ChatsController {
     @WorkingSessionParam session: WhatsappSession,
     @Param('chatId') chatId: string,
   ) {
+    filter = transformAck(filter);
     return session.getChatMessages(chatId, query, filter);
+  }
+
+  @Post(':chatId/messages/read')
+  @SessionApiParam
+  @ApiOperation({ summary: 'Read unread messages in the chat' })
+  @ChatIdApiParam
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  readChatMessages(
+    @Query() query: ReadChatMessagesQuery,
+    @WorkingSessionParam session: WhatsappSession,
+    @Param('chatId') chatId: string,
+  ): Promise<ReadChatMessagesResponse> {
+    return session.readChatMessages(chatId, query);
   }
 
   @Get(':chatId/messages/:messageId')

@@ -1,8 +1,10 @@
 import {
   BeforeApplicationShutdown,
+  NotFoundException,
   OnApplicationBootstrap,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { IAppsService } from '@waha/apps/app_sdk/services/IAppsService';
 import { WhatsappConfigService } from '@waha/config.service';
 import {
   EngineBootstrap,
@@ -12,9 +14,11 @@ import { GowsEngineConfigService } from '@waha/core/config/GowsEngineConfigServi
 import { GowsBootstrap } from '@waha/core/engines/gows/GowsBootstrap';
 import { ISessionMeRepository } from '@waha/core/storage/ISessionMeRepository';
 import { ISessionWorkerRepository } from '@waha/core/storage/ISessionWorkerRepository';
+import { IgnoreJidConfig } from '@waha/core/utils/jids';
 import { WAHAWebhook } from '@waha/structures/webhooks.dto';
 import { waitUntil } from '@waha/utils/promiseTimeout';
 import { VERSION } from '@waha/version';
+import * as lodash from 'lodash';
 import { PinoLogger } from 'nestjs-pino';
 import { merge, Observable, of } from 'rxjs';
 
@@ -50,16 +54,17 @@ export abstract class SessionManager
   WAIT_SESSION_RUNNING_TIMEOUT = 5_000;
   WAIT_STATUS_INTERVAL = 500;
   WAIT_STATUS_TIMEOUT = 10_000;
-  LOCK_TIMEOUT = 10_000;
 
   protected constructor(
     protected log: PinoLogger,
     protected config: WhatsappConfigService,
     protected gowsConfigService: GowsEngineConfigService,
+    protected readonly appsService: IAppsService,
   ) {
     this.lock = new AsyncLock({
+      timeout: 5_000,
       maxPending: Infinity,
-      timeout: this.LOCK_TIMEOUT,
+      maxExecutionTime: 30_000,
     });
     this.log.setContext(SessionManager.name);
   }
@@ -102,6 +107,18 @@ export abstract class SessionManager
   //
   // API Methods
   //
+  restart(name: string) {
+    return this.withLock(name, async () => {
+      const exists = await this.exists(name);
+      if (!exists) {
+        throw new NotFoundException('Session not found');
+      }
+      await this.assign(name);
+      await this.stop(name, true);
+      await this.start(name);
+    });
+  }
+
   /**
    * Either create or update
    */
@@ -150,6 +167,12 @@ export abstract class SessionManager
     sessionName: string,
     expected: WAHASessionStatus[],
   ): Promise<WhatsappSession> {
+    if (!sessionName) {
+      throw new UnprocessableEntityException({
+        error: `Session name is required`,
+        session: sessionName,
+      });
+    }
     const running = await waitUntil(
       async () => this.isRunning(sessionName),
       this.WAIT_SESSION_RUNNING_INTERVAL,
@@ -210,6 +233,12 @@ export abstract class SessionManager
     }
     return new NoopEngineBootstrap();
   }
+
+  protected ignoreChatsConfig(config: SessionConfig) {
+    const ignore: IgnoreJidConfig = this.config.getIgnoreChatsConfig();
+    // Given the default, overwrite from the config if any
+    return lodash.defaults({}, config?.ignore, ignore);
+  }
 }
 
 export function populateSessionInfo(
@@ -218,11 +247,14 @@ export function populateSessionInfo(
 ) {
   return (payload: any): WAHAWebhook => {
     const id = payload._eventId;
+    const timestampMs = payload._timestampMs;
     const data = { ...payload };
     delete data._eventId;
+    delete data._timestampMs;
     const me = session.getSessionMeInfo();
     return {
       id: id,
+      timestamp: timestampMs,
       event: event,
       session: session.name,
       metadata: session.sessionConfig?.metadata,

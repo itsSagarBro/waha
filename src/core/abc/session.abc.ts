@@ -1,4 +1,15 @@
 import {
+  CoreMediaConverter,
+  IMediaConverter,
+} from '@waha/core/media/IConverter';
+import { MessagesForRead } from '@waha/core/utils/convertors';
+import {
+  IgnoreJidConfig,
+  isJidBroadcast,
+  isJidNewsletter,
+  JidFilter,
+} from '@waha/core/utils/jids';
+import {
   Channel,
   ChannelListResult,
   ChannelMessage,
@@ -13,20 +24,27 @@ import {
   GetChatMessageQuery,
   GetChatMessagesFilter,
   GetChatMessagesQuery,
+  OverviewFilter,
+  ReadChatMessagesQuery,
+  ReadChatMessagesResponse,
 } from '@waha/structures/chats.dto';
 import { SendButtonsRequest } from '@waha/structures/chatting.buttons.dto';
+import { SendListRequest } from '@waha/structures/chatting.list.dto';
 import { BinaryFile, RemoteFile } from '@waha/structures/files.dto';
 import { Label, LabelDTO, LabelID } from '@waha/structures/labels.dto';
+import { LidToPhoneNumber } from '@waha/structures/lids.dto';
 import { PaginationParams } from '@waha/structures/pagination.dto';
-import { WAMessage } from '@waha/structures/responses.dto';
+import { MessageSource, WAMessage } from '@waha/structures/responses.dto';
+import { BrowserTraceQuery } from '@waha/structures/server.debug.dto';
 import { DefaultMap } from '@waha/utils/DefaultMap';
 import { generatePrefixedId } from '@waha/utils/ids';
 import { LoggerBuilder } from '@waha/utils/logging';
 import { complete } from '@waha/utils/reactive/complete';
 import { SwitchObservable } from '@waha/utils/reactive/SwitchObservable';
+import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import * as fs from 'fs';
 import * as lodash from 'lodash';
-import { PinoLogger } from 'nestjs-pino';
 import * as NodeCache from 'node-cache';
 import { Logger } from 'pino';
 import {
@@ -36,9 +54,11 @@ import {
   filter,
   of,
   retry,
+  scan,
   share,
   Subject,
   switchMap,
+  timestamp,
 } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { MessageId } from 'whatsapp-web.js';
@@ -47,13 +67,16 @@ import {
   ChatRequest,
   CheckNumberStatusQuery,
   EditMessageRequest,
+  MessageButtonReply,
   MessageContactVcardRequest,
   MessageFileRequest,
   MessageForwardRequest,
   MessageImageRequest,
+  MessageLinkCustomPreviewRequest,
   MessageLinkPreviewRequest,
   MessageLocationRequest,
   MessagePollRequest,
+  MessagePollVoteRequest,
   MessageReactionRequest,
   MessageReplyRequest,
   MessageStarRequest,
@@ -62,18 +85,22 @@ import {
   MessageVoiceRequest,
   SendSeenRequest,
 } from '../../structures/chatting.dto';
-import { ContactQuery, ContactRequest } from '../../structures/contacts.dto';
+import {
+  ContactQuery,
+  ContactRequest,
+  ContactUpdateBody,
+} from '../../structures/contacts.dto';
 import {
   WAHAEngine,
   WAHAEvents,
   WAHAPresenceStatus,
   WAHASessionStatus,
 } from '../../structures/enums.dto';
+import { EventMessageRequest } from '../../structures/events.dto';
 import {
   CreateGroupRequest,
   GroupField,
   GroupsListFields,
-  GroupsPaginationParams,
   ParticipantsRequest,
   SettingsSecurityChangeInfo,
 } from '../../structures/groups.dto';
@@ -90,13 +117,23 @@ import {
   VideoStatus,
   VoiceStatus,
 } from '../../structures/status.dto';
-import { WASessionStatusBody } from '../../structures/webhooks.dto';
-import { NotImplementedByEngineError } from '../exceptions';
+import {
+  SessionStatusPoint,
+  WASessionStatusBody,
+} from '../../structures/webhooks.dto';
+import {
+  AvailableInPlusVersion,
+  NotImplementedByEngineError,
+} from '../exceptions';
 import { IMediaManager } from '../media/IMediaManager';
 import { QR } from '../QR';
 import { DataStore } from './DataStore';
+import { fetchBuffer } from '@waha/utils/fetch';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const qrcode = require('qrcode-terminal');
+
+axiosRetry(axios, { retries: 3 });
 
 const CHROME_PATH = '/usr/bin/google-chrome-stable';
 const CHROMIUM_PATH = '/usr/bin/chromium';
@@ -123,8 +160,11 @@ export interface SessionParams {
   loggerBuilder: LoggerBuilder;
   sessionStore: DataStore;
   proxyConfig?: ProxyConfig;
+  // Raw unchanged SessionConfig
   sessionConfig?: SessionConfig;
   engineConfig?: any;
+  // Ignore settings
+  ignore: IgnoreJidConfig;
 }
 
 export abstract class WhatsappSession {
@@ -139,6 +179,7 @@ export abstract class WhatsappSession {
   public sessionConfig?: SessionConfig;
   protected engineConfig?: any;
   protected unpairing: boolean = false;
+  protected jids: JidFilter;
 
   private _status: WAHASessionStatus;
   private shouldPrintQR: boolean;
@@ -147,6 +188,14 @@ export abstract class WhatsappSession {
   protected profilePictures: NodeCache = new NodeCache({
     stdTTL: 24 * 60 * 60, // 1 day
   });
+
+  // Save sent messages ids in cache so we can determine if a message was sent
+  // via API or APP
+  private sentMessageIds: NodeCache = new NodeCache({
+    stdTTL: 10 * 60, // 10 minutes
+  });
+
+  public mediaConverter: IMediaConverter = new CoreMediaConverter();
 
   public constructor({
     name,
@@ -157,8 +206,9 @@ export abstract class WhatsappSession {
     mediaManager,
     sessionConfig,
     engineConfig,
+    ignore,
   }: SessionParams) {
-    this.status$ = new BehaviorSubject(null);
+    this.status$ = new BehaviorSubject(WAHASessionStatus.STOPPED);
 
     this.name = name;
     this.proxyConfig = proxyConfig;
@@ -178,6 +228,7 @@ export abstract class WhatsappSession {
             filter(Boolean),
             map((data) => {
               data._eventId = generatePrefixedId('evt');
+              data._timestampMs = Date.now();
               return data;
             }),
             retry(),
@@ -188,8 +239,6 @@ export abstract class WhatsappSession {
 
     this.events2.get(WAHAEvents.SESSION_STATUS).switch(
       this.status$
-        // initial value is null
-        .pipe(filter(Boolean))
         // Wait for WORKING status to get all the info
         // https://github.com/devlikeapro/waha/issues/409
         .pipe(
@@ -207,12 +256,32 @@ export abstract class WhatsappSession {
           distinctUntilChanged(
             (prev, curr) => prev === curr && curr === WAHASessionStatus.WORKING,
           ),
-        )
-        // Populate the session info
-        .pipe(
-          map<WAHASessionStatus, WASessionStatusBody>((status) => {
-            return { name: this.name, status: status };
-          }),
+          // attach current time (ms)
+          timestamp(),
+          map(
+            ({ value, timestamp }) =>
+              ({
+                status: value,
+                timestamp: timestamp,
+              }) as SessionStatusPoint,
+          ),
+          // keep the last 3 entries
+          scan<SessionStatusPoint, SessionStatusPoint[]>(
+            (statuses, status: SessionStatusPoint) => {
+              const next = [...statuses, status];
+              return next.length > 3 ? next.slice(-3) : next;
+            },
+            [],
+          ),
+          // shape final payload
+          map(
+            (statuses) =>
+              ({
+                name: this.name,
+                status: statuses.at(-1)?.status, // current
+                statuses: statuses,
+              }) as WASessionStatusBody,
+          ),
         ),
     );
 
@@ -221,6 +290,11 @@ export abstract class WhatsappSession {
     this.sessionConfig = sessionConfig;
     this.engineConfig = engineConfig;
     this.shouldPrintQR = printQR;
+    this.logger.info(
+      { ignore: ignore },
+      'The session ignores the following chat ids',
+    );
+    this.jids = new JidFilter(ignore);
   }
 
   public getEventObservable(event: WAHAEvents) {
@@ -253,21 +327,18 @@ export abstract class WhatsappSession {
     // https://superuser.com/questions/654565/how-to-run-google-chrome-in-a-single-process
     // https://www.bannerbear.com/blog/ways-to-speed-up-puppeteer-screenshots/
     return [
-      '--aggressive-cache-discard',
       '--disable-accelerated-2d-canvas',
       '--disable-application-cache',
-      // '--disable-background-networking', // COMMENTED to test WEBJS stability
       // DO NOT disable software rasterizer, it will break the video
       // https://github.com/devlikeapro/waha/issues/629
       // '--disable-software-rasterizer',
-      '--disable-cache',
       '--disable-client-side-phishing-detection',
       '--disable-component-update',
       '--disable-default-apps',
       '--disable-dev-shm-usage',
       '--disable-extensions',
       // '--disable-features=site-per-process', // COMMENTED to test WEBJS stability
-      //'--disable-gpu', // COMMENTED to test WEBJS stability
+      '--disable-gpu', // COMMENTED to test WEBJS stability
       '--disable-offer-store-unmasked-wallet-cards',
       '--disable-offline-load-stale-cache',
       '--disable-popup-blocking',
@@ -277,7 +348,6 @@ export abstract class WhatsappSession {
       '--disable-sync',
       '--disable-translate',
       '--disable-web-security',
-      '--disk-cache-size=0',
       '--hide-scrollbars',
       '--ignore-certificate-errors',
       '--ignore-ssl-errors',
@@ -291,11 +361,18 @@ export abstract class WhatsappSession {
       '--no-sandbox',
       '--no-zygote',
       '--password-store=basic',
-      // '--renderer-process-limit=2', // COMMENTED to test WEBJS stability
+      '--renderer-process-limit=2',
       '--safebrowsing-disable-auto-update',
-      // '--single-process',
       '--use-mock-keychain',
       '--window-size=1280,720',
+      '--disable-blink-features=AutomationControlled',
+      //
+      // Cache options
+      //
+      '--disk-cache-size=1073741824', // 1GB
+      // '--disk-cache-size=0',
+      // '--disable-cache',
+      // '--aggressive-cache-discard',
     ];
   }
 
@@ -321,6 +398,10 @@ export abstract class WhatsappSession {
   /**
    * START - Methods for API
    */
+
+  public browserTrace(query: BrowserTraceQuery): Promise<string> {
+    throw new NotImplementedByEngineError();
+  }
 
   /**
    * Auth methods
@@ -392,6 +473,10 @@ export abstract class WhatsappSession {
   /**
    * Other methods
    */
+  generateNewMessageId(): Promise<string> {
+    throw new NotImplementedByEngineError();
+  }
+
   abstract checkNumberStatus(request: CheckNumberStatusQuery);
 
   abstract sendText(request: MessageTextRequest);
@@ -404,9 +489,19 @@ export abstract class WhatsappSession {
     throw new NotImplementedByEngineError();
   }
 
+  sendPollVote(request: MessagePollVoteRequest) {
+    throw new NotImplementedByEngineError();
+  }
+
   abstract sendLocation(request: MessageLocationRequest);
 
   sendLinkPreview(request: MessageLinkPreviewRequest) {
+    throw new NotImplementedByEngineError();
+  }
+
+  sendLinkCustomPreview(
+    request: MessageLinkCustomPreviewRequest,
+  ): Promise<any> {
     throw new NotImplementedByEngineError();
   }
 
@@ -426,6 +521,14 @@ export abstract class WhatsappSession {
     throw new NotImplementedByEngineError();
   }
 
+  sendList(request: SendListRequest): Promise<any> {
+    throw new NotImplementedByEngineError();
+  }
+
+  sendButtonsReply(request: MessageButtonReply) {
+    throw new NotImplementedByEngineError();
+  }
+
   abstract reply(request: MessageReplyRequest);
 
   abstract sendSeen(chat: SendSeenRequest);
@@ -440,6 +543,14 @@ export abstract class WhatsappSession {
     throw new NotImplementedByEngineError();
   }
 
+  sendEvent(request: EventMessageRequest): Promise<WAMessage> {
+    throw new NotImplementedByEngineError();
+  }
+
+  cancelEvent(eventId: string): Promise<WAMessage> {
+    throw new NotImplementedByEngineError();
+  }
+
   /**
    * Chats methods
    */
@@ -449,6 +560,7 @@ export abstract class WhatsappSession {
 
   public getChatsOverview(
     pagination: PaginationParams,
+    filter?: OverviewFilter,
   ): Promise<ChatSummary[]> {
     throw new NotImplementedByEngineError();
   }
@@ -461,8 +573,33 @@ export abstract class WhatsappSession {
     chatId: string,
     query: GetChatMessagesQuery,
     filter: GetChatMessagesFilter,
-  ) {
+  ): Promise<WAMessage[]> {
     throw new NotImplementedByEngineError();
+  }
+
+  abstract readChatMessages(
+    chatId: string,
+    request: ReadChatMessagesQuery,
+  ): Promise<ReadChatMessagesResponse>;
+
+  protected async readChatMessagesWSImpl(
+    chatId: string,
+    request: ReadChatMessagesQuery,
+  ): Promise<ReadChatMessagesResponse> {
+    const { query, filter } = MessagesForRead(chatId, request);
+    const messages = await this.getChatMessages(chatId, query, filter);
+    this.logger.debug(`Found ${messages.length} messages to read`);
+    if (messages.length === 0) {
+      return { ids: [] };
+    }
+    const ids = messages.map((m) => m.id);
+    const seen: SendSeenRequest = {
+      chatId: chatId,
+      messageIds: ids,
+      session: '',
+    };
+    await this.sendSeen(seen);
+    return { ids: ids };
   }
 
   public getChatMessage(
@@ -552,6 +689,10 @@ export abstract class WhatsappSession {
   /**
    * Contacts methods
    */
+  public upsertContact(chatId: string, body: ContactUpdateBody): Promise<void> {
+    throw new NotImplementedByEngineError();
+  }
+
   public getContact(query: ContactQuery) {
     throw new NotImplementedByEngineError();
   }
@@ -561,6 +702,29 @@ export abstract class WhatsappSession {
   }
 
   public getContactAbout(query: ContactQuery): Promise<{ about: string }> {
+    throw new NotImplementedByEngineError();
+  }
+
+  /**
+   * Lid to Phone Number methods
+   */
+  public async getAllLids(
+    pagination: PaginationParams,
+  ): Promise<Array<LidToPhoneNumber>> {
+    throw new NotImplementedByEngineError();
+  }
+
+  public async getLidsCount(): Promise<number> {
+    throw new NotImplementedByEngineError();
+  }
+
+  public async findPNByLid(lid: string): Promise<LidToPhoneNumber> {
+    throw new NotImplementedByEngineError();
+  }
+
+  public async findLIDByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<LidToPhoneNumber> {
     throw new NotImplementedByEngineError();
   }
 
@@ -582,8 +746,17 @@ export abstract class WhatsappSession {
   }
 
   protected async refreshProfilePicture(id: string) {
+    this.logger.debug(`Refreshing profile picture for id "${id}"...`);
+    // Have no pictures
+    if (id === '0@c.us' || id === '0@s.whatsapp.net') {
+      return null;
+    } else if (isJidBroadcast(id)) {
+      return null;
+    }
+
+    // Find the right method
     let fn: Promise<string>;
-    if (isNewsletter(id)) {
+    if (isJidNewsletter(id)) {
       fn = this.channelsGetChannel(id).then(
         (channel: Channel) => channel.picture || channel.preview,
       );
@@ -828,21 +1001,24 @@ export abstract class WhatsappSession {
   }
 
   public sendImageStatus(status: ImageStatus) {
-    throw new NotImplementedByEngineError();
+    throw new AvailableInPlusVersion();
   }
 
   public sendVoiceStatus(status: VoiceStatus) {
-    throw new NotImplementedByEngineError();
+    throw new AvailableInPlusVersion();
   }
 
   public sendVideoStatus(status: VideoStatus) {
-    throw new NotImplementedByEngineError();
+    throw new AvailableInPlusVersion();
   }
 
   public deleteStatus(request: DeleteStatusRequest) {
     throw new NotImplementedByEngineError();
   }
 
+  /**
+   * Engine methods
+   */
   public async getEngineInfo(): Promise<any> {
     return {};
   }
@@ -884,10 +1060,25 @@ export abstract class WhatsappSession {
     );
     qrcode.generate(qr.raw, { small: true });
   }
-}
 
-export function isNewsletter(jid: string) {
-  return jid.endsWith('@newsletter');
+  protected saveSentMessageId(id: string) {
+    this.sentMessageIds.set(id, true);
+  }
+
+  protected getMessageSource(id: string): MessageSource {
+    if (!id) {
+      return MessageSource.APP;
+    }
+    const api = this.sentMessageIds.has(id);
+    return api ? MessageSource.API : MessageSource.APP;
+  }
+
+  /**
+   * Fetches the content from the specified URL and returns it as a Buffer.
+   */
+  public fetch(url: string): Promise<Buffer> {
+    return fetchBuffer(url);
+  }
 }
 
 export function getGroupInviteLink(code: string) {
@@ -914,4 +1105,20 @@ export function parseChannelInviteLink(link: string): string {
 
 export function getPublicUrlFromDirectPath(directPath: string) {
   return `https://pps.whatsapp.net${directPath}`;
+}
+
+const deviceRegexp = /^.*:(\d+)@.*$/;
+
+/**
+ * Extracts the device ID from a JID string.
+ *
+ * @param jid - The JID string (e.g., "123123:12@c.us")
+ * @return The extracted device ID (e.g., "12") or null if the format is invalid.
+ */
+export function extractDeviceId(jid: string): string | null {
+  if (!jid) {
+    return null;
+  }
+  const match = jid.match(deviceRegexp);
+  return match ? match[1] : null;
 }

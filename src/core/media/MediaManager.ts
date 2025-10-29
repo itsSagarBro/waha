@@ -62,7 +62,10 @@ export class MediaManager implements IMediaManager {
       return null;
     }
 
-    const extension = mime.extension(mimetype);
+    let extension = mime.extension(mimetype);
+    if (mimetype == 'application/was' && !extension) {
+      extension = 'zip';
+    }
     const mediaData: MediaData = {
       session: session,
       message: {
@@ -102,19 +105,19 @@ export class MediaManager implements IMediaManager {
     processor: IMediaEngineProcessor<Message>,
     message: Message,
     session: string,
-  ): Promise<Message> {
+  ): Promise<WAMedia | null> {
     let messageId: string;
     try {
       messageId = processor.getMessageId(message);
       if (!processor.hasMedia(message)) {
-        return message;
+        return null;
       }
     } catch (error) {
       this.log.error(
         error,
         `Error checking if message has media for message '${messageId}'`,
       );
-      return message;
+      return null;
     }
 
     let media: WAMedia = {
@@ -125,7 +128,6 @@ export class MediaManager implements IMediaManager {
     try {
       media.filename = processor.getFilename(message);
       media.mimetype = processor.getMimetype(message);
-      media.filename = processor.getFilename(message);
       const data = await this.processMediaInternal(processor, message, session);
       media = { ...media, ...data };
     } catch (err) {
@@ -134,9 +136,7 @@ export class MediaManager implements IMediaManager {
       // @ts-ignore
       media.error.details = `${err.stack}`;
     }
-    // @ts-ignore
-    message.media = media;
-    return message;
+    return media;
   }
 
   private async fetchMedia(

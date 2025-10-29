@@ -1,30 +1,37 @@
-import makeWASocket, {
-  areJidsSameUser,
+import type makeWASocket from '@adiwajshing/baileys';
+import type {
   BaileysEventEmitter,
   Chat,
   ChatUpdate,
-  Contact,
   GroupParticipant,
-  isRealMessage,
-  jidNormalizedUser,
+  Contact,
   ParticipantAction,
-  proto,
-  updateMessageWithReaction,
-  updateMessageWithReceipt,
+  WAMessage,
 } from '@adiwajshing/baileys';
-import { GroupMetadata } from '@adiwajshing/baileys/lib/Types/GroupMetadata';
-import { Label } from '@adiwajshing/baileys/lib/Types/Label';
-import {
-  LabelAssociation,
-  LabelAssociationType,
-} from '@adiwajshing/baileys/lib/Types/LabelAssociation';
+import type { GroupMetadata } from '@adiwajshing/baileys/lib/Types/GroupMetadata';
+import type { Label } from '@adiwajshing/baileys/lib/Types/Label';
+import type { LabelAssociation } from '@adiwajshing/baileys/lib/Types/LabelAssociation';
 import { IGroupRepository } from '@waha/core/engines/noweb/store/IGroupRepository';
 import { ILabelAssociationRepository } from '@waha/core/engines/noweb/store/ILabelAssociationsRepository';
 import { ILabelsRepository } from '@waha/core/engines/noweb/store/ILabelsRepository';
-import { GetChatMessagesFilter } from '@waha/structures/chats.dto';
-import { PaginationParams, SortOrder } from '@waha/structures/pagination.dto';
+import {
+  isLidUser,
+  isPnUser,
+  JidFilter,
+  jidsFromKey,
+} from '@waha/core/utils/jids';
+import {
+  GetChatMessagesFilter,
+  OverviewFilter,
+} from '@waha/structures/chats.dto';
+import { LidToPhoneNumber } from '@waha/structures/lids.dto';
+import {
+  LimitOffsetParams,
+  PaginationParams,
+  SortOrder,
+} from '@waha/structures/pagination.dto';
 import { DefaultMap } from '@waha/utils/DefaultMap';
-import { sleep, waitUntil } from '@waha/utils/promiseTimeout';
+import { waitUntil } from '@waha/utils/promiseTimeout';
 import * as lodash from 'lodash';
 import { toNumber } from 'lodash';
 import { Logger } from 'pino';
@@ -32,8 +39,11 @@ import { Logger } from 'pino';
 import { IChatRepository } from './IChatRepository';
 import { IContactRepository } from './IContactRepository';
 import { IMessagesRepository } from './IMessagesRepository';
+import { INowebLidPNRepository, LidToPN } from './INowebLidPNRepository';
 import { INowebStorage } from './INowebStorage';
 import { INowebStore } from './INowebStore';
+import { LabelAssociationType } from '../labels/LabelAssociationType';
+import esm from '@waha/vendor/esm';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const AsyncLock = require('async-lock');
@@ -49,9 +59,16 @@ export class NowebPersistentStore implements INowebStore {
   private messagesRepo: IMessagesRepository;
   private labelsRepo: ILabelsRepository;
   private labelAssociationsRepo: ILabelAssociationRepository;
+  private lidRepo: INowebLidPNRepository;
   public presences: any;
-  private lock: any;
+
+  private lock: any = new AsyncLock({
+    maxPending: Infinity,
+    maxExecutionTime: 60_000,
+  });
+
   private groupsFetchLock: any = new AsyncLock({
+    timeout: 5_000,
     maxPending: Infinity,
     maxExecutionTime: 60_000,
   });
@@ -63,6 +80,7 @@ export class NowebPersistentStore implements INowebStore {
   constructor(
     private logger: Logger,
     public storage: INowebStorage,
+    private jids: JidFilter,
   ) {
     this.socket = null;
     this.chatRepo = storage.getChatRepository();
@@ -71,8 +89,8 @@ export class NowebPersistentStore implements INowebStore {
     this.messagesRepo = storage.getMessagesRepository();
     this.labelsRepo = storage.getLabelsRepository();
     this.labelAssociationsRepo = storage.getLabelAssociationRepository();
+    this.lidRepo = storage.getLidPNRepository();
     this.presences = {};
-    this.lock = new AsyncLock({ maxPending: Infinity });
   }
 
   init(): Promise<void> {
@@ -83,9 +101,45 @@ export class NowebPersistentStore implements INowebStore {
     // All
     ev.on('messaging-history.set', (data) => this.onMessagingHistorySet(data));
     // Messages
-    ev.on('messages.upsert', (data) =>
-      this.withLock('messages', () => this.onMessagesUpsert(data)),
-    );
+    ev.on('messages.upsert', (data) => {
+      this.withLock('messages', () => this.onMessagesUpsert(data));
+      this.withNoLock('lids', async () => {
+        const messages: WAMessage[] = data.messages;
+        if (!messages) {
+          return;
+        }
+        const contacts: Partial<Contact>[] = messages
+          .map((message) => {
+            if (!message.key) {
+              return null;
+            }
+            const jids = jidsFromKey(message.key);
+            if (!jids) {
+              return null;
+            }
+            let { lid, pn } = jids;
+            // 123 => 123@s.whatsapp.net
+            if (pn && !pn.includes('@')) {
+              pn = `${pn}@s.whatsapp.net`;
+            }
+            // 123@c.us => 123@s.whatsapp.net
+            if (pn && !isPnUser(pn)) {
+              pn = esm.b.jidNormalizedUser(pn);
+            }
+            // 999@lid
+            return {
+              id: message.key.remoteJid,
+              lid: lid,
+              jid: pn,
+            };
+          })
+          .filter(Boolean);
+        const lids = await this.handleLidPNUpdates(contacts);
+        this.logger.debug(
+          `messages.upsert - '${lids.length}' synced lid to pn mapping`,
+        );
+      });
+    });
     ev.on('messages.update', (data) =>
       this.withLock('messages', () => this.onMessageUpdate(data)),
     );
@@ -112,22 +166,51 @@ export class NowebPersistentStore implements INowebStore {
     ev.on('groups.upsert', (data) =>
       this.withLock('groups', () => this.onGroupUpsert(data)),
     );
-    ev.on('groups.update', (data) =>
-      this.withLock('groups', () => this.onGroupUpdate(data)),
-    );
+    ev.on('groups.update', (data) => {
+      this.withLock('groups', () => this.onGroupUpdate(data));
+      this.withNoLock('lids', async () => {
+        const participants = lodash.flatMap(data, (g) => g?.participants || []);
+        const lids = await this.handleLidPNUpdates(participants);
+        this.logger.debug(
+          `groups.update - '${lids.length}' synced lid to pn mapping`,
+        );
+      });
+    });
     ev.on('group-participants.update', (data) =>
       this.withLock(`group-${data.id}`, () =>
         this.onGroupParticipantsUpdate(data),
       ),
     );
 
+    // Lids
+    ev.on('lid-mapping.update', (data) => {
+      this.withLock('lids', async () => {
+        const lids = await this.handleLidPNUpdates([data]);
+        this.logger.debug(
+          `lid-mapping.update - '${lids.length}' synced lid to pn mapping`,
+        );
+      });
+    });
+
     // Contacts
-    ev.on('contacts.upsert', (data) =>
-      this.withLock('contacts', () => this.onContactsUpsert(data)),
-    );
-    ev.on('contacts.update', (data) =>
-      this.withLock('contacts', () => this.onContactUpdate(data)),
-    );
+    ev.on('contacts.upsert', (data) => {
+      this.withLock('contacts', () => this.onContactsUpsert(data));
+      this.withNoLock('lids', async () => {
+        const lids = await this.handleLidPNUpdates(data);
+        this.logger.debug(
+          `contacts.upsert - '${lids.length}' synced lid to pn mapping`,
+        );
+      });
+    });
+    ev.on('contacts.update', (data) => {
+      this.withLock('contacts', () => this.onContactUpdate(data));
+      this.withNoLock('lids', async () => {
+        const lids = await this.handleLidPNUpdates(data);
+        this.logger.debug(
+          `contacts.update - '${lids.length}' synced lid to pn mapping`,
+        );
+      });
+    });
     ev.on('labels.edit', (data) => this.onLabelsEdit(data));
     ev.on('labels.association', ({ association, type }) =>
       this.onLabelsAssociation(association, type),
@@ -145,22 +228,18 @@ export class NowebPersistentStore implements INowebStore {
   }
 
   private async onMessagingHistorySet(history) {
-    const { contacts, chats, messages, isLatest } = history;
-    if (isLatest) {
-      this.logger.debug(
-        'history sync - clearing all entities, got latest history',
-      );
-      await Promise.all([
-        this.withLock('contacts', () => this.contactRepo.deleteAll()),
-        this.withLock('chats', () => this.chatRepo.deleteAll()),
-        this.withLock('messages', () => this.messagesRepo.deleteAll()),
-      ]);
-    }
+    const { contacts, chats, messages } = history;
 
     await Promise.all([
       this.withLock('contacts', async () => {
         await this.onContactsUpsert(contacts);
         this.logger.info(`history sync - '${contacts.length}' synced contacts`);
+      }),
+      this.withNoLock('lids', async () => {
+        const lids = await this.handleLidPNUpdates(contacts);
+        this.logger.info(
+          `history sync - '${lids.length}' synced lid to pn mapping`,
+        );
       }),
       this.withLock('chats', () => this.onChatUpsert(chats)),
       this.withLock('messages', () => this.syncMessagesHistory(messages)),
@@ -168,7 +247,8 @@ export class NowebPersistentStore implements INowebStore {
   }
 
   private async syncMessagesHistory(messages) {
-    const realMessages = messages.filter(isRealMessage);
+    const realMessages = messages.filter(esm.b.isRealMessage);
+    messages = messages.filter((msg) => this.jids.include(msg.key.remoteJid));
     await this.messagesRepo.upsert(realMessages);
     this.logger.info(
       `history sync - '${messages.length}' got messages, '${realMessages.length}' real messages`,
@@ -176,12 +256,14 @@ export class NowebPersistentStore implements INowebStore {
   }
 
   private async onMessagesUpsert(update) {
-    const { messages, type } = update;
+    const type = update.type;
     if (type !== 'notify' && type !== 'append') {
       this.logger.debug(`unexpected type for messages.upsert: '${type}'`);
       return;
     }
-    const realMessages = messages.filter(isRealMessage);
+    let messages = update.messages;
+    messages = messages.filter((msg) => this.jids.include(msg.key.remoteJid));
+    const realMessages = messages.filter(esm.b.isRealMessage);
     await this.messagesRepo.upsert(realMessages);
     this.logger.debug(
       `messages.upsert - ${messages.length} got messages, ${realMessages.length} real messages`,
@@ -191,19 +273,49 @@ export class NowebPersistentStore implements INowebStore {
   private async onMessageUpdate(updates) {
     for (const update of updates) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const jid = jidNormalizedUser(update.key.remoteJid!);
+      const jid = esm.b.jidNormalizedUser(update.key.remoteJid!);
+      if (!this.jids.include(jid)) {
+        continue;
+      }
+      if (!update.key.id) {
+        continue;
+      }
+      if (!jid) {
+        this.logger.warn(
+          `got message update for unknown jid. update: '${JSON.stringify(
+            update,
+          )}'`,
+        );
+        continue;
+      }
       const message = await this.messagesRepo.getByJidById(jid, update.key.id);
       if (!message) {
+        this.logger.warn(
+          `got update for non-existent message. update: '${JSON.stringify(
+            update,
+          )}'`,
+        );
         continue;
       }
       const fields = { ...update.update };
+      // check if fields has only "status" field
+      const onlyStatusField =
+        Object.keys(fields).length === 1 &&
+        'status' in fields &&
+        fields.status !== null;
+      if (onlyStatusField) {
+        // if so, check the message don't have a newer status
+        if (message.status >= fields.status) {
+          continue;
+        }
+      }
+
       // It can overwrite the key, so we need to delete it
       delete fields['key'];
       Object.assign(message, fields);
       // In case of revoked messages - remove it
       // TODO: May be we should save the flag instead of completely removing the message
-      const isYetRealMessage =
-        isRealMessage(message, this.socket?.authState?.creds?.me?.id) || false;
+      const isYetRealMessage = esm.b.isRealMessage(message) || false;
       if (isYetRealMessage) {
         await this.messagesRepo.upsertOne(message);
       } else {
@@ -217,7 +329,7 @@ export class NowebPersistentStore implements INowebStore {
       await this.messagesRepo.deleteAllByJid(item.jid);
       return;
     }
-    const jid = jidNormalizedUser(item.keys[0].remoteJid);
+    const jid = esm.b.jidNormalizedUser(item.keys[0].remoteJid);
     const ids = item.keys.map((key) => key.id);
     await this.messagesRepo.deleteByJidByIds(jid, ids);
   }
@@ -226,13 +338,17 @@ export class NowebPersistentStore implements INowebStore {
     for (const chat of chats) {
       delete chat['messages'];
       chat.conversationTimestamp = toNumber(chat.conversationTimestamp) || null;
-      await this.chatRepo.save(chat);
     }
+    chats = chats.filter((chat) => this.jids.include(chat.id));
+    await this.chatRepo.upsertMany(chats);
     this.logger.info(`store sync - '${chats.length}' synced chats`);
   }
 
   private async onGroupUpsert(groups: GroupMetadata[]) {
     for (const group of groups) {
+      if (!this.jids.include(group.id)) {
+        continue;
+      }
       await this.groupRepo.save(group);
     }
     this.logger.info(`store sync - '${groups.length}' synced groups`);
@@ -240,6 +356,9 @@ export class NowebPersistentStore implements INowebStore {
 
   private async onGroupUpdate(groups: Partial<GroupMetadata>[]) {
     for (const update of groups) {
+      if (!this.jids.include(update.id)) {
+        continue;
+      }
       let group = await this.groupRepo.getById(update.id);
       group = Object.assign(group || {}, update) as GroupMetadata;
       await this.groupRepo.save(group);
@@ -250,6 +369,9 @@ export class NowebPersistentStore implements INowebStore {
 
   private async onGroupParticipantsUpdate(data) {
     const id: string = data.id;
+    if (!this.jids.include(id)) {
+      return;
+    }
     const participants: string[] = data.participants;
     const action: ParticipantAction = data.action;
 
@@ -257,7 +379,7 @@ export class NowebPersistentStore implements INowebStore {
       // Remove the group if the current user is removed
       const myJid = this.socket?.authState?.creds?.me?.id;
       const participantsIncludesMe = lodash.find(participants, (p) =>
-        areJidsSameUser(p, myJid),
+        esm.b.areJidsSameUser(p, myJid),
       );
       if (participantsIncludesMe) {
         await this.groupRepo.deleteById(id);
@@ -313,6 +435,9 @@ export class NowebPersistentStore implements INowebStore {
 
   private async onChatUpdate(updates: ChatUpdate[]) {
     for (const update of updates) {
+      if (!this.jids.include(update.id)) {
+        continue;
+      }
       const chat = (await this.chatRepo.getById(update.id)) || ({} as Chat);
       Object.assign(chat, update);
       chat.conversationTimestamp = toNumber(chat.conversationTimestamp) || null;
@@ -332,20 +457,34 @@ export class NowebPersistentStore implements INowebStore {
     return this.lock.acquire(key, fn);
   }
 
+  private withNoLock(key, fn) {
+    return fn();
+  }
+
   private async onContactsUpsert(contacts: Contact[]) {
+    const upserts = [];
+    const ids = contacts.map((c) => c.id);
+    const contactById = await this.contactRepo.getEntitiesByIds(ids);
     for (const update of contacts) {
-      const contact = await this.contactRepo.getById(update.id);
+      if (!this.jids.include(update.id)) {
+        continue;
+      }
+      const contact = contactById.get(update.id) || {};
       // remove undefined from data
       Object.keys(update).forEach(
         (key) => update[key] === undefined && delete update[key],
       );
-      const result = { ...(contact || {}), ...update };
-      await this.contactRepo.save(result);
+      const result = { ...contact, ...update };
+      upserts.push(result);
     }
+    await this.contactRepo.upsertMany(upserts);
   }
 
   private async onContactUpdate(updates: Partial<Contact>[]) {
     for (const update of updates) {
+      if (!this.jids.include(update.id)) {
+        continue;
+      }
       let contact = await this.contactRepo.getById(update.id);
 
       if (!contact) {
@@ -363,7 +502,12 @@ export class NowebPersistentStore implements INowebStore {
 
       if (update.imgUrl === 'changed') {
         contact.imgUrl = this.socket
-          ? await this.socket?.profilePictureUrl(contact.id)
+          ? await this.socket?.profilePictureUrl(contact.id).catch((error) => {
+              this.logger.warn(
+                `failed to get profile picture for contact '${contact.id}': ${error}`,
+              );
+              return undefined;
+            })
           : undefined;
       } else if (update.imgUrl === 'removed') {
         delete contact.imgUrl;
@@ -374,6 +518,9 @@ export class NowebPersistentStore implements INowebStore {
 
   private async onMessageReaction(reactions) {
     for (const { key, reaction } of reactions) {
+      if (!this.jids.include(key.remoteJid)) {
+        continue;
+      }
       const msg = await this.messagesRepo.getByJidById(key.remoteJid, key.id);
       if (!msg) {
         this.logger.warn(
@@ -383,13 +530,16 @@ export class NowebPersistentStore implements INowebStore {
         );
         continue;
       }
-      updateMessageWithReaction(msg, reaction);
+      esm.b.updateMessageWithReaction(msg, reaction);
       await this.messagesRepo.upsertOne(msg);
     }
   }
 
   private async onMessageReceiptUpdate(updates) {
     for (const { key, receipt } of updates) {
+      if (!this.jids.include(key.remoteJid)) {
+        continue;
+      }
       const msg = await this.messagesRepo.getByJidById(key.remoteJid, key.id);
       if (!msg) {
         this.logger.warn(
@@ -399,7 +549,7 @@ export class NowebPersistentStore implements INowebStore {
         );
         continue;
       }
-      updateMessageWithReceipt(msg, receipt);
+      esm.b.updateMessageWithReceipt(msg, receipt);
       await this.messagesRepo.upsertOne(msg);
     }
   }
@@ -425,16 +575,24 @@ export class NowebPersistentStore implements INowebStore {
   }
 
   private async onPresenceUpdate({ id, presences: update }) {
+    if (!this.jids.include(id)) {
+      return;
+    }
     this.presences[id] = this.presences[id] || {};
     Object.assign(this.presences[id], update);
   }
 
   async loadMessage(jid: string, id: string) {
-    const data = await this.messagesRepo.getByJidById(jid, id);
+    let data;
+    if (!jid) {
+      data = await this.messagesRepo.getById(id);
+    } else {
+      data = await this.messagesRepo.getByJidById(jid, id);
+    }
     if (!data) {
       return null;
     }
-    return proto.WebMessageInfo.fromObject(data);
+    return esm.b.proto.WebMessageInfo.create(data);
   }
 
   getMessagesByJid(
@@ -451,10 +609,18 @@ export class NowebPersistentStore implements INowebStore {
     return this.messagesRepo.getByJidById(chatId, messageId);
   }
 
-  getChats(pagination: PaginationParams, broadcast: boolean): Promise<Chat[]> {
+  getChats(
+    pagination: PaginationParams,
+    broadcast: boolean,
+    filter?: OverviewFilter,
+  ): Promise<Chat[]> {
     pagination.sortBy ||= 'conversationTimestamp';
     pagination.sortOrder ||= SortOrder.DESC;
-    return this.chatRepo.getAllWithMessages(pagination, broadcast);
+    return this.chatRepo.getAllWithMessages(pagination, broadcast, filter);
+  }
+
+  async getChat(jid: string): Promise<Chat | null> {
+    return await this.chatRepo.getById(jid);
   }
 
   private shouldFetchGroup(): boolean {
@@ -523,5 +689,65 @@ export class NowebPersistentStore implements INowebStore {
       await this.labelAssociationsRepo.getAssociationsByChatId(chatId);
     const ids = associations.map((association) => association.labelId);
     return await this.labelsRepo.getAllByIds(ids);
+  }
+
+  //
+  // Lid methods
+  //
+  private async handleLidPNUpdates(contacts: Array<Partial<Contact>>) {
+    let lids: LidToPN[] = [];
+    for (const contact of contacts) {
+      // contact.id = pn, contact.lid = lid
+      if (isPnUser(contact.id) && isLidUser(contact.lid)) {
+        lids.push({
+          pn: contact.id,
+          id: contact.lid,
+        });
+      }
+      // contact.phoneNumber = pn, contact.lid = lid
+      else if (isPnUser(contact.phoneNumber) && isLidUser(contact.lid)) {
+        lids.push({
+          pn: contact.phoneNumber,
+          id: contact.lid,
+        });
+      }
+      // contact.phoneNumber = pn, contact.id = lid
+      else if (isPnUser(contact.phoneNumber) && isLidUser(contact.id)) {
+        lids.push({
+          pn: contact.phoneNumber,
+          id: contact.id,
+        });
+      }
+    }
+    // make lids unique by id
+    lids = lodash.uniqBy(lids, 'id');
+    if (lids.length > 0) {
+      await this.lidRepo.saveLids(lids);
+    }
+    return lids;
+  }
+
+  async getAllLids(
+    pagination?: LimitOffsetParams,
+  ): Promise<LidToPhoneNumber[]> {
+    const lids = await this.lidRepo.getAllLids(pagination);
+    return lids.map((value) => {
+      return {
+        lid: value.id,
+        pn: value.pn,
+      };
+    });
+  }
+
+  getLidsCount(): Promise<number> {
+    return this.lidRepo.getLidsCount();
+  }
+
+  findPNByLid(lid: string): Promise<string | null> {
+    return this.lidRepo.findPNByLid(lid);
+  }
+
+  findLidByPN(pn: string): Promise<string | null> {
+    return this.lidRepo.findLidByPN(pn);
   }
 }

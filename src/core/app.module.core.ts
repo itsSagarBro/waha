@@ -1,22 +1,33 @@
-import { INestApplication, Module } from '@nestjs/common';
+import * as process from 'node:process';
+
+import { INestApplication, MiddlewareConsumer, Module } from '@nestjs/common';
+import { Provider } from '@nestjs/common/interfaces/modules/provider.interface';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TerminusModule } from '@nestjs/terminus';
 import { ChannelsController } from '@waha/api/channels.controller';
+import { LidsController } from '@waha/api/lids.controller';
 import { ProfileController } from '@waha/api/profile.controller';
-import {
-  ServerController,
-  ServerDebugController,
-} from '@waha/api/server.controller';
-import { WebsocketGatewayCore } from '@waha/core/api/websocket.gateway.core';
+import { ServerController } from '@waha/api/server.controller';
+import { ServerDebugController } from '@waha/api/server.debug.controller';
+import { WebsocketGatewayCore } from '@waha/api/websocket.gateway.core';
+import { AppsModuleExports } from '@waha/apps/apps.module';
+import { ContactsSessionController } from '@waha/contacts.session.controller';
+import { ApiKeyStrategy } from '@waha/core/auth/apiKey.strategy';
+import { IApiKeyAuth } from '@waha/core/auth/auth';
+import { AuthMiddleware } from '@waha/core/auth/auth.middleware';
+import { BasicAuthFunction } from '@waha/core/auth/basicAuth';
+import { WebSocketAuth } from '@waha/core/auth/WebSocketAuth';
 import { GowsEngineConfigService } from '@waha/core/config/GowsEngineConfigService';
 import { WebJSEngineConfigService } from '@waha/core/config/WebJSEngineConfigService';
 import { MediaLocalStorageModule } from '@waha/core/media/local/media.local.storage.module';
 import { MediaLocalStorageConfig } from '@waha/core/media/local/MediaLocalStorageConfig';
 import { ChannelsInfoServiceCore } from '@waha/core/services/ChannelsInfoServiceCore';
+import { parseBool } from '@waha/helpers';
 import { BufferJsonReplacerInterceptor } from '@waha/nestjs/BufferJsonReplacerInterceptor';
+import { HttpsExpress } from '@waha/nestjs/HttpsExpress';
 import {
   getPinoHttpUseLevel,
   getPinoLogLevel,
@@ -24,6 +35,7 @@ import {
 } from '@waha/utils/logging';
 import * as Joi from 'joi';
 import { LoggerModule } from 'nestjs-pino';
+import { Logger as NestJSPinoLogger } from 'nestjs-pino';
 import { join } from 'path';
 import { Logger } from 'pino';
 
@@ -31,9 +43,11 @@ import { AuthController } from '../api/auth.controller';
 import { ChatsController } from '../api/chats.controller';
 import { ChattingController } from '../api/chatting.controller';
 import { ContactsController } from '../api/contacts.controller';
+import { EventsController } from '../api/events.controller';
 import { GroupsController } from '../api/groups.controller';
 import { HealthController } from '../api/health.controller';
 import { LabelsController } from '../api/labels.controller';
+import { MediaController } from '../api/media.controller';
 import { PingController } from '../api/ping.controller';
 import { PresenceController } from '../api/presence.controller';
 import { ScreenshotController } from '../api/screenshot.controller';
@@ -43,6 +57,7 @@ import { VersionController } from '../api/version.controller';
 import { WhatsappConfigService } from '../config.service';
 import { SessionManager } from './abc/manager.abc';
 import { WAHAHealthCheckService } from './abc/WAHAHealthCheckService';
+import { ApiKeyAuthFactory } from './auth/ApiKeyAuthFactory';
 import { DashboardConfigServiceCore } from './config/DashboardConfigServiceCore';
 import { EngineConfigService } from './config/EngineConfigService';
 import { SwaggerConfigServiceCore } from './config/SwaggerConfigServiceCore';
@@ -50,6 +65,7 @@ import { WAHAHealthCheckServiceCore } from './health/WAHAHealthCheckServiceCore'
 import { SessionManagerCore } from './manager.core';
 
 export const IMPORTS_CORE = [
+  ...AppsModuleExports.imports,
   LoggerModule.forRoot({
     renameContext: 'name',
     pinoHttp: {
@@ -60,9 +76,11 @@ export const IMPORTS_CORE = [
       autoLogging: {
         ignore: (req) => {
           return (
+            req.url.startsWith('/ping') ||
             req.url.startsWith('/dashboard/') ||
             req.url.startsWith('/api/files/') ||
-            req.url.startsWith('/api/s3/')
+            req.url.startsWith('/api/s3/') ||
+            req.url.startsWith('/jobs/')
           );
         },
       },
@@ -129,15 +147,43 @@ export const CONTROLLERS = [
   StatusController,
   LabelsController,
   ContactsController,
+  ContactsSessionController,
+  LidsController,
   GroupsController,
   PresenceController,
   ScreenshotController,
+  EventsController,
   PingController,
   HealthController,
   ServerController,
   ServerDebugController,
   VersionController,
+  MediaController,
+  ...AppsModuleExports.controllers,
 ];
+export const PROVIDERS_BASE: Provider[] = [
+  {
+    provide: APP_INTERCEPTOR,
+    useClass: BufferJsonReplacerInterceptor,
+  },
+  DashboardConfigServiceCore,
+  SwaggerConfigServiceCore,
+  WebJSEngineConfigService,
+  GowsEngineConfigService,
+  WhatsappConfigService,
+  EngineConfigService,
+  WebsocketGatewayCore,
+  MediaLocalStorageConfig,
+  WebSocketAuth,
+  ApiKeyStrategy,
+  {
+    provide: IApiKeyAuth,
+    useFactory: ApiKeyAuthFactory,
+    inject: [WhatsappConfigService, NestJSPinoLogger],
+  },
+  ...AppsModuleExports.providers,
+];
+
 const PROVIDERS = [
   {
     provide: SessionManager,
@@ -147,19 +193,8 @@ const PROVIDERS = [
     provide: WAHAHealthCheckService,
     useClass: WAHAHealthCheckServiceCore,
   },
-  {
-    provide: APP_INTERCEPTOR,
-    useClass: BufferJsonReplacerInterceptor,
-  },
   ChannelsInfoServiceCore,
-  DashboardConfigServiceCore,
-  SwaggerConfigServiceCore,
-  WebJSEngineConfigService,
-  GowsEngineConfigService,
-  WhatsappConfigService,
-  EngineConfigService,
-  WebsocketGatewayCore,
-  MediaLocalStorageConfig,
+  ...PROVIDERS_BASE,
 ];
 
 @Module({
@@ -170,15 +205,45 @@ const PROVIDERS = [
 export class AppModuleCore {
   public startTimestamp: number;
 
-  constructor(protected config: WhatsappConfigService) {
+  constructor(
+    protected config: WhatsappConfigService,
+    private dashboardConfig: DashboardConfigServiceCore,
+  ) {
     this.startTimestamp = Date.now();
   }
 
   static getHttpsOptions(logger: Logger) {
-    return undefined;
+    const httpsEnabled = parseBool(process.env.WAHA_HTTPS_ENABLED);
+    if (!httpsEnabled) {
+      return undefined;
+    }
+    const httpsExpress = new HttpsExpress(logger);
+    return httpsExpress.readSync();
   }
 
   static appReady(app: INestApplication, logger: Logger) {
-    return;
+    const httpsEnabled = parseBool(process.env.WAHA_HTTPS_ENABLED);
+    if (!httpsEnabled) {
+      return;
+    }
+    const httpd = app.getHttpServer();
+    const httpsExpress = new HttpsExpress(logger);
+    httpsExpress.watchCertChanges(httpd);
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    const exclude = this.config.getExcludedPaths();
+    consumer
+      .apply(AuthMiddleware)
+      .exclude(...exclude)
+      .forRoutes('api', 'health', 'ws');
+    const dashboardCredentials = this.dashboardConfig.credentials;
+    if (dashboardCredentials) {
+      const username = dashboardCredentials[0];
+      const password = dashboardCredentials[1];
+      consumer
+        .apply(BasicAuthFunction(username, password))
+        .forRoutes('dashboard');
+    }
   }
 }

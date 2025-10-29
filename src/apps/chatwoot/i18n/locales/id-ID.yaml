@@ -1,0 +1,382 @@
+# Indonesian translations for ChatWoot integration
+locale.name: '🇮🇩 Bahasa Indonesia (Indonesian)'
+
+# Kode locale dasar - harus berupa locale BCP 47 yang valid
+# https://en.wikipedia.org/wiki/IETF_language_tag
+# WAHA menggunakannya untuk format angka, mata uang, dan tanggal/waktu
+locale.base: 'id-ID'
+
+app.inbox.contact.name: 'Integrasi WhatsApp'
+app.inbox.contact.avatar.url: 'https://raw.githubusercontent.com/devlikeapro/waha/core/logo.png'
+
+# "opsi" dari date.toLocaleString
+# https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+datetime:
+  locales: id-ID
+  day: 2-digit
+  month: 2-digit
+  year: numeric
+  hour: 2-digit
+  minute: 2-digit
+  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
+  timeZoneName: shortGeneric
+  # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  # timeZone: 'Asia/Jakarta'
+
+job.report.error: |-
+  ⚠️ **{{{header}}}**
+  {{#attempts.nextDelay}}
+  🔄 Mencoba lagi dalam {{attempts.nextDelay}} detik...
+  {{/attempts.nextDelay}}
+  {{^attempts.nextDelay}}
+  ❌ Tidak ada percobaan lagi. Silakan coba lagi nanti.
+  {{/attempts.nextDelay}}
+  Percobaan: {{{attempts.current}}} / {{{attempts.max}}}
+  Detail: [{{{details.text}}}]({{{details.url}}})
+  {{#error}}
+  ```
+
+  {{{error}}}
+  ```
+  {{/error}}
+
+job.report.succeeded: |-
+  ✅ **Berhasil**
+  Percobaan: {{{attempts.current}}} / {{{attempts.max}}}
+  Detail: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.message.sending.error: Tidak dapat mengirim pesan di WhatsApp.
+whatsapp.message.receiving.error: Tidak dapat menerima pesan dari WhatsApp
+whatsapp.message.removing.error: Tidak dapat menghapus pesan dari WhatsApp
+job.scheduled.error.header: Tugas terjadwal gagal dijalankan
+
+message.from.whatsapp: |-
+  {{{text}}}
+
+  📱 *Dikirim dari WhatsApp*
+
+message.from.api: |-
+  {{{text}}}
+
+  📱 *Dikirim melalui API*
+
+message.removed.in.whatsapp: |-
+  ❌ *Pesan ini telah dihapus di WhatsApp*
+
+message.edited.in.whatsapp: |-
+  {{{text}}}
+
+  ✏️ *Diedit di WhatsApp*
+
+whatsapp.group.message: |-
+  👥 *{{{participant}}}*
+
+  {{{text}}}
+
+whatsapp.reaction.added: |-
+  *Bereaksi* {{{emoji}}}
+
+whatsapp.reaction.removed: |-
+  *Reaksi dihapus*
+
+whatsapp.contact.group.suffix: 'Grup'
+whatsapp.contact.channel.suffix: 'Saluran'
+whatsapp.contact.broadcast.suffix: 'Daftar Siaran'
+# Aka Stories
+whatsapp.contact.status.name: 'Status'
+
+app.connected.message: |-
+  🔗 **TERHUBUNG: Sesi WhatsApp ke Kotak Masuk ChatWoot**
+
+  ✅ Sesi WhatsApp **{{{name}}}** telah berhasil terhubung ke Kotak Masuk ChatWoot ini.
+
+  Kotak masuk ini sekarang terhubung ke **Akun WhatsApp** Anda. Anda dapat mengirim dan menerima pesan langsung dari sini — seperti menggunakan WhatsApp, tetapi di dalam ChatWoot.
+
+  Anda juga dapat mengelola sesi WhatsApp yang terhubung ke kotak masuk ini. Untuk melihat tindakan yang tersedia, kirim **help** ke obrolan ini.
+
+  📋 Tindakan umum yang dapat Anda lakukan:
+  - Periksa apakah sesi WhatsApp aktif
+  - Mulai ulang atau Hentikan sesi WhatsApp
+  - Keluar dan hubungkan kembali dengan memindai kode QR baru
+
+  Jika semuanya berfungsi, Anda akan dapat mengobrol dengan bebas. Jika Anda melihat peringatan, Anda mungkin perlu menghubungkan kembali akun WhatsApp Anda.
+
+  Mari kita mulai! 🚀
+
+app.disconnected.message: |-
+  🔌 **TERPUTUS: Sesi WhatsApp dari Kotak Masuk ChatWoot**
+
+  ❌ Sesi WhatsApp **{{{name}}}** telah terputus dari Kotak Masuk ChatWoot ini.
+
+  Anda tidak akan dapat lagi mengirim atau menerima pesan dari WhatsApp.
+
+  Untuk menghubungkan kembali, silakan hubungi administrator Anda.
+
+app.updated.message: |-
+  🔄 **DIPERBARUI: Pengaturan Sesi WhatsApp**
+
+  ✅ Pengaturan untuk sesi WhatsApp **{{{name}}}** telah diperbarui.
+
+app.commands.list: |-
+  Anda dapat mengelola **Integrasi WhatsApp** dengan mengirimkan salah satu perintah berikut:
+
+  🖥️ **Sesi**:
+  1. **status** - dapatkan status sesi saat ini.
+  2. **restart** - mulai ulang sesi - ini akan mencoba menghubungkan kembali akun WhatsApp Anda.
+  3. **start** - mulai sesi.
+  4. **stop** - hentikan sesi.
+  5. **logout** - keluar dari sesi, sehingga Anda dapat memindai kode QR dan memperbaiki sesi.
+  6. **qr** - dapatkan kode QR untuk sesi.
+  7. **screenshot** - dapatkan tangkapan layar sesi (hanya tersedia di mesin **WEBJS**).
+  8. **help** - perintah yang tersedia.
+
+  {{#commands.server}}
+  ⚙️ Server:
+  - **server status** - dapatkan informasi versi dan status server.
+  - **server reboot** - mulai ulang server dengan anggun.
+  - **server reboot force** - paksa mulai ulang server.
+  {{/commands.server}}
+
+  Kirim **perintah** (tidak peka huruf besar/kecil) atau **nomor perintah** ke percakapan ini.
+
+app.commands.server.disabled: ⛔ **Perintah server dinonaktifkan**.
+
+  Silakan hubungi administrator Anda.
+
+  Kirim **help** untuk melihat daftar perintah yang tersedia.
+
+app.help.reminder: |-
+  Kirim **help** untuk mendapatkan daftar perintah yang tersedia.
+
+app.session.status.change: |-
+  {{{emoji}}} Sesi "{{{session}}}" beralih ke status {{{status}}}
+
+app.session.current.status: |-
+  {{{emoji}}} Status sesi **{{{session}}}** adalah **{{{status}}}**
+  **Akun WhatsApp:**
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.working: |-
+  ✅ Kotak Masuk ChatWoot ini terhubung ke **Akun WhatsApp** dan siap untuk mengirim dan menerima pesan!
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.error: |-
+  ⚠️ **Kotak Masuk ChatWoot ini terhubung ke Akun WhatsApp tetapi TIDAK siap untuk mengirim dan menerima pesan!**
+
+  Silakan periksa status sesi dan coba mulai ulang atau keluar dan pindai kode QR lagi.
+
+app.session.scan.qr.code: |-
+  ⚠️ **Pindai kode QR di ponsel Anda untuk menghubungkan Akun WhatsApp dengan Kotak Masuk ChatWoot ini!**
+
+app.server.version.and.status: |-
+  **Versi:**
+  ```
+  {{{version}}}
+  ```
+
+  **Status:**
+  ```
+  {{{status}}}
+  ```
+
+app.server.reboot: |-
+  Server sedang dimulai ulang dengan anggun...
+
+app.server.reboot.force: |-
+  Server sedang dipaksa untuk dimulai ulang...
+
+app.logout.success: |-
+  ✅ Akun berhasil tidak diotorisasi!
+
+waha.new.version.available: |-
+  🔄 **Versi Baru Tersedia!**
+
+  Versi saat ini: **{{{currentVersion}}}**
+  Versi baru: **{{{newVersion}}}**
+
+  👉 Lihat apa yang baru di [**🆕 Changelog**]({{{changelogUrl}}})
+
+waha.core.version.used: |-
+  ❤️ **Dukung WAHA!**
+
+  Anda menggunakan versi **WAHA Core** gratis. Jika Anda merasa proyek ini bermanfaat, harap pertimbangkan untuk mendukung pengembangannya.
+
+  Dukungan Anda adalah satu-satunya cara kami dapat terus bekerja pada pembaruan, perbaikan, dan fitur baru.
+
+  [**🎁 Dukung Kami**]({{{supportUrl}}})
+
+chatwoot.to.whatsapp.message.text: |-
+  {{{ content }}}
+
+chatwoot.to.whatsapp.message.media.caption: |-
+  {{#singleAttachment}}
+  {{#content}}
+  {{{ content }}}
+  {{/content}}
+  {{/singleAttachment}}
+
+whatsapp.to.chatwoot.message: |-
+  {{{payload.body}}}
+
+whatsapp.to.chatwoot.message.contacts: |-
+  👤 **Kontak yang dibagikan**
+
+  {{#contacts}}
+  🪪 Nama: **{{fullName}}**
+  {{#phoneNumbers}}
+  - 📞 Telepon: **{{.}}**
+  {{/phoneNumbers}}
+
+  {{/contacts}}
+
+whatsapp.to.chatwoot.message.location: |-
+  {{#message}}
+  {{#locationMessage}}
+  📍 **Lokasi yang dibagikan**
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **Alamat:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **Situs web:** {{url}}
+  {{/url}}
+
+  🔗 **Lihat di peta:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/locationMessage}}
+
+  {{#liveLocationMessage}}
+  📍📡 **Berbagi Lokasi Langsung**
+  Buka **WhatsApp** untuk melihat pembaruan waktu nyata.
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **Alamat:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **Situs web:** {{url}}
+  {{/url}}
+
+  🔗 **Lihat di peta:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/liveLocationMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.poll: |-
+  {{#poll}}
+  📊 **Jajak Pendapat**
+
+  **{{name}}**
+  {{#options}}
+  - {{optionName}}
+  {{/options}}
+  {{/poll}}
+
+whatsapp.to.chatwoot.message.list: |-
+  {{#message.listMessage}}
+  {{#title}}
+  *{{{title}}}*
+  {{/title}}
+  {{#description}}
+  {{{description}}}
+  {{/description}}
+  {{#footerText}}
+  {{{footerText}}}
+  {{/footerText}}
+
+  {{#buttonText}}
+  {{{buttonText}}}
+  {{/buttonText}}
+  {{#sections}}
+  {{#title}}
+  {{{title}}}:
+  {{/title}}
+  {{#rows}}
+  {{#title}}
+  - {{{title}}}
+  {{/title}}
+  {{/rows}}
+
+  {{/sections}}
+  {{/message.listMessage}}
+
+whatsapp.to.chatwoot.message.event: |-
+  {{#message}}
+  {{#eventMessage}}
+  📅 **Acara**
+
+  **{{name}}**
+  {{#description}}
+  {{description}}
+  {{/description}}
+
+  {{#location.name}}
+  📍 **Lokasi:** {{location.name}}
+  {{/location.name}}
+  {{#startTime}}
+  🕐 **Mulai:** {{startTime}}
+  {{/startTime}}
+  {{#endTime}}
+  🕐 **Selesai:** {{endTime}}
+  {{/endTime}}
+  {{#joinLink}}
+  🔗 **Tautan bergabung:** [{{joinLink}}]({{joinLink}})
+  {{/joinLink}}
+  {{/eventMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.pix: |-
+  💳 **PIX - Salin dan Tempel**
+
+  {{#pixData}}
+  {{#merchantName}}
+  **{{merchantName}}**
+  {{/merchantName}}
+
+  {{#key}}
+  **Kunci PIX:** {{key}}
+  {{/key}}
+  {{#keyType}}
+  **Jenis:** {{keyType}}
+  {{/keyType}}
+  {{#totalAmount}}
+  **Jumlah:** {{totalAmountFormatted}}
+  {{/totalAmount}}
+  {{#referenceId}}
+  **Referensi:** {{referenceId}}
+  {{/referenceId}}
+
+  💳 **PIX Salin dan Tempel terkirim**
+  {{/pixData}}
+
+whatsapp.to.chatwoot.message.unsupported: |-
+  ⚠️ **Jenis pesan ini tidak didukung di ChatWoot.**
+  📱 Silakan buka **WhatsApp** untuk melihatnya.
+
+  Detail: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.to.chatwoot.message.facebook.ad: |-
+  📢 **IKLAN FACEBOOK**
+
+  **Judul:** {{{adData.title}}}
+
+  **Deskripsi:**
+  {{{adData.body}}}
+
+  **Tautan Iklan:** [Lihat di Facebook]({{{adData.sourceUrl}}})
+  **ID Iklan:** {{{adData.sourceId}}}
+
+  ---
+  💬 **Pesan Pelanggan:**
+  {{{payload.body}}}

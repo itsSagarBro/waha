@@ -10,21 +10,29 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { WAHAValidationPipe } from '@waha/nestjs/pipes/WAHAValidationPipe';
-import { GetChatMessagesFilter } from '@waha/structures/chats.dto';
+import {
+  GetChatMessagesFilter,
+  ReadChatMessagesQuery,
+  transformAck,
+} from '@waha/structures/chats.dto';
 import { SendButtonsRequest } from '@waha/structures/chatting.buttons.dto';
+import { SendListRequest } from '@waha/structures/chatting.list.dto';
 
 import { SessionManager } from '../core/abc/manager.abc';
 import {
   ChatRequest,
   CheckNumberStatusQuery,
   GetMessageQuery,
+  MessageButtonReply,
   MessageContactVcardRequest,
   MessageFileRequest,
   MessageForwardRequest,
   MessageImageRequest,
+  MessageLinkCustomPreviewRequest,
   MessageLinkPreviewRequest,
   MessageLocationRequest,
   MessagePollRequest,
+  MessagePollVoteRequest,
   MessageReactionRequest,
   MessageReplyRequest,
   MessageStarRequest,
@@ -94,15 +102,46 @@ export class ChattingController {
     return whatsapp.sendVideo(request);
   }
 
+  @Post('/send/link-custom-preview')
+  @ApiOperation({
+    summary: 'Send a text message with a CUSTOM link preview.',
+    description:
+      'You can use regular /api/sendText if you wanna send auto-generated link preview.',
+  })
+  @UsePipes(new WAHAValidationPipe())
+  async sendLinkCustomPreview(
+    @Body() request: MessageLinkCustomPreviewRequest,
+  ): Promise<any> {
+    const whatsapp = await this.manager.getWorkingSession(request.session);
+    if (!request.text.includes(request.preview.url)) {
+      throw new Error(
+        '"text" must include the URL provided in the "preview.url"',
+      );
+    }
+    return whatsapp.sendLinkCustomPreview(request);
+  }
+
   @Post('/sendButtons')
   @ApiOperation({
-    summary: 'Send buttons (interactive message)',
+    summary: 'Send buttons message (interactive)',
     description: 'Send Buttons',
+    deprecated: true,
   })
   @UsePipes(new WAHAValidationPipe())
   async sendButtons(@Body() request: SendButtonsRequest) {
     const whatsapp = await this.manager.getWorkingSession(request.session);
     return whatsapp.sendButtons(request);
+  }
+
+  @Post('/sendList')
+  @ApiOperation({
+    summary: 'Send a list message (interactive)',
+    description: 'Send a List message with sections and rows',
+  })
+  @UsePipes(new WAHAValidationPipe())
+  async sendList(@Body() request: SendListRequest) {
+    const whatsapp = await this.manager.getWorkingSession(request.session);
+    return whatsapp.sendList(request);
   }
 
   @Post('/forwardMessage')
@@ -115,6 +154,15 @@ export class ChattingController {
 
   @Post('/sendSeen')
   async sendSeen(@Body() chat: SendSeenRequest) {
+    const hasMessageId = chat.messageIds?.length > 0 || Boolean(chat.messageId);
+    if (!hasMessageId) {
+      const whatsapp = await this.manager.getWorkingSession(chat.session);
+      const query: ReadChatMessagesQuery = {
+        messages: null,
+        days: 7,
+      };
+      return whatsapp.readChatMessages(chat.chatId, query);
+    }
     const whatsapp = await this.manager.getWorkingSession(chat.session);
     return whatsapp.sendSeen(chat);
   }
@@ -159,22 +207,37 @@ export class ChattingController {
     return whatsapp.sendPoll(request);
   }
 
+  @Post('/sendPollVote')
+  @ApiOperation({
+    summary: 'Vote on a poll',
+    description: 'Cast vote(s) on an existing poll message',
+  })
+  @UsePipes(new WAHAValidationPipe())
+  async sendPollVote(@Body() request: MessagePollVoteRequest) {
+    const whatsapp = await this.manager.getWorkingSession(request.session);
+    return whatsapp.sendPollVote(request);
+  }
+
   @Post('/sendLocation')
   async sendLocation(@Body() request: MessageLocationRequest) {
     const whatsapp = await this.manager.getWorkingSession(request.session);
     return whatsapp.sendLocation(request);
   }
 
-  @Post('/sendLinkPreview')
-  async sendLinkPreview(@Body() request: MessageLinkPreviewRequest) {
-    const whatsapp = await this.manager.getWorkingSession(request.session);
-    return whatsapp.sendLinkPreview(request);
-  }
-
   @Post('/sendContactVcard')
   async sendContactVcard(@Body() request: MessageContactVcardRequest) {
     const whatsapp = await this.manager.getWorkingSession(request.session);
     return whatsapp.sendContactVCard(request);
+  }
+
+  @Post('/send/buttons/reply')
+  @ApiOperation({
+    summary: 'Reply on a button message',
+  })
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  async sendButtonsReply(@Body() request: MessageButtonReply) {
+    const whatsapp = await this.manager.getWorkingSession(request.session);
+    return whatsapp.sendButtonsReply(request);
   }
 
   @Get('/sendText')
@@ -198,6 +261,7 @@ export class ChattingController {
     @Query() query: GetMessageQuery,
     @Query() filter: GetChatMessagesFilter,
   ) {
+    filter = transformAck(filter);
     const whatsapp = await this.manager.getWorkingSession(query.session);
     return whatsapp.getChatMessages(query.chatId, query, filter);
   }
@@ -224,5 +288,12 @@ export class ChattingController {
   async reply(@Body() request: MessageReplyRequest) {
     const whatsapp = await this.manager.getWorkingSession(request.session);
     return whatsapp.reply(request);
+  }
+
+  @Post('/sendLinkPreview')
+  @ApiOperation({ deprecated: true })
+  async sendLinkPreview_DEPRECATED(@Body() request: MessageLinkPreviewRequest) {
+    const whatsapp = await this.manager.getWorkingSession(request.session);
+    return whatsapp.sendLinkPreview(request);
   }
 }

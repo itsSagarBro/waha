@@ -1,5 +1,6 @@
 import { ALL_JID } from '@waha/core/engines/noweb/session.noweb.core';
 import { SqlKVRepository } from '@waha/core/storage/sql/SqlKVRepository';
+import { AckToStatus } from '@waha/core/utils/acks';
 import { GetChatMessagesFilter } from '@waha/structures/chats.dto';
 import { PaginationParams } from '@waha/structures/pagination.dto';
 
@@ -35,14 +36,26 @@ export class SqlMessagesMethods {
     }
     if (filter['filter.fromMe'] != null) {
       // filter by data json inside
-      const sql = this.repository.filterJson('data', 'key.fromMe');
-      query = query.whereRaw(sql, [filter['filter.fromMe'] ? 'true' : 'false']);
+      const [sql, value] = this.repository.filterJson(
+        'data',
+        'key.fromMe',
+        filter['filter.fromMe'],
+      );
+      query = query.whereRaw(sql, [value]);
+    }
+    if (filter['filter.ack'] != null) {
+      const status = AckToStatus(filter['filter.ack']);
+      const [sql, value] = this.repository.filterJson('data', 'status', status);
+      query = query.whereRaw(sql, [value]);
     }
     query = this.repository.pagination(query, pagination);
     return this.repository.all(query);
   }
 
   async getByJidById(jid: string, id: string): Promise<any> {
+    if (jid === ALL_JID) {
+      return this.repository.getBy({ id: id });
+    }
     return this.repository.getBy({ jid: jid, id: id });
   }
 

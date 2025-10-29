@@ -1,0 +1,382 @@
+# Punjabi translations for ChatWoot integration
+locale.name: '🇵🇰 ਪੰਜਾਬੀ (Punjabi)'
+
+# ਅਧਾਰਭੂਤ ਲੋਕੇਲ ਕੋਡ - ਇਹ ਇੱਕ ਵੈਧ BCP 47 ਲੋਕੇਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ
+# https://en.wikipedia.org/wiki/IETF_language_tag
+# WAHA ਇਸਨੂੰ ਅੰਕ, ਕਰੰਸੀ ਅਤੇ ਤਾਰੀਖ/ਸਮੇਂ ਦੀ ਨਮਾਇਸ਼ ਲਈ ਵਰਤਦਾ ਹੈ
+locale.base: 'pa-PK'
+
+app.inbox.contact.name: 'ਵਟਸਐਪ ਇੰਟੀਗ੍ਰੇਸ਼ਨ'
+app.inbox.contact.avatar.url: 'https://raw.githubusercontent.com/devlikeapro/waha/core/logo.png'
+
+# date.toLocaleString ਦੀਆਂ "options"
+# https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+datetime:
+  locales: pa-PK
+  day: 2-digit
+  month: 2-digit
+  year: numeric
+  hour: 2-digit
+  minute: 2-digit
+  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
+  timeZoneName: shortGeneric
+  # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  # timeZone: 'Asia/Karachi'
+
+job.report.error: |-
+  ⚠️ **{{{header}}}**
+  {{#attempts.nextDelay}}
+  🔄 {{attempts.nextDelay}} ਸਕਿੰਟਾਂ ਵਿੱਚ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰ ਰਿਹਾ ਹੈ...
+  {{/attempts.nextDelay}}
+  {{^attempts.nextDelay}}
+  ❌ ਕੋਈ ਹੋਰ ਕੋਸ਼ਿਸ਼ਾਂ ਨਹੀਂ ਬਚੀਆਂ। ਕਿਰਪਾ ਕਰਕੇ ਬਾਅਦ ਵਿੱਚ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।
+  {{/attempts.nextDelay}}
+  ਕੋਸ਼ਿਸ਼: {{{attempts.current}}} / {{{attempts.max}}}
+  ਵੇਰਵੇ: [{{{details.text}}}]({{{details.url}}})
+  {{#error}}
+  ```
+
+  {{{error}}}
+  ```
+  {{/error}}
+
+job.report.succeeded: |-
+  ✅ **ਸਫਲ**
+  ਕੋਸ਼ਿਸ਼: {{{attempts.current}}} / {{{attempts.max}}}
+  ਵੇਰਵੇ: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.message.sending.error: ਵਟਸਐਪ 'ਤੇ ਸੁਨੇਹਾ ਭੇਜ ਨਹੀਂ ਸਕਿਆ।
+whatsapp.message.receiving.error: ਵਟਸਐਪ ਤੋਂ ਸੁਨੇਹਾ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰ ਸਕਿਆ
+whatsapp.message.removing.error: ਵਟਸਐਪ ਤੋਂ ਸੁਨੇਹਾ ਹਟਾ ਨਹੀਂ ਸਕਿਆ
+job.scheduled.error.header: ਨਿਰਧਾਰਿਤ ਕੰਮ ਚਲਾਉਣ ਵਿੱਚ ਅਸਫਲ ਰਿਹਾ
+
+message.from.whatsapp: |-
+  {{{text}}}
+
+  📱 *ਵਟਸਐਪ ਤੋਂ ਭੇਜਿਆ ਗਿਆ*
+
+message.from.api: |-
+  {{{text}}}
+
+  📱 *API ਰਾਹੀਂ ਭੇਜਿਆ ਗਿਆ*
+
+message.removed.in.whatsapp: |-
+  ❌ *ਇਹ ਸੁਨੇਹਾ ਵਟਸਐਪ ਵਿੱਚ ਮਿਟਾ ਦਿੱਤਾ ਗਿਆ ਸੀ*
+
+message.edited.in.whatsapp: |-
+  {{{text}}}
+
+  ✏️ *ਵਟਸਐਪ ਵਿੱਚ ਸੰਪਾਦਿਤ ਕੀਤਾ ਗਿਆ*
+
+whatsapp.group.message: |-
+  👥 *{{{participant}}}*
+
+  {{{text}}}
+
+whatsapp.reaction.added: |-
+  *ਪ੍ਰਤੀਕਿਰਿਆ ਕੀਤੀ* {{{emoji}}}
+
+whatsapp.reaction.removed: |-
+  *ਪ੍ਰਤੀਕਿਰਿਆ ਹਟਾਈ ਗਈ*
+
+whatsapp.contact.group.suffix: 'ਗਰੁੱਪ'
+whatsapp.contact.channel.suffix: 'ਚੈਨਲ'
+whatsapp.contact.broadcast.suffix: 'ਪ੍ਰਸਾਰਣ ਸੂਚੀ'
+# Aka Stories
+whatsapp.contact.status.name: 'ਸਥਿਤੀ'
+
+app.connected.message: |-
+  🔗 **ਕਨੈਕਟ ਕੀਤਾ: ਵਟਸਐਪ ਸੈਸ਼ਨ ਤੋਂ ChatWoot ਇਨਬਾਕਸ**
+
+  ✅ ਵਟਸਐਪ ਸੈਸ਼ਨ **{{{name}}}** ਨੂੰ ਸਫਲਤਾਪੂਰਵਕ ਇਸ ChatWoot ਇਨਬਾਕਸ ਨਾਲ ਜੋੜਿਆ ਗਿਆ ਹੈ।
+
+  ਇਹ ਇਨਬਾਕਸ ਹੁਣ ਤੁਹਾਡੇ **ਵਟਸਐਪ ਖਾਤੇ** ਨਾਲ ਜੁੜਿਆ ਹੋਇਆ ਹੈ। ਤੁਸੀਂ ਇੱਥੋਂ ਸਿੱਧੇ ਸੁਨੇਹੇ ਭੇਜ ਅਤੇ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ — ਬਿਲਕੁਲ ਵਟਸਐਪ ਦੀ ਵਰਤੋਂ ਵਾਂਗ, ਪਰ ChatWoot ਦੇ ਅੰਦਰ।
+
+  ਤੁਸੀਂ ਇਸ ਇਨਬਾਕਸ ਨਾਲ ਜੁੜੇ ਵਟਸਐਪ ਸੈਸ਼ਨ ਦਾ ਪ੍ਰਬੰਧਨ ਵੀ ਕਰ ਸਕਦੇ ਹੋ। ਉਪਲਬਧ ਕਾਰਵਾਈਆਂ ਦੇਖਣ ਲਈ, ਇਸ ਚੈਟ ਨੂੰ **help** ਭੇਜੋ।
+
+  📋 ਆਮ ਕਾਰਵਾਈਆਂ ਜੋ ਤੁਸੀਂ ਕਰ ਸਕਦੇ ਹੋ:
+  - ਜਾਂਚ ਕਰੋ ਕਿ ਕੀ ਵਟਸਐਪ ਸੈਸ਼ਨ ਸਰਗਰਮ ਹੈ
+  - ਵਟਸਐਪ ਸੈਸ਼ਨ ਨੂੰ ਮੁੜ ਚਾਲੂ ਜਾਂ ਬੰਦ ਕਰੋ
+  - ਲੌਗ ਆਉਟ ਕਰੋ ਅਤੇ ਨਵਾਂ QR ਕੋਡ ਸਕੈਨ ਕਰਕੇ ਮੁੜ ਕਨੈਕਟ ਕਰੋ
+
+  ਜੇ ਸਭ ਕੁਝ ਕੰਮ ਕਰ ਰਿਹਾ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਆਜ਼ਾਦੀ ਨਾਲ ਗੱਲਬਾਤ ਕਰ ਸਕੋਗੇ। ਜੇ ਤੁਸੀਂ ਚੇਤਾਵਨੀਆਂ ਦੇਖਦੇ ਹੋ, ਤਾਂ ਤੁਹਾਨੂੰ ਆਪਣੇ ਵਟਸਐਪ ਖਾਤੇ ਨੂੰ ਮੁੜ ਕਨੈਕਟ ਕਰਨ ਦੀ ਜ਼ਰੂਰਤ ਹੋ ਸਕਦੀ ਹੈ।
+
+  ਆਓ ਸ਼ੁਰੂ ਕਰੀਏ! 🚀
+
+app.disconnected.message: |-
+  🔌 **ਡਿਸਕਨੈਕਟ ਕੀਤਾ: ਵਟਸਐਪ ਸੈਸ਼ਨ ਤੋਂ ChatWoot ਇਨਬਾਕਸ**
+
+  ❌ ਵਟਸਐਪ ਸੈਸ਼ਨ **{{{name}}}** ਇਸ ChatWoot ਇਨਬਾਕਸ ਤੋਂ ਡਿਸਕਨੈਕਟ ਕੀਤਾ ਗਿਆ ਹੈ।
+
+  ਤੁਸੀਂ ਹੁਣ ਵਟਸਐਪ ਤੋਂ ਸੁਨੇਹੇ ਭੇਜ ਜਾਂ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰ ਸਕੋਗੇ।
+
+  ਮੁੜ ਕਨੈਕਟ ਕਰਨ ਲਈ, ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਪ੍ਰਸ਼ਾਸਕ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।
+
+app.updated.message: |-
+  🔄 **ਅਪਡੇਟ ਕੀਤਾ: ਵਟਸਐਪ ਸੈਸ਼ਨ ਸੈਟਿੰਗਾਂ**
+
+  ✅ ਵਟਸਐਪ ਸੈਸ਼ਨ **{{{name}}}** ਲਈ ਸੈਟਿੰਗਾਂ ਅਪਡੇਟ ਕੀਤੀਆਂ ਗਈਆਂ ਹਨ।
+
+app.commands.list: |-
+  ਤੁਸੀਂ ਹੇਠਾਂ ਦਿੱਤੇ ਕਮਾਂਡਾਂ ਵਿੱਚੋਂ ਇੱਕ ਭੇਜ ਕੇ **ਵਟਸਐਪ ਇੰਟੀਗ੍ਰੇਸ਼ਨ** ਦਾ ਪ੍ਰਬੰਧਨ ਕਰ ਸਕਦੇ ਹੋ:
+
+  🖥️ **ਸੈਸ਼ਨ**:
+  1. **status** - ਮੌਜੂਦਾ ਸੈਸ਼ਨ ਸਥਿਤੀ ਪ੍ਰਾਪਤ ਕਰੋ।
+  2. **restart** - ਸੈਸ਼ਨ ਮੁੜ ਚਾਲੂ ਕਰੋ - ਇਹ ਤੁਹਾਡੇ ਵਟਸਐਪ ਖਾਤੇ ਨੂੰ ਮੁੜ ਕਨੈਕਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੇਗਾ।
+  3. **start** - ਸੈਸ਼ਨ ਸ਼ੁਰੂ ਕਰੋ।
+  4. **stop** - ਸੈਸ਼ਨ ਬੰਦ ਕਰੋ।
+  5. **logout** - ਸੈਸ਼ਨ ਤੋਂ ਲੌਗਆਉਟ ਕਰੋ, ਤਾਂ ਜੋ ਤੁਸੀਂ QR ਕੋਡ ਸਕੈਨ ਕਰ ਸਕੋ ਅਤੇ ਸੈਸ਼ਨ ਨੂੰ ਮੁਰੰਮਤ ਕਰ ਸਕੋ।
+  6. **qr** - ਸੈਸ਼ਨ ਲਈ QR ਕੋਡ ਪ੍ਰਾਪਤ ਕਰੋ।
+  7. **screenshot** - ਸੈਸ਼ਨ ਦਾ ਸਕ੍ਰੀਨਸ਼ਾਟ ਪ੍ਰਾਪਤ ਕਰੋ (ਸਿਰਫ **WEBJS** ਇੰਜਣ ਵਿੱਚ ਉਪਲਬਧ)।
+  8. **help** - ਉਪਲਬਧ ਕਮਾਂਡਾਂ।
+
+  {{#commands.server}}
+  ⚙️ ਸਰਵਰ:
+  - **server status** - ਸਰਵਰ ਵਰਜਨ ਅਤੇ ਸਥਿਤੀ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ।
+  - **server reboot** - ਸਰਵਰ ਨੂੰ ਸੁਚਾਰੂ ਢੰਗ ਨਾਲ ਮੁੜ ਚਾਲੂ ਕਰੋ।
+  - **server reboot force** - ਸਰਵਰ ਨੂੰ ਜ਼ਬਰਦਸਤੀ ਮੁੜ ਚਾਲੂ ਕਰੋ।
+  {{/commands.server}}
+
+  ਇਸ ਗੱਲਬਾਤ ਵਿੱਚ **ਕਮਾਂਡ** (ਕੇਸ ਇਨਸੈਂਸਿਟਿਵ) ਜਾਂ **ਕਮਾਂਡ ਨੰਬਰ** ਭੇਜੋ।
+
+app.commands.server.disabled: ⛔ **ਸਰਵਰ ਕਮਾਂਡ ਅਯੋਗ ਹਨ**।
+
+  ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਪ੍ਰਸ਼ਾਸਕ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।
+
+  ਉਪਲਬਧ ਕਮਾਂਡਾਂ ਦੀ ਸੂਚੀ ਲਈ **help** ਭੇਜੋ।
+
+app.help.reminder: |-
+  ਉਪਲਬਧ ਕਮਾਂਡਾਂ ਦੀ ਸੂਚੀ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ **help** ਭੇਜੋ।
+
+app.session.status.change: |-
+  {{{emoji}}} "{{{session}}}" ਸੈਸ਼ਨ {{{status}}} ਸਥਿਤੀ 'ਤੇ ਬਦਲ ਗਿਆ
+
+app.session.current.status: |-
+  {{{emoji}}} **{{{session}}}** ਸੈਸ਼ਨ ਸਥਿਤੀ **{{{status}}}** ਵਿੱਚ ਹੈ
+  **ਵਟਸਐਪ ਖਾਤਾ:**
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.working: |-
+  ✅ ਇਹ ChatWoot ਇਨਬਾਕਸ **ਵਟਸਐਪ ਖਾਤੇ** ਨਾਲ ਜੁੜਿਆ ਹੋਇਆ ਹੈ ਅਤੇ ਸੁਨੇਹੇ ਭੇਜਣ ਅਤੇ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਤਿਆਰ ਹੈ!
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.error: |-
+  ⚠️ **ਇਹ ChatWoot ਇਨਬਾਕਸ ਵਟਸਐਪ ਖਾਤੇ ਨਾਲ ਜੁੜਿਆ ਹੋਇਆ ਹੈ ਪਰ ਸੁਨੇਹੇ ਭੇਜਣ ਅਤੇ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਤਿਆਰ ਨਹੀਂ ਹੈ!**
+
+  ਕਿਰਪਾ ਕਰਕੇ ਸੈਸ਼ਨ ਸਥਿਤੀ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਇਸਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ ਜਾਂ ਲੌਗਆਉਟ ਕਰੋ ਅਤੇ QR ਕੋਡ ਦੁਬਾਰਾ ਸਕੈਨ ਕਰੋ।
+
+app.session.scan.qr.code: |-
+  ⚠️ **ਵਟਸਐਪ ਖਾਤੇ ਨੂੰ ਇਸ ChatWoot ਇਨਬਾਕਸ ਨਾਲ ਜੋੜਨ ਲਈ ਆਪਣੇ ਫੋਨ 'ਤੇ QR ਕੋਡ ਸਕੈਨ ਕਰੋ!**
+
+app.server.version.and.status: |-
+  **ਵਰਜਨ:**
+  ```
+  {{{version}}}
+  ```
+
+  **ਸਥਿਤੀ:**
+  ```
+  {{{status}}}
+  ```
+
+app.server.reboot: |-
+  ਸਰਵਰ ਸੁਚਾਰੂ ਢੰਗ ਨਾਲ ਮੁੜ ਚਾਲੂ ਹੋ ਰਿਹਾ ਹੈ...
+
+app.server.reboot.force: |-
+  ਸਰਵਰ ਜ਼ਬਰਦਸਤੀ ਮੁੜ ਚਾਲੂ ਹੋ ਰਿਹਾ ਹੈ...
+
+app.logout.success: |-
+  ✅ ਖਾਤਾ ਸਫਲਤਾਪੂਰਵਕ ਅਣਅਧਿਕਾਰਤ ਕੀਤਾ ਗਿਆ!
+
+waha.new.version.available: |-
+  🔄 **ਨਵਾਂ ਵਰਜਨ ਉਪਲਬਧ!**
+
+  ਮੌਜੂਦਾ ਵਰਜਨ: **{{{currentVersion}}}**
+  ਨਵਾਂ ਵਰਜਨ: **{{{newVersion}}}**
+
+  👉 [**🆕 ਬਦਲਾਅ ਲੌਗ**]({{{changelogUrl}}}) ਵਿੱਚ ਨਵਾਂ ਕੀ ਹੈ ਦੇਖੋ
+
+waha.core.version.used: |-
+  ❤️ **WAHA ਦਾ ਸਮਰਥਨ ਕਰੋ!**
+
+  ਤੁਸੀਂ ਮੁਫਤ **WAHA Core** ਵਰਜਨ ਦੀ ਵਰਤੋਂ ਕਰ ਰਹੇ ਹੋ। ਜੇ ਤੁਹਾਨੂੰ ਇਹ ਪ੍ਰੋਜੈਕਟ ਲਾਭਦਾਇਕ ਲੱਗਦਾ ਹੈ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਇਸਦੇ ਵਿਕਾਸ ਦਾ ਸਮਰਥਨ ਕਰਨ 'ਤੇ ਵਿਚਾਰ ਕਰੋ।
+
+  ਤੁਹਾਡਾ ਸਮਰਥਨ ਹੀ ਇੱਕੋ ਇੱਕ ਤਰੀਕਾ ਹੈ ਜਿਸ ਨਾਲ ਅਸੀਂ ਅਪਡੇਟਾਂ, ਫਿਕਸਾਂ, ਅਤੇ ਨਵੀਆਂ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ 'ਤੇ ਕੰਮ ਕਰਨਾ ਜਾਰੀ ਰੱਖ ਸਕਦੇ ਹਾਂ।
+
+  [**🎁 ਸਾਡਾ ਸਮਰਥਨ ਕਰੋ**]({{{supportUrl}}})
+
+chatwoot.to.whatsapp.message.text: |-
+  {{{ content }}}
+
+chatwoot.to.whatsapp.message.media.caption: |-
+  {{#singleAttachment}}
+  {{#content}}
+  {{{ content }}}
+  {{/content}}
+  {{/singleAttachment}}
+
+whatsapp.to.chatwoot.message: |-
+  {{{payload.body}}}
+
+whatsapp.to.chatwoot.message.contacts: |-
+  👤 **ਸਾਂਝੇ ਕੀਤੇ ਸੰਪਰਕ**
+
+  {{#contacts}}
+  🪪 ਨਾਮ: **{{fullName}}**
+  {{#phoneNumbers}}
+  - 📞 ਫ਼ੋਨ: **{{.}}**
+  {{/phoneNumbers}}
+
+  {{/contacts}}
+
+whatsapp.to.chatwoot.message.location: |-
+  {{#message}}
+  {{#locationMessage}}
+  📍 **ਸਾਂਝੀ ਸਥਿਤੀ**
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **ਪਤਾ:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **ਵੈਬਸਾਈਟ:** {{url}}
+  {{/url}}
+
+  🔗 **ਨਕਸ਼ੇ 'ਤੇ ਵੇਖੋ:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/locationMessage}}
+
+  {{#liveLocationMessage}}
+  📍📡 **ਲਾਈਵ ਸਥਿਤੀ ਸਾਂਝੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ**
+  ਰੀਅਲ-ਟਾਈਮ ਅੱਪਡੇਟ ਦੇਖਣ ਲਈ **WhatsApp** ਖੋਲ੍ਹੋ।
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **ਪਤਾ:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **ਵੈਬਸਾਈਟ:** {{url}}
+  {{/url}}
+
+  🔗 **ਨਕਸ਼ੇ 'ਤੇ ਵੇਖੋ:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/liveLocationMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.poll: |-
+  {{#poll}}
+  📊 **ਸਰਵੇਖਣ**
+
+  **{{name}}**
+  {{#options}}
+  - {{optionName}}
+  {{/options}}
+  {{/poll}}
+
+whatsapp.to.chatwoot.message.list: |-
+  {{#message.listMessage}}
+  {{#title}}
+  *{{{title}}}*
+  {{/title}}
+  {{#description}}
+  {{{description}}}
+  {{/description}}
+  {{#footerText}}
+  {{{footerText}}}
+  {{/footerText}}
+
+  {{#buttonText}}
+  {{{buttonText}}}
+  {{/buttonText}}
+  {{#sections}}
+  {{#title}}
+  {{{title}}}:
+  {{/title}}
+  {{#rows}}
+  {{#title}}
+  - {{{title}}}
+  {{/title}}
+  {{/rows}}
+
+  {{/sections}}
+  {{/message.listMessage}}
+
+whatsapp.to.chatwoot.message.event: |-
+  {{#message}}
+  {{#eventMessage}}
+  📅 **ਇਵੈਂਟ**
+
+  **{{name}}**
+  {{#description}}
+  {{description}}
+  {{/description}}
+
+  {{#location.name}}
+  📍 **ਸਥਾਨ:** {{location.name}}
+  {{/location.name}}
+  {{#startTime}}
+  🕐 **ਸ਼ੁਰੂਆਤ:** {{startTime}}
+  {{/startTime}}
+  {{#endTime}}
+  🕐 **ਖਾਤਮਾ:** {{endTime}}
+  {{/endTime}}
+  {{#joinLink}}
+  🔗 **ਜੁੜਨ ਲਈ ਲਿੰਕ:** [{{joinLink}}]({{joinLink}})
+  {{/joinLink}}
+  {{/eventMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.pix: |-
+  💳 **PIX - ਕਾਪੀ ਅਤੇ ਪੇਸਟ**
+
+  {{#pixData}}
+  {{#merchantName}}
+  **{{merchantName}}**
+  {{/merchantName}}
+
+  {{#key}}
+  **PIX ਕੁੰਜੀ:** {{key}}
+  {{/key}}
+  {{#keyType}}
+  **ਕਿਸਮ:** {{keyType}}
+  {{/keyType}}
+  {{#totalAmount}}
+  **ਰਕਮ:** {{totalAmountFormatted}}
+  {{/totalAmount}}
+  {{#referenceId}}
+  **ਹਵਾਲਾ:** {{referenceId}}
+  {{/referenceId}}
+
+  💳 **PIX ਕਾਪੀ ਅਤੇ ਪੇਸਟ ਭੇਜਿਆ ਗਿਆ**
+  {{/pixData}}
+
+whatsapp.to.chatwoot.message.unsupported: |-
+  ⚠️ **ਇਹ ਸੁਨੇਹੇ ਦੀ ਕਿਸਮ ChatWoot ਵਿੱਚ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ।**
+  📱 ਇਸਨੂੰ ਦੇਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ **WhatsApp** ਖੋਲ੍ਹੋ।
+
+  ਵੇਰਵੇ: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.to.chatwoot.message.facebook.ad: |-
+  📢 **ਫੇਸਬੁੱਕ ਵਿਗਿਆਪਨ**
+
+  **ਸਿਰਲੇਖ:** {{{adData.title}}}
+
+  **ਵੇਰਵਾ:**
+  {{{adData.body}}}
+
+  **ਵਿਗਿਆਪਨ ਲਿੰਕ:** [ਫੇਸਬੁੱਕ 'ਤੇ ਵੇਖੋ]({{{adData.sourceUrl}}})
+  **ਵਿਗਿਆਪਨ ਆਈਡੀ:** {{{adData.sourceId}}}
+
+  ---
+  💬 **ਗਾਹਕ ਦਾ ਸੁਨੇਹਾ:**
+  {{{payload.body}}}

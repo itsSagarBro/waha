@@ -1,9 +1,14 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   OnModuleInit,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import {
+  AppsService,
+  IAppsService,
+} from '@waha/apps/app_sdk/services/IAppsService';
 import { EngineBootstrap } from '@waha/core/abc/EngineBootstrap';
 import { GowsEngineConfigService } from '@waha/core/config/GowsEngineConfigService';
 import { WebJSEngineConfigService } from '@waha/core/config/WebJSEngineConfigService';
@@ -45,9 +50,11 @@ import { LocalSessionAuthRepository } from './storage/LocalSessionAuthRepository
 import { LocalStoreCore } from './storage/LocalStoreCore';
 
 export class OnlyDefaultSessionIsAllowed extends UnprocessableEntityException {
-  constructor() {
+  constructor(name: string) {
+    const encoded = Buffer.from(name, 'utf-8').toString('base64');
     super(
-      `WAHA Core support only 'default' session. If you want to run more then one WhatsApp account - please get WAHA PLUS version. Check this out: ${DOCS_URL}`,
+      `WAHA Core support only 'default' session. You tried to access '${name}' session (base64: ${encoded}). ` +
+        `If you want to run more then one WhatsApp account - please get WAHA PLUS version. Check this out: ${DOCS_URL}`,
     );
   }
 }
@@ -79,8 +86,10 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
     gowsConfigService: GowsEngineConfigService,
     log: PinoLogger,
     private mediaStorageFactory: MediaStorageFactory,
+    @Inject(AppsService)
+    appsService: IAppsService,
   ) {
-    super(log, config, gowsConfigService);
+    super(log, config, gowsConfigService, appsService);
     this.session = DefaultSessionStatus.STOPPED;
     this.sessionConfig = null;
     const engineName = this.engineConfigService.getDefaultEngineName();
@@ -115,7 +124,7 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
 
   private onlyDefault(name: string) {
     if (name !== this.DEFAULT) {
-      throw new OnlyDefaultSessionIsAllowed();
+      throw new OnlyDefaultSessionIsAllowed(name);
     }
   }
 
@@ -191,6 +200,7 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
       sessionStore: this.store,
       proxyConfig: proxyConfig,
       sessionConfig: this.sessionConfig,
+      ignore: this.ignoreChatsConfig(this.sessionConfig),
     };
     if (this.EngineClass === WhatsappSessionWebJSCore) {
       sessionConfig.engineConfig = this.webjsEngineConfigService.getConfig();
@@ -207,9 +217,16 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
     const webhooks = this.getWebhooks();
     webhook.configure(session, webhooks);
 
+    // Apps
+    await this.appsService.beforeSessionStart(session, this.store);
+
     // start session
     await session.start();
     logger.info('Session has been started.');
+
+    // Apps
+    await this.appsService.afterSessionStart(session, this.store);
+
     return {
       name: session.name,
       status: session.status,
@@ -362,9 +379,9 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
       try {
         engineInfo = await promiseTimeout(1000, session.getEngineInfo());
       } catch (error) {
-        this.log.warn(
+        this.log.debug(
           { session: session.name, error: `${error}` },
-          'Error while getting engine info',
+          'Can not get engine info',
         );
       }
     }
@@ -376,9 +393,7 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
   }
 
   async getSessionInfo(name: string): Promise<SessionDetailedInfo | null> {
-    if (name !== this.DEFAULT) {
-      return null;
-    }
+    this.onlyDefault(name);
     const sessions = await this.getSessions(true);
     if (sessions.length === 0) {
       return null;
@@ -398,5 +413,7 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
 
   async init() {
     await this.store.init();
+    const knex = this.store.getWAHADatabase();
+    await this.appsService.migrate(knex);
   }
 }

@@ -8,6 +8,7 @@ export enum WAHAEvents {
   MESSAGE_ACK = 'message.ack',
   MESSAGE_WAITING = 'message.waiting',
   MESSAGE_REVOKED = 'message.revoked',
+  MESSAGE_EDITED = 'message.edited',
   STATE_CHANGE = 'state.change',
   GROUP_JOIN = 'group.join',
   GROUP_LEAVE = 'group.leave',
@@ -26,8 +27,13 @@ export enum WAHAEvents {
   LABEL_DELETED = 'label.deleted',
   LABEL_CHAT_ADDED = 'label.chat.added',
   LABEL_CHAT_DELETED = 'label.chat.deleted',
+  EVENT_RESPONSE = 'event.response',
+  EVENT_RESPONSE_FAILED = 'event.response.failed',
   ENGINE_EVENT = 'engine.event',
 }
+
+export type AllEventType = WAHAEvents | '*';
+export const AllEvents = [...Object.values(WAHAEvents), '*'];
 
 // All but no state.change, it's internal one
 export const WAHAEventsWild = Object.values(WAHAEvents).filter(
@@ -63,6 +69,15 @@ export enum WAMessageAck {
   DEVICE = 2,
   READ = 3,
   PLAYED = 4,
+}
+
+export enum WAMessageAckName {
+  ERROR = 'ERROR',
+  PENDING = 'PENDING',
+  SERVER = 'SERVER',
+  DEVICE = 'DEVICE',
+  READ = 'READ',
+  PLAYED = 'PLAYED',
 }
 
 export const ACK_UNKNOWN = 'UNKNOWN';

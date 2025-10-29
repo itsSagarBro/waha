@@ -1,11 +1,10 @@
-import {
+import type {
   AuthenticationCreds,
   AuthenticationState,
-  proto,
 } from '@adiwajshing/baileys';
-import { BufferJSON, initAuthCreds } from '@adiwajshing/baileys/lib/Utils';
 import { mkdir, readFile, stat, unlink } from 'fs/promises';
 import { join } from 'path';
+import esm from '@waha/vendor/esm';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const writeFileAtomic = require('write-file-atomic');
@@ -18,7 +17,11 @@ const AsyncLock = require('async-lock');
 // https://github.com/nodejs/node/issues/26338
 // Default pending is 1000, set it to infinity
 // https://github.com/rogierschouten/async-lock/issues/63
-const fileLock = new AsyncLock({ maxPending: Infinity });
+const fileLock = new AsyncLock({
+  timeout: 5_000,
+  maxPending: Infinity,
+  maxExecutionTime: 30_000,
+});
 
 /**
  * stores the full authentication state in a single folder.
@@ -39,7 +42,7 @@ export const useMultiFileAuthState = async (
     return fileLock.acquire(filePath, () =>
       writeFileAtomic(
         join(filePath),
-        JSON.stringify(data, BufferJSON.replacer),
+        JSON.stringify(data, esm.b.BufferJSON.replacer),
       ),
     );
   };
@@ -50,7 +53,7 @@ export const useMultiFileAuthState = async (
       const data = await fileLock.acquire(filePath, () =>
         readFile(filePath, { encoding: 'utf-8' }),
       );
-      return JSON.parse(data, BufferJSON.reviver);
+      return JSON.parse(data, esm.b.BufferJSON.reviver);
     } catch (error) {
       return null;
     }
@@ -80,7 +83,7 @@ export const useMultiFileAuthState = async (
     file?.replace(/\//g, '__')?.replace(/:/g, '-') || '';
 
   const creds: AuthenticationCreds =
-    (await readData('creds.json')) || initAuthCreds();
+    (await readData('creds.json')) || esm.b.initAuthCreds();
 
   return {
     state: {
@@ -92,7 +95,7 @@ export const useMultiFileAuthState = async (
             ids.map(async (id) => {
               let value = await readData(`${type}-${id}.json`);
               if (type === 'app-state-sync-key' && value) {
-                value = proto.Message.AppStateSyncKeyData.fromObject(value);
+                value = esm.b.proto.Message.AppStateSyncKeyData.create(value);
               }
 
               data[id] = value;

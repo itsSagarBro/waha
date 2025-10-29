@@ -4,6 +4,39 @@
 var grpc = require('@grpc/grpc-js');
 var gows_pb = require('./gows_pb.js');
 
+function serialize_messages_ButtonReplyRequest(arg) {
+  if (!(arg instanceof gows_pb.ButtonReplyRequest)) {
+    throw new Error('Expected argument of type messages.ButtonReplyRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_ButtonReplyRequest(buffer_arg) {
+  return gows_pb.ButtonReplyRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_messages_CancelEventMessageRequest(arg) {
+  if (!(arg instanceof gows_pb.CancelEventMessageRequest)) {
+    throw new Error('Expected argument of type messages.CancelEventMessageRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_CancelEventMessageRequest(buffer_arg) {
+  return gows_pb.CancelEventMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_messages_ChatLabelRequest(arg) {
+  if (!(arg instanceof gows_pb.ChatLabelRequest)) {
+    throw new Error('Expected argument of type messages.ChatLabelRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_ChatLabelRequest(buffer_arg) {
+  return gows_pb.ChatLabelRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_messages_ChatPresenceRequest(arg) {
   if (!(arg instanceof gows_pb.ChatPresenceRequest)) {
     throw new Error('Expected argument of type messages.ChatPresenceRequest');
@@ -13,6 +46,17 @@ function serialize_messages_ChatPresenceRequest(arg) {
 
 function deserialize_messages_ChatPresenceRequest(buffer_arg) {
   return gows_pb.ChatPresenceRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_messages_ChatUnreadRequest(arg) {
+  if (!(arg instanceof gows_pb.ChatUnreadRequest)) {
+    throw new Error('Expected argument of type messages.ChatUnreadRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_ChatUnreadRequest(buffer_arg) {
+  return gows_pb.ChatUnreadRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_messages_CheckPhonesRequest(arg) {
@@ -59,6 +103,17 @@ function deserialize_messages_CreateNewsletterRequest(buffer_arg) {
   return gows_pb.CreateNewsletterRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_messages_DeleteLabelRequest(arg) {
+  if (!(arg instanceof gows_pb.DeleteLabelRequest)) {
+    throw new Error('Expected argument of type messages.DeleteLabelRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_DeleteLabelRequest(buffer_arg) {
+  return gows_pb.DeleteLabelRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_messages_DownloadMediaRequest(arg) {
   if (!(arg instanceof gows_pb.DownloadMediaRequest)) {
     throw new Error('Expected argument of type messages.DownloadMediaRequest');
@@ -79,6 +134,17 @@ function serialize_messages_DownloadMediaResponse(arg) {
 
 function deserialize_messages_DownloadMediaResponse(buffer_arg) {
   return gows_pb.DownloadMediaResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_messages_EditMessageRequest(arg) {
+  if (!(arg instanceof gows_pb.EditMessageRequest)) {
+    throw new Error('Expected argument of type messages.EditMessageRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_EditMessageRequest(buffer_arg) {
+  return gows_pb.EditMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_messages_Empty(arg) {
@@ -134,6 +200,28 @@ function serialize_messages_GetContactsRequest(arg) {
 
 function deserialize_messages_GetContactsRequest(buffer_arg) {
   return gows_pb.GetContactsRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_messages_GetLabelsRequest(arg) {
+  if (!(arg instanceof gows_pb.GetLabelsRequest)) {
+    throw new Error('Expected argument of type messages.GetLabelsRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_GetLabelsRequest(buffer_arg) {
+  return gows_pb.GetLabelsRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_messages_GetLidsRequest(arg) {
+  if (!(arg instanceof gows_pb.GetLidsRequest)) {
+    throw new Error('Expected argument of type messages.GetLidsRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_GetLidsRequest(buffer_arg) {
+  return gows_pb.GetLidsRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_messages_GetMessagesRequest(arg) {
@@ -268,6 +356,17 @@ function deserialize_messages_MessageResponse(buffer_arg) {
   return gows_pb.MessageResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_messages_NewMessageIDResponse(arg) {
+  if (!(arg instanceof gows_pb.NewMessageIDResponse)) {
+    throw new Error('Expected argument of type messages.NewMessageIDResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_NewMessageIDResponse(buffer_arg) {
+  return gows_pb.NewMessageIDResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_messages_Newsletter(arg) {
   if (!(arg instanceof gows_pb.Newsletter)) {
     throw new Error('Expected argument of type messages.Newsletter');
@@ -356,6 +455,17 @@ function deserialize_messages_OptionalString(buffer_arg) {
   return gows_pb.OptionalString.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_messages_OptionalUInt64(arg) {
+  if (!(arg instanceof gows_pb.OptionalUInt64)) {
+    throw new Error('Expected argument of type messages.OptionalUInt64');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_OptionalUInt64(buffer_arg) {
+  return gows_pb.OptionalUInt64.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_messages_PairCodeRequest(arg) {
   if (!(arg instanceof gows_pb.PairCodeRequest)) {
     throw new Error('Expected argument of type messages.PairCodeRequest');
@@ -431,6 +541,17 @@ function serialize_messages_ProfileStatusRequest(arg) {
 
 function deserialize_messages_ProfileStatusRequest(buffer_arg) {
   return gows_pb.ProfileStatusRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_messages_RevokeMessageRequest(arg) {
+  if (!(arg instanceof gows_pb.RevokeMessageRequest)) {
+    throw new Error('Expected argument of type messages.RevokeMessageRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_RevokeMessageRequest(buffer_arg) {
+  return gows_pb.RevokeMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_messages_SearchNewslettersByTextRequest(arg) {
@@ -521,6 +642,17 @@ function deserialize_messages_SubscribePresenceRequest(buffer_arg) {
   return gows_pb.SubscribePresenceRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_messages_UpdateContactRequest(arg) {
+  if (!(arg instanceof gows_pb.UpdateContactRequest)) {
+    throw new Error('Expected argument of type messages.UpdateContactRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_UpdateContactRequest(buffer_arg) {
+  return gows_pb.UpdateContactRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_messages_UpdateParticipantsRequest(arg) {
   if (!(arg instanceof gows_pb.UpdateParticipantsRequest)) {
     throw new Error('Expected argument of type messages.UpdateParticipantsRequest');
@@ -530,6 +662,17 @@ function serialize_messages_UpdateParticipantsRequest(arg) {
 
 function deserialize_messages_UpdateParticipantsRequest(buffer_arg) {
   return gows_pb.UpdateParticipantsRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_messages_UpsertLabelRequest(arg) {
+  if (!(arg instanceof gows_pb.UpsertLabelRequest)) {
+    throw new Error('Expected argument of type messages.UpsertLabelRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_UpsertLabelRequest(buffer_arg) {
+  return gows_pb.UpsertLabelRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -550,7 +693,7 @@ var EventStreamService = exports.EventStreamService = {
   },
 };
 
-exports.EventStreamClient = grpc.makeGenericClientConstructor(EventStreamService);
+exports.EventStreamClient = grpc.makeGenericClientConstructor(EventStreamService, 'EventStream');
 var MessageServiceService = exports.MessageServiceService = {
   //
 // Session management
@@ -645,6 +788,53 @@ setProfileName: {
     requestDeserialize: deserialize_messages_SetProfilePictureRequest,
     responseSerialize: serialize_messages_Empty,
     responseDeserialize: deserialize_messages_Empty,
+  },
+  //
+// Lids
+//
+getAllLids: {
+    path: '/messages.MessageService/GetAllLids',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.GetLidsRequest,
+    responseType: gows_pb.JsonList,
+    requestSerialize: serialize_messages_GetLidsRequest,
+    requestDeserialize: deserialize_messages_GetLidsRequest,
+    responseSerialize: serialize_messages_JsonList,
+    responseDeserialize: deserialize_messages_JsonList,
+  },
+  getLidsCount: {
+    path: '/messages.MessageService/GetLidsCount',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.Session,
+    responseType: gows_pb.OptionalUInt64,
+    requestSerialize: serialize_messages_Session,
+    requestDeserialize: deserialize_messages_Session,
+    responseSerialize: serialize_messages_OptionalUInt64,
+    responseDeserialize: deserialize_messages_OptionalUInt64,
+  },
+  findPNByLid: {
+    path: '/messages.MessageService/FindPNByLid',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.EntityByIdRequest,
+    responseType: gows_pb.OptionalString,
+    requestSerialize: serialize_messages_EntityByIdRequest,
+    requestDeserialize: deserialize_messages_EntityByIdRequest,
+    responseSerialize: serialize_messages_OptionalString,
+    responseDeserialize: deserialize_messages_OptionalString,
+  },
+  findLIDByPhoneNumber: {
+    path: '/messages.MessageService/FindLIDByPhoneNumber',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.EntityByIdRequest,
+    responseType: gows_pb.OptionalString,
+    requestSerialize: serialize_messages_EntityByIdRequest,
+    requestDeserialize: deserialize_messages_EntityByIdRequest,
+    responseSerialize: serialize_messages_OptionalString,
+    responseDeserialize: deserialize_messages_OptionalString,
   },
   //
 // Groups
@@ -819,29 +1009,7 @@ updateGroupParticipants: {
   //
 // Actions
 //
-sendMessage: {
-    path: '/messages.MessageService/SendMessage',
-    requestStream: false,
-    responseStream: false,
-    requestType: gows_pb.MessageRequest,
-    responseType: gows_pb.MessageResponse,
-    requestSerialize: serialize_messages_MessageRequest,
-    requestDeserialize: deserialize_messages_MessageRequest,
-    responseSerialize: serialize_messages_MessageResponse,
-    responseDeserialize: deserialize_messages_MessageResponse,
-  },
-  sendReaction: {
-    path: '/messages.MessageService/SendReaction',
-    requestStream: false,
-    responseStream: false,
-    requestType: gows_pb.MessageReaction,
-    responseType: gows_pb.MessageResponse,
-    requestSerialize: serialize_messages_MessageReaction,
-    requestDeserialize: deserialize_messages_MessageReaction,
-    responseSerialize: serialize_messages_MessageResponse,
-    responseDeserialize: deserialize_messages_MessageResponse,
-  },
-  getProfilePicture: {
+getProfilePicture: {
     path: '/messages.MessageService/GetProfilePicture',
     requestStream: false,
     responseStream: false,
@@ -885,6 +1053,64 @@ sendMessage: {
     responseSerialize: serialize_messages_Empty,
     responseDeserialize: deserialize_messages_Empty,
   },
+  checkPhones: {
+    path: '/messages.MessageService/CheckPhones',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.CheckPhonesRequest,
+    responseType: gows_pb.CheckPhonesResponse,
+    requestSerialize: serialize_messages_CheckPhonesRequest,
+    requestDeserialize: deserialize_messages_CheckPhonesRequest,
+    responseSerialize: serialize_messages_CheckPhonesResponse,
+    responseDeserialize: deserialize_messages_CheckPhonesResponse,
+  },
+  markChatUnread: {
+    path: '/messages.MessageService/MarkChatUnread',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.ChatUnreadRequest,
+    responseType: gows_pb.Empty,
+    requestSerialize: serialize_messages_ChatUnreadRequest,
+    requestDeserialize: deserialize_messages_ChatUnreadRequest,
+    responseSerialize: serialize_messages_Empty,
+    responseDeserialize: deserialize_messages_Empty,
+  },
+  //
+// Message
+//
+generateNewMessageID: {
+    path: '/messages.MessageService/GenerateNewMessageID',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.Session,
+    responseType: gows_pb.NewMessageIDResponse,
+    requestSerialize: serialize_messages_Session,
+    requestDeserialize: deserialize_messages_Session,
+    responseSerialize: serialize_messages_NewMessageIDResponse,
+    responseDeserialize: deserialize_messages_NewMessageIDResponse,
+  },
+  sendMessage: {
+    path: '/messages.MessageService/SendMessage',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.MessageRequest,
+    responseType: gows_pb.MessageResponse,
+    requestSerialize: serialize_messages_MessageRequest,
+    requestDeserialize: deserialize_messages_MessageRequest,
+    responseSerialize: serialize_messages_MessageResponse,
+    responseDeserialize: deserialize_messages_MessageResponse,
+  },
+  sendReaction: {
+    path: '/messages.MessageService/SendReaction',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.MessageReaction,
+    responseType: gows_pb.MessageResponse,
+    requestSerialize: serialize_messages_MessageReaction,
+    requestDeserialize: deserialize_messages_MessageReaction,
+    responseSerialize: serialize_messages_MessageResponse,
+    responseDeserialize: deserialize_messages_MessageResponse,
+  },
   markRead: {
     path: '/messages.MessageService/MarkRead',
     requestStream: false,
@@ -896,16 +1122,38 @@ sendMessage: {
     responseSerialize: serialize_messages_Empty,
     responseDeserialize: deserialize_messages_Empty,
   },
-  checkPhones: {
-    path: '/messages.MessageService/CheckPhones',
+  editMessage: {
+    path: '/messages.MessageService/EditMessage',
     requestStream: false,
     responseStream: false,
-    requestType: gows_pb.CheckPhonesRequest,
-    responseType: gows_pb.CheckPhonesResponse,
-    requestSerialize: serialize_messages_CheckPhonesRequest,
-    requestDeserialize: deserialize_messages_CheckPhonesRequest,
-    responseSerialize: serialize_messages_CheckPhonesResponse,
-    responseDeserialize: deserialize_messages_CheckPhonesResponse,
+    requestType: gows_pb.EditMessageRequest,
+    responseType: gows_pb.MessageResponse,
+    requestSerialize: serialize_messages_EditMessageRequest,
+    requestDeserialize: deserialize_messages_EditMessageRequest,
+    responseSerialize: serialize_messages_MessageResponse,
+    responseDeserialize: deserialize_messages_MessageResponse,
+  },
+  revokeMessage: {
+    path: '/messages.MessageService/RevokeMessage',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.RevokeMessageRequest,
+    responseType: gows_pb.MessageResponse,
+    requestSerialize: serialize_messages_RevokeMessageRequest,
+    requestDeserialize: deserialize_messages_RevokeMessageRequest,
+    responseSerialize: serialize_messages_MessageResponse,
+    responseDeserialize: deserialize_messages_MessageResponse,
+  },
+  sendButtonReply: {
+    path: '/messages.MessageService/SendButtonReply',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.ButtonReplyRequest,
+    responseType: gows_pb.MessageResponse,
+    requestSerialize: serialize_messages_ButtonReplyRequest,
+    requestDeserialize: deserialize_messages_ButtonReplyRequest,
+    responseSerialize: serialize_messages_MessageResponse,
+    responseDeserialize: deserialize_messages_MessageResponse,
   },
   //
 // Newsletters
@@ -999,6 +1247,136 @@ getSubscribedNewsletters: {
     responseDeserialize: deserialize_messages_Empty,
   },
   //
+// Labels
+//
+getLabels: {
+    path: '/messages.MessageService/GetLabels',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.GetLabelsRequest,
+    responseType: gows_pb.JsonList,
+    requestSerialize: serialize_messages_GetLabelsRequest,
+    requestDeserialize: deserialize_messages_GetLabelsRequest,
+    responseSerialize: serialize_messages_JsonList,
+    responseDeserialize: deserialize_messages_JsonList,
+  },
+  upsertLabel: {
+    path: '/messages.MessageService/UpsertLabel',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.UpsertLabelRequest,
+    responseType: gows_pb.Empty,
+    requestSerialize: serialize_messages_UpsertLabelRequest,
+    requestDeserialize: deserialize_messages_UpsertLabelRequest,
+    responseSerialize: serialize_messages_Empty,
+    responseDeserialize: deserialize_messages_Empty,
+  },
+  deleteLabel: {
+    path: '/messages.MessageService/DeleteLabel',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.DeleteLabelRequest,
+    responseType: gows_pb.Empty,
+    requestSerialize: serialize_messages_DeleteLabelRequest,
+    requestDeserialize: deserialize_messages_DeleteLabelRequest,
+    responseSerialize: serialize_messages_Empty,
+    responseDeserialize: deserialize_messages_Empty,
+  },
+  addChatLabel: {
+    path: '/messages.MessageService/AddChatLabel',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.ChatLabelRequest,
+    responseType: gows_pb.Empty,
+    requestSerialize: serialize_messages_ChatLabelRequest,
+    requestDeserialize: deserialize_messages_ChatLabelRequest,
+    responseSerialize: serialize_messages_Empty,
+    responseDeserialize: deserialize_messages_Empty,
+  },
+  removeChatLabel: {
+    path: '/messages.MessageService/RemoveChatLabel',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.ChatLabelRequest,
+    responseType: gows_pb.Empty,
+    requestSerialize: serialize_messages_ChatLabelRequest,
+    requestDeserialize: deserialize_messages_ChatLabelRequest,
+    responseSerialize: serialize_messages_Empty,
+    responseDeserialize: deserialize_messages_Empty,
+  },
+  getLabelsByJid: {
+    path: '/messages.MessageService/GetLabelsByJid',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.EntityByIdRequest,
+    responseType: gows_pb.JsonList,
+    requestSerialize: serialize_messages_EntityByIdRequest,
+    requestDeserialize: deserialize_messages_EntityByIdRequest,
+    responseSerialize: serialize_messages_JsonList,
+    responseDeserialize: deserialize_messages_JsonList,
+  },
+  getChatsByLabelId: {
+    path: '/messages.MessageService/GetChatsByLabelId',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.EntityByIdRequest,
+    responseType: gows_pb.JsonList,
+    requestSerialize: serialize_messages_EntityByIdRequest,
+    requestDeserialize: deserialize_messages_EntityByIdRequest,
+    responseSerialize: serialize_messages_JsonList,
+    responseDeserialize: deserialize_messages_JsonList,
+  },
+  //
+// Contacts
+//
+updateContact: {
+    path: '/messages.MessageService/UpdateContact',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.UpdateContactRequest,
+    responseType: gows_pb.Empty,
+    requestSerialize: serialize_messages_UpdateContactRequest,
+    requestDeserialize: deserialize_messages_UpdateContactRequest,
+    responseSerialize: serialize_messages_Empty,
+    responseDeserialize: deserialize_messages_Empty,
+  },
+  getContacts: {
+    path: '/messages.MessageService/GetContacts',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.GetContactsRequest,
+    responseType: gows_pb.JsonList,
+    requestSerialize: serialize_messages_GetContactsRequest,
+    requestDeserialize: deserialize_messages_GetContactsRequest,
+    responseSerialize: serialize_messages_JsonList,
+    responseDeserialize: deserialize_messages_JsonList,
+  },
+  getContactById: {
+    path: '/messages.MessageService/GetContactById',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.EntityByIdRequest,
+    responseType: gows_pb.Json,
+    requestSerialize: serialize_messages_EntityByIdRequest,
+    requestDeserialize: deserialize_messages_EntityByIdRequest,
+    responseSerialize: serialize_messages_Json,
+    responseDeserialize: deserialize_messages_Json,
+  },
+  //
+// Events
+//
+cancelEventMessage: {
+    path: '/messages.MessageService/CancelEventMessage',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.CancelEventMessageRequest,
+    responseType: gows_pb.MessageResponse,
+    requestSerialize: serialize_messages_CancelEventMessageRequest,
+    requestDeserialize: deserialize_messages_CancelEventMessageRequest,
+    responseSerialize: serialize_messages_MessageResponse,
+    responseDeserialize: deserialize_messages_MessageResponse,
+  },
+  //
 // Media
 //
 downloadMedia: {
@@ -1037,28 +1415,6 @@ getMessageById: {
     responseSerialize: serialize_messages_JsonList,
     responseDeserialize: deserialize_messages_JsonList,
   },
-  getContacts: {
-    path: '/messages.MessageService/GetContacts',
-    requestStream: false,
-    responseStream: false,
-    requestType: gows_pb.GetContactsRequest,
-    responseType: gows_pb.JsonList,
-    requestSerialize: serialize_messages_GetContactsRequest,
-    requestDeserialize: deserialize_messages_GetContactsRequest,
-    responseSerialize: serialize_messages_JsonList,
-    responseDeserialize: deserialize_messages_JsonList,
-  },
-  getContactById: {
-    path: '/messages.MessageService/GetContactById',
-    requestStream: false,
-    responseStream: false,
-    requestType: gows_pb.EntityByIdRequest,
-    responseType: gows_pb.Json,
-    requestSerialize: serialize_messages_EntityByIdRequest,
-    requestDeserialize: deserialize_messages_EntityByIdRequest,
-    responseSerialize: serialize_messages_Json,
-    responseDeserialize: deserialize_messages_Json,
-  },
   getChats: {
     path: '/messages.MessageService/GetChats',
     requestStream: false,
@@ -1072,4 +1428,4 @@ getMessageById: {
   },
 };
 
-exports.MessageServiceClient = grpc.makeGenericClientConstructor(MessageServiceService);
+exports.MessageServiceClient = grpc.makeGenericClientConstructor(MessageServiceService, 'MessageService');

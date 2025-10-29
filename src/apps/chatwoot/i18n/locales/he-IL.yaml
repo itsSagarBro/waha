@@ -1,0 +1,382 @@
+# Hebrew translations for ChatWoot integration
+locale.name: '🇮🇱 עברית (Hebrew)'
+
+# קוד הלוקאל הבסיסי - חייב להיות לוקאל תקין לפי BCP 47
+# https://en.wikipedia.org/wiki/IETF_language_tag
+# WAHA משתמש בכך להצגת מספרים, מטבע ותאריך/שעה
+locale.base: 'he-IL'
+
+app.inbox.contact.name: 'אינטגרציית וואטסאפ'
+app.inbox.contact.avatar.url: 'https://raw.githubusercontent.com/devlikeapro/waha/core/logo.png'
+
+# "אפשרויות" של date.toLocaleString
+# https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+datetime:
+  locales: he-IL
+  day: 2-digit
+  month: 2-digit
+  year: numeric
+  hour: 2-digit
+  minute: 2-digit
+  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
+  timeZoneName: shortGeneric
+  # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  # timeZone: 'Asia/Jerusalem'
+
+job.report.error: |-
+  ⚠️ **{{{header}}}**
+  {{#attempts.nextDelay}}
+  🔄 מנסה שוב בעוד {{attempts.nextDelay}} שניות...
+  {{/attempts.nextDelay}}
+  {{^attempts.nextDelay}}
+  ❌ לא נותרו ניסיונות נוספים. אנא נסה שוב מאוחר יותר.
+  {{/attempts.nextDelay}}
+  ניסיון: {{{attempts.current}}} / {{{attempts.max}}}
+  פרטים: [{{{details.text}}}]({{{details.url}}})
+  {{#error}}
+  ```
+
+  {{{error}}}
+  ```
+  {{/error}}
+
+job.report.succeeded: |-
+  ✅ **הצליח**
+  ניסיון: {{{attempts.current}}} / {{{attempts.max}}}
+  פרטים: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.message.sending.error: לא ניתן לשלוח הודעה בוואטסאפ.
+whatsapp.message.receiving.error: לא ניתן לקבל הודעה מוואטסאפ
+whatsapp.message.removing.error: לא ניתן להסיר הודעה מוואטסאפ
+job.scheduled.error.header: המשימה המתוזמנת נכשלה בביצוע
+
+message.from.whatsapp: |-
+  {{{text}}}
+
+  📱 *נשלח מוואטסאפ*
+
+message.from.api: |-
+  {{{text}}}
+
+  📱 *נשלח דרך API*
+
+message.removed.in.whatsapp: |-
+  ❌ *הודעה זו נמחקה בוואטסאפ*
+
+message.edited.in.whatsapp: |-
+  {{{text}}}
+
+  ✏️ *נערך בוואטסאפ*
+
+whatsapp.group.message: |-
+  👥 *{{{participant}}}*
+
+  {{{text}}}
+
+whatsapp.reaction.added: |-
+  *הגיב* {{{emoji}}}
+
+whatsapp.reaction.removed: |-
+  *התגובה הוסרה*
+
+whatsapp.contact.group.suffix: 'קבוצה'
+whatsapp.contact.channel.suffix: 'ערוץ'
+whatsapp.contact.broadcast.suffix: 'רשימת שידור'
+# Aka Stories
+whatsapp.contact.status.name: 'סטטוס'
+
+app.connected.message: |-
+  🔗 **מחובר: הפעלת וואטסאפ לתיבת הדואר הנכנס של ChatWoot**
+
+  ✅ הפעלת וואטסאפ **{{{name}}}** חוברה בהצלחה לתיבת הדואר הנכנס של ChatWoot.
+
+  תיבת דואר נכנס זו מקושרת כעת ל**חשבון הוואטסאפ** שלך. אתה יכול לשלוח ולקבל הודעות ישירות מכאן — בדיוק כמו שימוש בוואטסאפ, אבל בתוך ChatWoot.
+
+  אתה יכול גם לנהל את הפעלת הוואטסאפ המקושרת לתיבת דואר נכנס זו. כדי לראות פעולות זמינות, שלח **help** לצ'אט זה.
+
+  📋 פעולות נפוצות שאתה יכול לעשות:
+  - בדוק אם הפעלת הוואטסאפ פעילה
+  - הפעל מחדש או עצור את הפעלת הוואטסאפ
+  - התנתק והתחבר מחדש על ידי סריקת קוד QR חדש
+
+  אם הכל עובד, תוכל לשוחח בחופשיות. אם אתה רואה אזהרות, ייתכן שתצטרך לחבר מחדש את חשבון הוואטסאפ שלך.
+
+  בוא נתחיל! 🚀
+
+app.disconnected.message: |-
+  🔌 **מנותק: הפעלת וואטסאפ מתיבת הדואר הנכנס של ChatWoot**
+
+  ❌ הפעלת וואטסאפ **{{{name}}}** נותקה מתיבת הדואר הנכנס של ChatWoot.
+
+  לא תוכל יותר לשלוח או לקבל הודעות מוואטסאפ.
+
+  כדי להתחבר מחדש, אנא פנה למנהל המערכת שלך.
+
+app.updated.message: |-
+  🔄 **עודכן: הגדרות הפעלת וואטסאפ**
+
+  ✅ ההגדרות עבור הפעלת וואטסאפ **{{{name}}}** עודכנו.
+
+app.commands.list: |-
+  אתה יכול לנהל **אינטגרציית וואטסאפ** על ידי שליחת אחת מהפקודות הבאות:
+
+  🖥️ **הפעלה**:
+  1. **status** - קבל את סטטוס ההפעלה הנוכחי.
+  2. **restart** - הפעל מחדש את ההפעלה - זה ינסה לחבר מחדש את חשבון הוואטסאפ שלך.
+  3. **start** - התחל את ההפעלה.
+  4. **stop** - עצור את ההפעלה.
+  5. **logout** - התנתק מההפעלה, כך שתוכל לסרוק קוד QR ולתקן את ההפעלה.
+  6. **qr** - קבל את קוד ה-QR עבור ההפעלה.
+  7. **screenshot** - קבל צילום מסך של ההפעלה (זמין רק במנוע **WEBJS**).
+  8. **help** - פקודות זמינות.
+
+  {{#commands.server}}
+  ⚙️ שרת:
+  - **server status** - קבל מידע על גרסת השרת והסטטוס.
+  - **server reboot** - הפעל מחדש את השרת בצורה חלקה.
+  - **server reboot force** - אלץ הפעלה מחדש של השרת.
+  {{/commands.server}}
+
+  שלח **פקודה** (לא תלוי רישיות) או **מספר פקודה** לשיחה זו.
+
+app.commands.server.disabled: ⛔ **פקודות השרת מושבתות**.
+
+  אנא פנו למנהל המערכת שלכם.
+
+  שלחו **help** כדי לקבל את רשימת הפקודות הזמינות.
+
+app.help.reminder: |-
+  שלח **help** כדי לקבל את רשימת הפקודות הזמינות.
+
+app.session.status.change: |-
+  {{{emoji}}} הפעלה "{{{session}}}" עברה לסטטוס {{{status}}}
+
+app.session.current.status: |-
+  {{{emoji}}} סטטוס ההפעלה **{{{session}}}** הוא **{{{status}}}**
+  **חשבון וואטסאפ:**
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.working: |-
+  ✅ תיבת הדואר הנכנס של ChatWoot מקושרת ל**חשבון וואטסאפ** ומוכנה לשלוח ולקבל הודעות!
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.error: |-
+  ⚠️ **תיבת הדואר הנכנס של ChatWoot מקושרת לחשבון וואטסאפ אך אינה מוכנה לשלוח ולקבל הודעות!**
+
+  אנא בדוק את סטטוס ההפעלה ונסה להפעיל אותה מחדש או התנתק וסרוק את קוד ה-QR שוב.
+
+app.session.scan.qr.code: |-
+  ⚠️ **סרוק את קוד ה-QR בטלפון שלך כדי לקשר את חשבון הוואטסאפ לתיבת הדואר הנכנס של ChatWoot!**
+
+app.server.version.and.status: |-
+  **גרסה:**
+  ```
+  {{{version}}}
+  ```
+
+  **סטטוס:**
+  ```
+  {{{status}}}
+  ```
+
+app.server.reboot: |-
+  השרת מופעל מחדש בצורה חלקה...
+
+app.server.reboot.force: |-
+  השרת מופעל מחדש בכוח...
+
+app.logout.success: |-
+  ✅ החשבון בוטל בהצלחה!
+
+waha.new.version.available: |-
+  🔄 **גרסה חדשה זמינה!**
+
+  גרסה נוכחית: **{{{currentVersion}}}**
+  גרסה חדשה: **{{{newVersion}}}**
+
+  👉 בדוק מה חדש ב[**🆕 יומן שינויים**]({{{changelogUrl}}})
+
+waha.core.version.used: |-
+  ❤️ **תמוך ב-WAHA!**
+
+  אתה משתמש בגרסת **WAHA Core** החינמית. אם אתה מוצא פרויקט זה שימושי, אנא שקול לתמוך בפיתוח שלו.
+
+  התמיכה שלך היא הדרך היחידה שבה אנחנו יכולים להמשיך לעבוד על עדכונים, תיקונים ותכונות חדשות.
+
+  [**🎁 תמוך בנו**]({{{supportUrl}}})
+
+chatwoot.to.whatsapp.message.text: |-
+  {{{ content }}}
+
+chatwoot.to.whatsapp.message.media.caption: |-
+  {{#singleAttachment}}
+  {{#content}}
+  {{{ content }}}
+  {{/content}}
+  {{/singleAttachment}}
+
+whatsapp.to.chatwoot.message: |-
+  {{{payload.body}}}
+
+whatsapp.to.chatwoot.message.contacts: |-
+  👤 **אנשי קשר משותפים**
+
+  {{#contacts}}
+  🪪 שם: **{{fullName}}**
+  {{#phoneNumbers}}
+  - 📞 טלפון: **{{.}}**
+  {{/phoneNumbers}}
+
+  {{/contacts}}
+
+whatsapp.to.chatwoot.message.location: |-
+  {{#message}}
+  {{#locationMessage}}
+  📍 **מיקום משותף**
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **כתובת:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **אתר אינטרנט:** {{url}}
+  {{/url}}
+
+  🔗 **הצג במפה:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/locationMessage}}
+
+  {{#liveLocationMessage}}
+  📍📡 **משתף מיקום חי**
+  פתח/י את **WhatsApp** כדי לראות עדכונים בזמן אמת.
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **כתובת:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **אתר אינטרנט:** {{url}}
+  {{/url}}
+
+  🔗 **הצג במפה:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/liveLocationMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.poll: |-
+  {{#poll}}
+  📊 **סקר**
+
+  **{{name}}**
+  {{#options}}
+  - {{optionName}}
+  {{/options}}
+  {{/poll}}
+
+whatsapp.to.chatwoot.message.list: |-
+  {{#message.listMessage}}
+  {{#title}}
+  *{{{title}}}*
+  {{/title}}
+  {{#description}}
+  {{{description}}}
+  {{/description}}
+  {{#footerText}}
+  {{{footerText}}}
+  {{/footerText}}
+
+  {{#buttonText}}
+  {{{buttonText}}}
+  {{/buttonText}}
+  {{#sections}}
+  {{#title}}
+  {{{title}}}:
+  {{/title}}
+  {{#rows}}
+  {{#title}}
+  - {{{title}}}
+  {{/title}}
+  {{/rows}}
+
+  {{/sections}}
+  {{/message.listMessage}}
+
+whatsapp.to.chatwoot.message.event: |-
+  {{#message}}
+  {{#eventMessage}}
+  📅 **אירוע**
+
+  **{{name}}**
+  {{#description}}
+  {{description}}
+  {{/description}}
+
+  {{#location.name}}
+  📍 **מיקום:** {{location.name}}
+  {{/location.name}}
+  {{#startTime}}
+  🕐 **התחלה:** {{startTime}}
+  {{/startTime}}
+  {{#endTime}}
+  🕐 **סיום:** {{endTime}}
+  {{/endTime}}
+  {{#joinLink}}
+  🔗 **קישור הצטרפות:** [{{joinLink}}]({{joinLink}})
+  {{/joinLink}}
+  {{/eventMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.pix: |-
+  💳 **PIX - העתק והדבק**
+
+  {{#pixData}}
+  {{#merchantName}}
+  **{{merchantName}}**
+  {{/merchantName}}
+
+  {{#key}}
+  **מפתח PIX:** {{key}}
+  {{/key}}
+  {{#keyType}}
+  **סוג:** {{keyType}}
+  {{/keyType}}
+  {{#totalAmount}}
+  **סכום:** {{totalAmountFormatted}}
+  {{/totalAmount}}
+  {{#referenceId}}
+  **אסמכתא:** {{referenceId}}
+  {{/referenceId}}
+
+  💳 **PIX העתק והדבק נשלח**
+  {{/pixData}}
+
+whatsapp.to.chatwoot.message.unsupported: |-
+  ⚠️ **סוג הודעה זה אינו נתמך ב-ChatWoot.**
+  📱 אנא פתח/י את **WhatsApp** כדי לצפות בזה.
+
+  פרטים: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.to.chatwoot.message.facebook.ad: |-
+  📢 **מודעת פייסבוק**
+
+  **כותרת:** {{{adData.title}}}
+
+  **תיאור:**
+  {{{adData.body}}}
+
+  **קישור למודעה:** [לצפייה בפייסבוק]({{{adData.sourceUrl}}})
+  **מזהה המודעה:** {{{adData.sourceId}}}
+
+  ---
+  💬 **הודעת הלקוח:**
+  {{{payload.body}}}

@@ -1,19 +1,19 @@
+build-all: build-plus build-chrome build-gows build-noweb
+
 build:
 	docker build . -t devlikeapro/waha
+
+build-plus:
+	docker build . -t devlikeapro/waha-plus
 
 build-chrome:
 	docker build . -t devlikeapro/waha-plus:chrome --build-arg USE_BROWSER=chrome
 
 build-noweb:
-	docker build . -t devlikeapro/waha:noweb --build-arg USE_BROWSER=none --build-arg WHATSAPP_DEFAULT_ENGINE=NOWEB
+	docker build . -t devlikeapro/waha-plus:noweb --build-arg USE_BROWSER=none --build-arg WHATSAPP_DEFAULT_ENGINE=NOWEB
 
-build-plus-gows:
+build-gows:
 	docker build . -t devlikeapro/waha-plus:gows --build-arg USE_BROWSER=none --build-arg WHATSAPP_DEFAULT_ENGINE=GOWS
-
-build-all: build build-chrome build-noweb
-
-build-plus:
-	docker build . -t devlikeapro/waha-plus
 
 build-ssh:
 	# check IMAGE provided
@@ -35,13 +35,13 @@ for-swagger:
 	WHATSAPP_SWAGGER_CONFIG_ADVANCED=true . ${NVM_DIR}/nvm.sh && nvm exec yarn start
 
 up-noweb:
-	. ${NVM_DIR}/nvm.sh && nvm exec yarn up @adiwajshing/baileys@github:devlikeapro/Baileys#fork-master-channels-6712
+	yarn up @adiwajshing/baileys@github:devlikeapro/Baileys#fork-master-2025-10-19
 
 up-noweb-libsignal:
-	. ${NVM_DIR}/nvm.sh && nvm exec yarn up libsignal@github:devlikeapro/libsignal-node#fork-master
+	yarn up libsignal@github:devlikeapro/libsignal-node#fork-master
 
 up-webjs:
-	. ${NVM_DIR}/nvm.sh && nvm exec yarn up whatsapp-web.js@github:devlikeapro/whatsapp-web.js#fork-main-channels
+	yarn up whatsapp-web.js@github:devlikeapro/whatsapp-web.js#fork-main-2025-09-10
 
 start-proxy:
 	docker run --rm -d --name squid-container -e TZ=UTC -p 3128:3128 ubuntu/squid:5.2-22.04_beta

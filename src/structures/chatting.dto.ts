@@ -4,8 +4,19 @@ import {
   ApiProperty,
   getSchemaPath,
 } from '@nestjs/swagger';
+import { IsFileType } from '@waha/nestjs/validation/IsFileType';
 import { GetChatMessagesQuery } from '@waha/structures/chats.dto';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { plainToInstance, Transform, Type } from 'class-transformer';
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
 
 import {
   SessionBaseRequest,
@@ -14,13 +25,20 @@ import {
 } from './base.dto';
 import {
   BinaryFile,
+  FileContent,
+  FileType,
+  FileURL,
   RemoteFile,
   VideoBinaryFile,
   VideoRemoteFile,
   VoiceBinaryFile,
   VoiceRemoteFile,
 } from './files.dto';
-import { ChatIdProperty, ReplyToProperty } from './properties.dto';
+import {
+  ChatIdProperty,
+  ConvertApiProperty,
+  ReplyToProperty,
+} from './properties.dto';
 
 /**
  * Queries
@@ -64,24 +82,30 @@ export class GetPresenceQuery extends ChatQuery {}
  */
 export class ChatRequest extends SessionBaseRequest {
   @ChatIdProperty()
+  @IsString()
   chatId: string;
 }
 
 export class SendSeenRequest extends ChatRequest {
   @ApiProperty({
-    example: 'false_11111111111@c.us_AAAAAAAAAAAAAAAAAAAA',
+    example: null,
+    deprecated: true,
     required: false,
-    description:
-      "NOWEB engine only - it's important to mark ALL messages as seen",
   })
   messageId?: string;
+
+  @ApiProperty({
+    example: ['false_11111111111@c.us_AAAAAAAAAAAAAAAAAAAA'],
+    required: false,
+  })
+  messageIds?: string[];
 
   @ApiProperty({
     example: '11111111111@c.us',
     required: false,
     default: null,
     description:
-      'NOWEB engine only - the ID of the user that sent the  message (undefined for individual chats)',
+      'NOWEB engine only - the ID of the user that sent the message (undefined for individual chats)',
   })
   participant?: string;
 }
@@ -146,6 +170,9 @@ export class MessageContactVcardRequest extends ChatRequest {
     ],
   })
   contacts: (VCardContact | Contact)[];
+
+  @ReplyToProperty()
+  reply_to?: string;
 }
 
 export class MessageTextRequest extends ChatRequest {
@@ -158,6 +185,74 @@ export class MessageTextRequest extends ChatRequest {
   reply_to?: string;
 
   linkPreview?: boolean = true;
+  linkPreviewHighQuality?: boolean = false;
+}
+
+@ApiExtraModels(FileURL, FileContent)
+export class LinkPreviewData {
+  @IsNotEmpty()
+  @IsUrl({
+    protocols: ['http', 'https'],
+    require_protocol: true,
+    require_tld: false,
+  })
+  url: string = 'https://github.com/';
+
+  @IsString()
+  title: string = 'Your Title';
+
+  @IsString()
+  description: string = 'Check this out, amazing!';
+
+  @IsOptional()
+  @ValidateNested()
+  @Transform(
+    ({ value }) => {
+      if (value?.url) {
+        return plainToInstance(FileURL, value);
+      }
+      if (value?.data) {
+        return plainToInstance(FileContent, value);
+      }
+      return value;
+    },
+    { toClassOnly: true },
+  )
+  @IsFileType({ message: 'Image must contain either "data" or "url".' })
+  @ApiProperty({
+    oneOf: [
+      { $ref: getSchemaPath(FileURL) },
+      { $ref: getSchemaPath(FileContent) },
+    ],
+    example: {
+      url:
+        process.env.WHATSAPP_SWAGGER_JPG_EXAMPLE_URL ||
+        'https://github.com/devlikeapro/waha/raw/core/examples/waha.jpg',
+    },
+  })
+  image?: FileType;
+}
+
+export class MessageLinkCustomPreviewRequest extends ChatRequest {
+  @IsString()
+  @ApiProperty({
+    description:
+      'The text to send. MUST include the URL provided in preview.url',
+  })
+  text: string = 'Check this out! https://github.com/';
+
+  @IsBoolean()
+  @IsOptional()
+  linkPreviewHighQuality?: boolean = true;
+
+  @ValidateNested()
+  @Type(() => LinkPreviewData)
+  preview: LinkPreviewData;
+
+  @ReplyToProperty()
+  @IsString()
+  @IsOptional()
+  reply_to?: string;
 }
 
 export class EditMessageRequest {
@@ -167,6 +262,7 @@ export class EditMessageRequest {
   mentions?: string[];
 
   linkPreview?: boolean = true;
+  linkPreviewHighQuality?: boolean = false;
 }
 
 export class MessageReplyRequest extends MessageTextRequest {
@@ -230,6 +326,9 @@ export class MessageVoiceRequest extends ChatRequest {
 
   @ReplyToProperty()
   reply_to?: string;
+
+  @ConvertApiProperty()
+  convert: boolean;
 }
 
 @ApiExtraModels(VideoRemoteFile, VideoBinaryFile)
@@ -256,6 +355,9 @@ export class MessageVideoRequest extends ChatRequest {
     example: false,
   })
   asNote?: boolean;
+
+  @ConvertApiProperty()
+  convert: boolean;
 }
 
 export class MessageLinkPreviewRequest extends ChatRequest {
@@ -330,4 +432,60 @@ export class MessageDestination {
   to: string;
   from: string;
   fromMe: boolean;
+  participant?: string;
+}
+
+export class MessageButtonReply extends ChatRequest {
+  @ReplyToProperty()
+  @IsString()
+  @IsNotEmpty()
+  replyTo?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  selectedDisplayText: string;
+
+  @IsString()
+  @IsNotEmpty()
+  selectedButtonID: string;
+}
+
+export class NewMessageIDResponse {
+  @ApiProperty({
+    description: 'Pre-generated message id',
+    example: 'BBBBBBBBBBBBBBBBB',
+    required: true,
+  })
+  id: string;
+}
+
+export class MessagePollVoteRequest extends ChatRequest {
+  @ApiProperty({
+    description:
+      'The ID of the poll message. Format: {fromMe}_{chatID}_{messageId}[_{participant}] or just ID for GOWS',
+    example: 'false_11111111111@c.us_AAAAAAAAAAAAAAAAAAAA',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  pollMessageId: string;
+
+  @ApiProperty({
+    description:
+      'Only for Channels - server message id (if known); if omitted, API may look it up in the storage',
+    required: false,
+    example: null,
+  })
+  @IsOptional()
+  @IsNumber()
+  pollServerId?: number;
+
+  @ApiProperty({
+    description: 'Poll options you are voting for',
+    example: 'Awesome!',
+    isArray: true,
+  })
+  @IsArray()
+  @IsString({ each: true })
+  votes: string[];
 }

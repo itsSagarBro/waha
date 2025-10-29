@@ -1,32 +1,49 @@
-import {
-  getUrlFromDirectPath,
-  isJidGroup,
-  isJidStatusBroadcast,
-  jidNormalizedUser,
-} from '@adiwajshing/baileys';
+import { normalizeMessageContent, WAMessageKey } from '@adiwajshing/baileys';
+import { proto } from '@adiwajshing/baileys';
 import * as grpc from '@grpc/grpc-js';
 import { connectivityState } from '@grpc/grpc-js';
 import { UnprocessableEntityException } from '@nestjs/common';
 import {
+  extractDeviceId,
   getChannelInviteLink,
   WhatsappSession,
 } from '@waha/core/abc/session.abc';
 import { Jid } from '@waha/core/engines/const';
 import { EventsFromObservable } from '@waha/core/engines/gows/EventsFromObservable';
 import { GowsEventStreamObservable } from '@waha/core/engines/gows/GowsEventStreamObservable';
+import {
+  ToGroupV2JoinEvent,
+  ToGroupV2LeaveEvent,
+  ToGroupV2ParticipantsEvents,
+  ToGroupV2UpdateEvent,
+} from '@waha/core/engines/gows/groups.gows';
 import { messages } from '@waha/core/engines/gows/grpc/gows';
+import {
+  optional,
+  parseJson,
+  parseJsonList,
+  statusToAck,
+} from '@waha/core/engines/gows/helpers';
 import { GowsAuthFactoryCore } from '@waha/core/engines/gows/store/GowsAuthFactoryCore';
 import {
-  parseMessageIdSerialized,
-  toCusFormat,
-  toJID,
+  extractBody,
+  getDestination,
 } from '@waha/core/engines/noweb/session.noweb.core';
+import { extractMediaContent } from '@waha/core/engines/noweb/utils';
 import {
   AvailableInPlusVersion,
   NotImplementedByEngineError,
 } from '@waha/core/exceptions';
 import { IMediaEngineProcessor } from '@waha/core/media/IMediaEngineProcessor';
 import { QR } from '@waha/core/QR';
+import { ExtractMessageKeysForRead } from '@waha/core/utils/convertors';
+import { parseMessageIdSerialized } from '@waha/core/utils/ids';
+import {
+  isJidBroadcast,
+  isJidGroup,
+  toCusFormat,
+  toJID,
+} from '@waha/core/utils/jids';
 import {
   Channel,
   ChannelListResult,
@@ -39,12 +56,27 @@ import {
   PreviewChannelMessages,
 } from '@waha/structures/channels.dto';
 import {
+  ChatSortField,
+  ChatSummary,
+  GetChatMessageQuery,
+  GetChatMessagesFilter,
+  GetChatMessagesQuery,
+  OverviewFilter,
+  ReadChatMessagesQuery,
+  ReadChatMessagesResponse,
+} from '@waha/structures/chats.dto';
+import {
   ChatRequest,
   CheckNumberStatusQuery,
+  EditMessageRequest,
+  MessageContactVcardRequest,
   MessageFileRequest,
   MessageForwardRequest,
   MessageImageRequest,
+  MessageLinkCustomPreviewRequest,
   MessageLocationRequest,
+  MessagePollRequest,
+  MessagePollVoteRequest,
   MessageReactionRequest,
   MessageReplyRequest,
   MessageTextRequest,
@@ -52,6 +84,8 @@ import {
   SendSeenRequest,
   WANumberExistResult,
 } from '@waha/structures/chatting.dto';
+import { SendListRequest } from '@waha/structures/chatting.list.dto';
+import { ContactQuery, ContactUpdateBody } from '@waha/structures/contacts.dto';
 import {
   ACK_UNKNOWN,
   WAHAEvents,
@@ -60,53 +94,10 @@ import {
   WAMessageAck,
 } from '@waha/structures/enums.dto';
 import {
-  WAHAChatPresences,
-  WAHAPresenceData,
-} from '@waha/structures/presence.dto';
-import { WAMessage, WAMessageReaction } from '@waha/structures/responses.dto';
-import { MeInfo, ProxyConfig } from '@waha/structures/sessions.dto';
-import { StatusRequest, TextStatus } from '@waha/structures/status.dto';
-import { EnginePayload, WAMessageAckBody } from '@waha/structures/webhooks.dto';
-import { sleep, waitUntil } from '@waha/utils/promiseTimeout';
-import { onlyEvent } from '@waha/utils/reactive/ops/onlyEvent';
-import * as NodeCache from 'node-cache';
-import {
-  debounceTime,
-  filter,
-  groupBy,
-  merge,
-  mergeMap,
-  Observable,
-  partition,
-  retry,
-  share,
-} from 'rxjs';
-import { map } from 'rxjs/operators';
-import { promisify } from 'util';
-
-import * as gows from './types';
-import MessageServiceClient = messages.MessageServiceClient;
-import {
-  ToGroupV2JoinEvent,
-  ToGroupV2LeaveEvent,
-  ToGroupV2ParticipantsEvents,
-  ToGroupV2UpdateEvent,
-} from '@waha/core/engines/gows/groups.gows';
-import {
-  optional,
-  parseJson,
-  parseJsonList,
-  statusToAck,
-} from '@waha/core/engines/gows/helpers';
-import { extractMediaContent } from '@waha/core/engines/noweb/utils';
-import {
-  ChatSortField,
-  ChatSummary,
-  GetChatMessageQuery,
-  GetChatMessagesFilter,
-  GetChatMessagesQuery,
-} from '@waha/structures/chats.dto';
-import { ContactQuery } from '@waha/structures/contacts.dto';
+  EventMessageRequest,
+  EventResponse,
+  EventResponsePayload,
+} from '@waha/structures/events.dto';
 import { BinaryFile, RemoteFile } from '@waha/structures/files.dto';
 import {
   CreateGroupRequest,
@@ -115,8 +106,68 @@ import {
   ParticipantsRequest,
   SettingsSecurityChangeInfo,
 } from '@waha/structures/groups.dto';
+import { ReplyToMessage } from '@waha/structures/message.dto';
 import { PaginationParams, SortOrder } from '@waha/structures/pagination.dto';
+import {
+  WAHAChatPresences,
+  WAHAPresenceData,
+} from '@waha/structures/presence.dto';
+import {
+  MessageSource,
+  WAMessage,
+  WAMessageReaction,
+} from '@waha/structures/responses.dto';
+import { MeInfo, ProxyConfig } from '@waha/structures/sessions.dto';
+import {
+  BROADCAST_ID,
+  DeleteStatusRequest,
+  TextStatus,
+} from '@waha/structures/status.dto';
+import {
+  EnginePayload,
+  PollVotePayload,
+  WAMessageAckBody,
+  WAMessageEditedBody,
+  WAMessageRevokedBody,
+} from '@waha/structures/webhooks.dto';
 import { PaginatorInMemory } from '@waha/utils/Paginator';
+import { sleep, waitUntil } from '@waha/utils/promiseTimeout';
+import { onlyEvent } from '@waha/utils/reactive/ops/onlyEvent';
+import * as NodeCache from 'node-cache';
+import {
+  filter,
+  merge,
+  mergeMap,
+  Observable,
+  partition,
+  retry,
+  share,
+} from 'rxjs';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { promisify } from 'util';
+
+import * as gows from './types';
+import { MessageStatus } from './types';
+import MessageServiceClient = messages.MessageServiceClient;
+import { isFromFullSync } from '@waha/core/engines/gows/appstate';
+import { toVcardV3 } from '@waha/core/vcard';
+import { AckToStatus } from '@waha/core/utils/acks';
+import { ParseEventResponseType } from '@waha/core/utils/events';
+import { DistinctAck } from '@waha/core/utils/reactive';
+import { Label, LabelDTO, LabelID } from '@waha/structures/labels.dto';
+import { LidToPhoneNumber } from '@waha/structures/lids.dto';
+import { exclude } from '@waha/utils/reactive/ops/exclude';
+import * as lodash from 'lodash';
+
+import {
+  eventToLabelChatAssociationDTO,
+  eventToLabelDTO,
+  isLabelChatAddedEvent,
+  isLabelUpsertEvent,
+} from './labels.gows';
+import esm from '@waha/vendor/esm';
+import { IsEditedMessage } from '@waha/core/utils/pwa';
 
 enum WhatsMeowEvent {
   CONNECTED = 'gows.ConnectedEventData',
@@ -133,6 +184,13 @@ enum WhatsMeowEvent {
   // Groups
   GROUP_INFO = 'events.GroupInfo',
   JOINED_GROUP = 'events.JoinedGroup',
+  // Labels
+  LABEL_EDIT = 'events.LabelEdit',
+  LABEL_ASSOCIATION_CHAT = 'events.LabelAssociationChat',
+  // Events
+  EVENT_MESSAGE_RESPONSE = 'gows.EventMessageResponse',
+  // Polls
+  POLL_VOTE_EVENT = 'gows.PollVoteEvent',
 }
 
 const gRPCClientConfig = {
@@ -156,6 +214,8 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
   protected me: MeInfo | null;
   public session: messages.Session;
   protected presences: any;
+
+  private local$ = new Subject<EnginePayload>();
 
   public constructor(config) {
     super(config);
@@ -192,6 +252,12 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
         }),
         proxy: new messages.SessionProxyConfig({
           url: this.getProxyUrl(this.proxyConfig),
+        }),
+        ignore: new messages.SessionIgnoreJidsConfig({
+          status: this.jids.ignore.status,
+          groups: this.jids.ignore.groups,
+          newsletters: this.jids.ignore.channels,
+          broadcast: this.jids.ignore.broadcast,
         }),
       }),
     });
@@ -237,7 +303,11 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     );
 
     // Retry on error with delay
-    this.all$ = this.stream$.pipe(retry({ delay: 2_000 }), share());
+    // Accept locally re-issued events as well
+    this.all$ = merge(this.stream$, this.local$).pipe(
+      retry({ delay: 2_000 }),
+      share(),
+    );
   }
 
   subscribeEvents() {
@@ -247,9 +317,12 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     events.on(WhatsMeowEvent.CONNECTED, (data) => {
       this.status = WAHASessionStatus.WORKING;
       this.me = {
-        id: toCusFormat(jidNormalizedUser(data.ID)),
+        id: toCusFormat(esm.b.jidNormalizedUser(data.ID)),
         pushName: data.PushName,
+        lid: esm.b.jidNormalizedUser(data.LID),
       };
+      // @ts-ignore
+      this.me.jid = data.ID;
     });
 
     events.on(WhatsMeowEvent.DISCONNECTED, () => {
@@ -320,6 +393,48 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       // add new value
       this.presences.set(Chat, [...filtered, event]);
     });
+
+    //
+    // Fix for "typing" after sending a message
+    // Re-issue a synthetic ChatPresence(PAUSED) to cancel COMPOSING state
+    // Works for both DM and Group chats
+    //
+    events.on(WhatsMeowEvent.MESSAGE, (message: any) => {
+      const chat = message?.Info?.Chat;
+      if (!this.jids.include(chat)) {
+        return;
+      }
+      if (message?.Info?.IsFromMe) {
+        return;
+      }
+      const sender = message?.Info?.Sender || chat;
+      if (!chat || !sender) {
+        return;
+      }
+      const stored: Array<gows.Presence | gows.ChatPresence> =
+        this.presences.get(chat) || [];
+      const composing = stored.find(
+        (presence: any) =>
+          (presence?.Sender === sender || presence?.From === sender) &&
+          presence?.State === gows.ChatPresenceState.COMPOSING,
+      ) as gows.ChatPresence | undefined;
+      if (!composing) {
+        return;
+      }
+      const presence: gows.ChatPresence = {
+        Chat: chat,
+        Sender: sender,
+        IsFromMe: false,
+        IsGroup: !!isJidGroup(chat),
+        State: gows.ChatPresenceState.PAUSED,
+        Media: (composing as any)?.Media ?? gows.ChatPresenceMedia.TEXT,
+      } as any;
+      this.local$.next({
+        event: WhatsMeowEvent.CHAT_PRESENCE,
+        data: presence,
+      } as any);
+    });
+
     events.start();
   }
 
@@ -327,14 +442,26 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     const all$ = this.all$;
     this.events2.get(WAHAEvents.ENGINE_EVENT).switch(all$);
 
-    const messages$ = all$.pipe(onlyEvent(WhatsMeowEvent.MESSAGE));
+    const messages$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.MESSAGE),
+      filter((msg: any) => this.jids.include(msg?.Info?.Chat)),
+      share(),
+    );
 
     let [messagesFromMe$, messagesFromOthers$] = partition(messages$, isMine);
     messagesFromMe$ = messagesFromMe$.pipe(
+      map((msg) => {
+        msg.Status = MessageStatus.ServerAck;
+        return msg;
+      }),
       mergeMap((msg) => this.processIncomingMessage(msg, true)),
       share(), // share it so we don't process twice in message.any
     );
     messagesFromOthers$ = messagesFromOthers$.pipe(
+      map((msg) => {
+        msg.Status = MessageStatus.DeliveryAck;
+        return msg;
+      }),
       mergeMap((msg) => this.processIncomingMessage(msg, true)),
       share(), // share it so we don't process twice in message.any
     );
@@ -342,17 +469,56 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     this.events2.get(WAHAEvents.MESSAGE).switch(messagesFromOthers$);
     this.events2.get(WAHAEvents.MESSAGE_ANY).switch(messagesFromAll$);
 
-    const receipt$ = all$.pipe(onlyEvent(WhatsMeowEvent.RECEIPT));
+    // Handle revoked messages
+    const messagesRevoked$ = messages$.pipe(
+      filter((msg) => {
+        return (
+          msg?.Message?.protocolMessage?.type === 0 &&
+          msg?.Message?.protocolMessage?.key !== undefined
+        );
+      }),
+      mergeMap(async (message): Promise<WAMessageRevokedBody> => {
+        const afterMessage = await this.toWAMessage(message);
+        // Extract the revoked message ID from protocolMessage.key
+        const revokedMessageId = message.Message.protocolMessage.key?.ID;
+        return {
+          after: afterMessage,
+          before: null,
+          revokedMessageId: revokedMessageId,
+          _data: message,
+        };
+      }),
+    );
+    this.events2.get(WAHAEvents.MESSAGE_REVOKED).switch(messagesRevoked$);
+
+    // Handle edited messages
+    const messagesEdited$ = messages$.pipe(
+      filter((message) => IsEditedMessage(message.Message)),
+      mergeMap(async (message): Promise<WAMessageEditedBody> => {
+        const waMessage = await this.toWAMessage(message);
+        const content = normalizeMessageContent(message.Message);
+        // Extract the body from editedMessage using extractBody function
+        const body = extractBody(content.protocolMessage.editedMessage) || '';
+        // Extract the original message ID from protocolMessage.key
+        // @ts-ignore
+        const editedMessageId = content.protocolMessage.key?.ID;
+        return {
+          ...waMessage,
+          body: body,
+          editedMessageId: editedMessageId,
+          _data: message,
+        };
+      }),
+    );
+    this.events2.get(WAHAEvents.MESSAGE_EDITED).switch(messagesEdited$);
+
+    const receipt$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.RECEIPT),
+      filter((r: any) => this.jids.include(r?.Chat)),
+    );
     const messageAck$ = receipt$.pipe(
       mergeMap(this.receiptToMessageAck.bind(this)),
-      // Create a composite key for deduplication
-      groupBy((message) => `${message.id}-${message.ack}`),
-      mergeMap((group$) =>
-        group$.pipe(
-          debounceTime(1000), // Wait 1 second for deduplication
-          map((message) => message), // Pass the latest message after debounce
-        ),
-      ),
+      DistinctAck(),
     );
     this.events2.get(WAHAEvents.MESSAGE_ACK).switch(messageAck$);
 
@@ -364,9 +530,13 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
 
     const presence$ = all$.pipe(
       onlyEvent(WhatsMeowEvent.PRESENCE),
+      filter((event: any) => this.jids.include(event?.From)),
       filter((event) => !isJidGroup(event.From)),
     );
-    const chatPresence$ = all$.pipe(onlyEvent(WhatsMeowEvent.CHAT_PRESENCE));
+    const chatPresence$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.CHAT_PRESENCE),
+      filter((event: any) => this.jids.include(event?.Chat)),
+    );
     const presenceUpdates$ = merge(presence$, chatPresence$).pipe(
       map((event) => this.toWahaPresences(event.From || event.Chat, [event])),
     );
@@ -399,6 +569,95 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       filter(Boolean),
     );
     this.events2.get(WAHAEvents.GROUP_V2_UPDATE).switch(groupV2Update$);
+
+    // Label Events
+    // First, create streams for the raw label events
+    const labelEditEvents$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.LABEL_EDIT),
+      exclude(isFromFullSync),
+    );
+
+    // Split the raw label edit events into upsert and deleted events
+    const [labelUpsertEvents$, labelDeletedEvents$] = partition(
+      labelEditEvents$,
+      isLabelUpsertEvent,
+    );
+
+    // Convert the events to DTOs
+    const labelUpsert$ = labelUpsertEvents$.pipe(map(eventToLabelDTO));
+
+    const labelDeleted$ = labelDeletedEvents$.pipe(map(eventToLabelDTO));
+
+    this.events2.get(WAHAEvents.LABEL_UPSERT).switch(labelUpsert$);
+    this.events2.get(WAHAEvents.LABEL_DELETED).switch(labelDeleted$);
+
+    //
+    // Polls
+    //
+    const pollVoteEvent$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.POLL_VOTE_EVENT),
+      filter((event: any) => this.jids.include(event?.Info?.Chat)),
+      map(this.toPollVotePayload.bind(this)),
+      filter(Boolean),
+      share(),
+    );
+
+    // Split into successful and failed responses
+    const [pollVoteSuccess$, pollVoteFailed$] = partition(
+      pollVoteEvent$,
+      (payload: PollVotePayload) => !!payload.vote.selectedOptions,
+    );
+
+    this.events2.get(WAHAEvents.POLL_VOTE).switch(pollVoteSuccess$);
+    this.events2.get(WAHAEvents.POLL_VOTE_FAILED).switch(pollVoteFailed$);
+
+    //
+    // Event Message
+    //
+    const eventMessageResponse$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.EVENT_MESSAGE_RESPONSE),
+      filter((event: any) => this.jids.include(event?.Info?.Chat)),
+      map(this.toEventResponsePayload.bind(this)),
+      filter(Boolean),
+    );
+
+    // Split into successful and failed responses
+    const [eventResponseSuccess$, eventResponseFailed$] = partition(
+      eventMessageResponse$,
+      (payload: EventResponsePayload) => !!payload.eventResponse,
+    );
+
+    this.events2.get(WAHAEvents.EVENT_RESPONSE).switch(eventResponseSuccess$);
+    this.events2
+      .get(WAHAEvents.EVENT_RESPONSE_FAILED)
+      .switch(eventResponseFailed$);
+
+    //
+    // Labels
+    //
+    // Handle label association events
+    const labelAssociationEvents$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.LABEL_ASSOCIATION_CHAT),
+      exclude(isFromFullSync),
+    );
+
+    // Split the raw label association events into added and deleted events
+    const [labelChatAddedEvents$, labelChatDeletedEvents$] = partition(
+      labelAssociationEvents$,
+      isLabelChatAddedEvent,
+    );
+
+    // Convert the events to DTOs
+    const labelChatAdded$ = labelChatAddedEvents$.pipe(
+      map(eventToLabelChatAssociationDTO),
+    );
+
+    const labelChatDeleted$ = labelChatDeletedEvents$.pipe(
+      map(eventToLabelChatAssociationDTO),
+    );
+
+    this.events2.get(WAHAEvents.LABEL_CHAT_ADDED).switch(labelChatAdded$);
+    this.events2.get(WAHAEvents.LABEL_CHAT_DELETED).switch(labelChatDeleted$);
   }
 
   async fetchContactProfilePicture(id: string): Promise<string> {
@@ -524,31 +783,115 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
   /**
    * Other methods
    */
+  async generateNewMessageId(): Promise<string> {
+    const response = await promisify(this.client.GenerateNewMessageID)(
+      this.session,
+    );
+    const data = response.toObject();
+    return data.id;
+  }
+
   async sendText(request: MessageTextRequest) {
     const jid = toJID(this.ensureSuffix(request.chatId));
     const message = new messages.MessageRequest({
       jid: jid,
       text: request.text,
       session: this.session,
+      linkPreview: request.linkPreview ?? true,
+      linkPreviewHighQuality: request.linkPreviewHighQuality,
+      replyTo: getMessageIdFromSerialized(request.reply_to),
     });
     const response = await promisify(this.client.SendMessage)(message);
     const data = response.toObject();
     return this.messageResponse(jid, data);
   }
 
-  protected checkStatusRequest(request: StatusRequest) {
-    if (request.contacts && request.contacts?.length > 0) {
-      const msg =
-        "GOWS doesn't accept 'contacts'. Remove the field to send status to all contacts.";
-      throw new UnprocessableEntityException(msg);
+  public async editMessage(
+    chatId: string,
+    messageId: string,
+    request: EditMessageRequest,
+  ) {
+    const jid = toJID(this.ensureSuffix(chatId));
+    const key = parseMessageIdSerialized(messageId, true);
+    const message = new messages.EditMessageRequest({
+      session: this.session,
+      jid: jid,
+      messageId: key.id,
+      text: request.text,
+      linkPreview: request.linkPreview ?? true,
+      linkPreviewHighQuality: request.linkPreviewHighQuality,
+    });
+    const response = await promisify(this.client.EditMessage)(message);
+    const data = response.toObject();
+    return this.messageResponse(jid, data);
+  }
+
+  async sendContactVCard(request: MessageContactVcardRequest) {
+    const jid = toJID(this.ensureSuffix(request.chatId));
+    const contacts = request.contacts.map((el) => ({ vcard: toVcardV3(el) }));
+    const message = new messages.MessageRequest({
+      jid: jid,
+      session: this.session,
+      replyTo: getMessageIdFromSerialized(request.reply_to),
+      contacts: contacts.map((contact) => new messages.vCardContact(contact)),
+    });
+    const response = await promisify(this.client.SendMessage)(message);
+    const data = response.toObject();
+    return this.messageResponse(jid, data);
+  }
+
+  async sendPoll(request: MessagePollRequest) {
+    const jid = toJID(request.chatId);
+    const message = new messages.MessageRequest({
+      jid: jid,
+      session: this.session,
+      replyTo: getMessageIdFromSerialized(request.reply_to),
+      poll: new messages.PollMessage({
+        name: request.poll.name,
+        options: request.poll.options,
+        multipleAnswers: request.poll.multipleAnswers,
+      }),
+    });
+    const response = await promisify(this.client.SendMessage)(message);
+    const data = response.toObject();
+    return this.messageResponse(jid, data);
+  }
+
+  sendPollVote(request: MessagePollVoteRequest) {
+    throw new AvailableInPlusVersion('Poll voting');
+  }
+
+  sendList(request: SendListRequest): Promise<any> {
+    throw new AvailableInPlusVersion();
+  }
+
+  public async deleteMessage(chatId: string, messageId: string) {
+    const jid = toJID(this.ensureSuffix(chatId));
+    const key = parseMessageIdSerialized(messageId);
+    const message = new messages.RevokeMessageRequest({
+      session: this.session,
+      jid: jid,
+      sender: key.participant || '',
+      messageId: key.id,
+    });
+    const response = await promisify(this.client.RevokeMessage)(message);
+    const data = response.toObject();
+    return this.messageResponse(jid, data);
+  }
+
+  protected async prepareJidsForStatus(contacts: string[]) {
+    if (!contacts || contacts.length == 0) {
+      return [];
     }
+    return contacts.map(toJID);
   }
 
   public async sendTextStatus(status: TextStatus) {
-    this.checkStatusRequest(status);
-
+    const participants = await this.prepareJidsForStatus(status.contacts);
     const message = new messages.MessageRequest({
+      id: status.id,
       jid: Jid.BROADCAST,
+      participants: participants,
       text: status.text,
       session: this.session,
       backgroundColor: new messages.OptionalString({
@@ -557,44 +900,76 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       font: new messages.OptionalUInt32({
         value: status.font,
       }),
+      linkPreview: status.linkPreview ?? true,
+      linkPreviewHighQuality: status.linkPreviewHighQuality,
     });
     const response = await promisify(this.client.SendMessage)(message);
     const data = response.toObject();
     return this.messageResponse(Jid.BROADCAST, data);
   }
 
+  public async deleteStatus(request: DeleteStatusRequest) {
+    const participants = await this.prepareJidsForStatus(request.contacts);
+    const key = parseMessageIdSerialized(request.id, true);
+    const message = new messages.RevokeMessageRequest({
+      session: this.session,
+      jid: BROADCAST_ID,
+      sender: '',
+      messageId: key.id,
+      participants: participants,
+    });
+    const response = await promisify(this.client.RevokeMessage)(message);
+    const data = response.toObject();
+    return this.messageResponse(BROADCAST_ID, data);
+  }
+
   protected messageResponse(jid, data) {
+    const message = data.message ? parseJson(data.message) : null;
     const id = buildMessageId({
       ID: data.id,
       IsFromMe: true,
-      IsGroup: isJidGroup(jid) || isJidStatusBroadcast(jid),
+      IsGroup: isJidGroup(jid) || isJidBroadcast(jid),
       Chat: jid,
       Sender: this.me.id,
     });
     return {
       id: id,
-      _data: data,
+      _data: message,
     };
   }
 
   async checkNumberStatus(
     request: CheckNumberStatusQuery,
   ): Promise<WANumberExistResult> {
+    let phone = request.phone.replace(/\+/g, '');
     const req = new messages.CheckPhonesRequest({
       session: this.session,
-      phones: [request.phone],
+      phones: [phone],
     });
     const response = await promisify(this.client.CheckPhones)(req);
     const data = response.toObject();
     const info = data.infos[0];
     return {
-      numberExists: info.registered,
-      chatId: toCusFormat(info.jid),
+      numberExists: info?.registered || false,
+      chatId: toCusFormat(info?.jid || null),
     };
   }
 
-  sendLocation(request: MessageLocationRequest) {
-    throw new Error('Method not implemented.');
+  async sendLocation(request: MessageLocationRequest) {
+    const jid = toJID(this.ensureSuffix(request.chatId));
+    const message = new messages.MessageRequest({
+      jid: jid,
+      session: this.session,
+      replyTo: getMessageIdFromSerialized(request.reply_to),
+      location: new messages.Location({
+        name: request.title,
+        degreesLatitude: request.latitude,
+        degreesLongitude: request.longitude,
+      }),
+    });
+    const response = await promisify(this.client.SendMessage)(message);
+    const data = response.toObject();
+    return this.messageResponse(jid, data);
   }
 
   forwardMessage(request: MessageForwardRequest): Promise<WAMessage> {
@@ -613,20 +988,35 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     throw new AvailableInPlusVersion();
   }
 
+  sendLinkCustomPreview(
+    request: MessageLinkCustomPreviewRequest,
+  ): Promise<any> {
+    throw new AvailableInPlusVersion();
+  }
+
   reply(request: MessageReplyRequest) {
     throw new Error('Method not implemented.');
   }
 
   async sendSeen(request: SendSeenRequest) {
-    const key = parseMessageIdSerialized(request.messageId);
-    const req = new messages.MarkReadRequest({
-      session: this.session,
-      jid: key.remoteJid,
-      messageId: key.id,
-      sender: key.fromMe ? this.me.id : key.participant,
-    });
-    const response = await promisify(this.client.MarkRead)(req);
-    response.toObject();
+    const keys = ExtractMessageKeysForRead(request);
+    if (keys.length === 0) {
+      return;
+    }
+    const receipts = esm.b.aggregateMessageKeysNotFromMe(keys);
+    for (const receipt of receipts) {
+      if (receipt.messageIds.length === 0) {
+        return;
+      }
+      const req = new messages.MarkReadRequest({
+        session: this.session,
+        jid: receipt.jid,
+        messageIds: receipt.messageIds,
+        sender: receipt.participant,
+      });
+      const response = await promisify(this.client.MarkRead)(req);
+      response.toObject();
+    }
     return;
   }
 
@@ -841,11 +1231,64 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       jid: key.remoteJid,
       messageId: key.id,
       reaction: request.reaction,
-      sender: key.fromMe ? this.me.id : key.participant,
+      sender: key.fromMe ? this.me.id : key.participant || key.remoteJid,
     });
     const response = await promisify(this.client.SendReaction)(message);
     const data = response.toObject();
     return this.messageResponse(key.remoteJid, data);
+  }
+
+  async sendEvent(request: EventMessageRequest): Promise<WAMessage> {
+    const jid = toJID(this.ensureSuffix(request.chatId));
+    const event = request.event;
+
+    // Create EventLocation if provided
+    let location = null;
+    if (event.location) {
+      location = new messages.EventLocation({
+        name: event.location.name,
+        // Doesn't work right now
+        degreesLatitude: 0,
+        degreesLongitude: 0,
+      });
+    }
+
+    // Create event payload
+    const eventMessage = new messages.EventMessage({
+      name: event.name,
+      description: event.description,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      location: location,
+      extraGuestsAllowed: event.extraGuestsAllowed,
+    });
+
+    // Create message
+    const message = new messages.MessageRequest({
+      jid: jid,
+      session: this.session,
+      event: eventMessage,
+      replyTo: getMessageIdFromSerialized(request.reply_to),
+    });
+
+    const response = await promisify(this.client.SendMessage)(message);
+    const data = response.toObject();
+    return this.messageResponse(jid, data) as any;
+  }
+
+  async cancelEvent(eventId: string): Promise<WAMessage> {
+    throw new Error('Method not implemented.');
+
+    const key = parseMessageIdSerialized(eventId, false);
+    const jid = key.remoteJid;
+    const request = new messages.CancelEventMessageRequest({
+      session: this.session,
+      jid: jid,
+      messageId: key.id,
+    });
+    const response = await promisify(this.client.CancelEventMessage)(request);
+    const data = response.toObject();
+    return this.messageResponse(jid, data) as any;
   }
 
   public async setPresence(presence: WAHAPresenceStatus, chatId?: string) {
@@ -908,13 +1351,13 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
   }
 
   public async getPresence(chatId: string): Promise<WAHAChatPresences> {
-    const remoteJid = toJID(chatId);
-    if (!(remoteJid in this.presences.keys())) {
-      await this.subscribePresence(remoteJid);
+    const jid = toJID(chatId);
+    await this.subscribePresence(jid);
+    if (!(jid in this.presences.keys())) {
       await sleep(1000);
     }
-    const result = this.presences.get(remoteJid) || [];
-    return this.toWahaPresences(remoteJid, result);
+    const result = this.presences.get(jid) || [];
+    return this.toWahaPresences(jid, result);
   }
 
   async subscribePresence(chatId: string) {
@@ -1002,11 +1445,11 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       (newsletter.role?.toUpperCase() as ChannelRole) || ChannelRole.GUEST;
     let picture = newsletter.picture;
     if (picture.startsWith('/')) {
-      picture = getUrlFromDirectPath(picture);
+      picture = esm.b.getUrlFromDirectPath(picture);
     }
     let preview = newsletter.preview;
     if (preview.startsWith('/')) {
-      preview = getUrlFromDirectPath(preview);
+      preview = esm.b.getUrlFromDirectPath(preview);
     }
     return {
       id: newsletter.id,
@@ -1109,6 +1552,18 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
    * Contacts methods
    */
 
+  public async upsertContact(chatId: string, body: ContactUpdateBody) {
+    const jid = toJID(chatId);
+    const request = new messages.UpdateContactRequest({
+      session: this.session,
+      jid: jid,
+      firstName: body.firstName || '',
+      lastName: body.lastName || '',
+    });
+    const response = await promisify(this.client.UpdateContact)(request);
+    response.toObject();
+  }
+
   protected toWAContact(contact) {
     return {
       id: toCusFormat(contact.Jid),
@@ -1123,7 +1578,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       session: this.session,
       id: jid,
     });
-    const response = await promisify(this.client.GetContact)(request);
+    const response = await promisify(this.client.GetContactById)(request);
     const data = parseJson(response);
     return this.toWAContact(data);
   }
@@ -1149,10 +1604,67 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
   }
 
   /**
+   * Lid to Phone Number methods
+   */
+  public async getAllLids(
+    pagination: PaginationParams,
+  ): Promise<Array<LidToPhoneNumber>> {
+    const request = new messages.GetLidsRequest({
+      session: this.session,
+    });
+    const response = await promisify(this.client.GetAllLids)(request);
+    const data = parseJsonList(response);
+
+    const lids = data.map((item) => ({
+      lid: item.lid,
+      pn: toCusFormat(item.pn),
+    }));
+
+    // Use in-memory pagination
+    const paginator = new PaginatorInMemory(pagination);
+    return paginator.apply(lids);
+  }
+
+  public async getLidsCount(): Promise<number> {
+    const response = await promisify(this.client.GetLidsCount)(this.session);
+    return response?.value;
+  }
+
+  public async findPNByLid(lid: string): Promise<LidToPhoneNumber> {
+    const request = new messages.EntityByIdRequest({
+      session: this.session,
+      id: lid,
+    });
+    const response = await promisify(this.client.FindPNByLid)(request);
+    const phoneNumber = response?.value;
+    return {
+      lid: lid,
+      pn: phoneNumber ? toCusFormat(phoneNumber) : null,
+    };
+  }
+
+  public async findLIDByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<LidToPhoneNumber> {
+    const pn = toJID(phoneNumber);
+    const request = new messages.EntityByIdRequest({
+      session: this.session,
+      id: pn,
+    });
+    const response = await promisify(this.client.FindLIDByPhoneNumber)(request);
+    const lid = response.value;
+    return {
+      lid: lid || null,
+      pn: toCusFormat(pn),
+    };
+  }
+
+  /**
    * Chats methods
    */
   public async getChatsOverview(
     pagination: PaginationParams,
+    filter?: OverviewFilter,
   ): Promise<ChatSummary[]> {
     if (!pagination.sortBy) {
       pagination.sortBy = 'timestamp';
@@ -1160,7 +1672,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     if (!pagination.sortOrder) {
       pagination.sortOrder = SortOrder.DESC;
     }
-    const chats = await this.getChats(pagination);
+    const chats = await this.getChats(pagination, filter);
 
     const promises = [];
     for (const chat of chats) {
@@ -1199,9 +1711,16 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     };
   }
 
-  public async getChats(pagination: PaginationParams) {
+  public async getChats(
+    pagination: PaginationParams,
+    filter: OverviewFilter | null = null,
+  ) {
     if (pagination.sortBy === ChatSortField.CONVERSATION_TIMESTAMP) {
       pagination.sortBy = 'timestamp';
+    }
+    let jids = [];
+    if (filter?.ids && filter.ids.length > 0) {
+      jids = filter.ids.map((id) => toJID(id));
     }
     const request = new messages.GetChatsRequest({
       session: this.session,
@@ -1215,6 +1734,9 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
           pagination.sortOrder === SortOrder.DESC
             ? messages.SortBy.Order.DESC
             : messages.SortBy.Order.ASC,
+      }),
+      filter: new messages.ChatFilter({
+        jids: jids,
       }),
     });
     const response = await promisify(this.client.GetChats)(request);
@@ -1237,6 +1759,8 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       });
     }
 
+    const status =
+      filter['filter.ack'] != null ? AckToStatus(filter['filter.ack']) : null;
     const request = new messages.GetMessagesRequest({
       session: this.session,
       filters: new messages.MessageFilters({
@@ -1250,6 +1774,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
           messages.OptionalUInt64,
         ),
         fromMe: optional(filter['filter.fromMe'], messages.OptionalBool),
+        status: optional(status, messages.OptionalUInt32),
       }),
       pagination: new messages.Pagination({
         limit: query.limit,
@@ -1267,6 +1792,13 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     return result;
   }
 
+  public readChatMessages(
+    chatId: string,
+    request: ReadChatMessagesQuery,
+  ): Promise<ReadChatMessagesResponse> {
+    return this.readChatMessagesWSImpl(chatId, request);
+  }
+
   public async getChatMessage(
     chatId: string,
     messageId: string,
@@ -1282,62 +1814,223 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     return this.processIncomingMessage(msg, query.downloadMedia);
   }
 
+  /**
+   * Labels methods
+   */
+
+  public async getLabels(): Promise<Label[]> {
+    const request = new messages.GetLabelsRequest({
+      session: this.session,
+    });
+    const response = await promisify(this.client.GetLabels)(request);
+    const labels = parseJsonList(response);
+    return labels.map(this.toLabel);
+  }
+
+  public async createLabel(labelDto: LabelDTO): Promise<Label> {
+    const labels = await this.getLabels();
+    const highestLabelId = lodash.max(
+      labels.map((label) => parseInt(label.id)),
+    );
+    const labelId = highestLabelId ? highestLabelId + 1 : 1;
+    const label: Label = {
+      id: labelId.toString(),
+      name: labelDto.name,
+      color: labelDto.color,
+      colorHex: Label.toHex(labelDto.color),
+    };
+    return this.updateLabel(label);
+  }
+
+  protected toLabel(label: any): Label {
+    const color = label.color;
+    return {
+      id: label.id,
+      name: label.name,
+      color: color,
+      colorHex: Label.toHex(color),
+    };
+  }
+
+  public async updateLabel(label: Label): Promise<Label> {
+    const request = new messages.UpsertLabelRequest({
+      session: this.session,
+      label: new messages.Label({
+        id: label.id,
+        name: label.name,
+        color: label.color,
+      }),
+    });
+    await promisify(this.client.UpsertLabel)(request);
+    return label;
+  }
+
+  public async deleteLabel(label: Label): Promise<void> {
+    const request = new messages.DeleteLabelRequest({
+      session: this.session,
+      label: new messages.Label({
+        id: label.id,
+        name: label.name,
+        color: label.color,
+      }),
+    });
+    await promisify(this.client.DeleteLabel)(request);
+  }
+
+  public async getChatsByLabelId(labelId: string) {
+    const request = new messages.EntityByIdRequest({
+      session: this.session,
+      id: labelId,
+    });
+    const response = await promisify(this.client.GetChatsByLabelId)(request);
+    const ids = parseJsonList(response);
+    return ids.map((jid) => {
+      return {
+        id: toCusFormat(jid),
+      };
+    });
+  }
+
+  public async getChatLabels(chatId: string): Promise<Label[]> {
+    const jid = toJID(chatId);
+    const request = new messages.EntityByIdRequest({
+      session: this.session,
+      id: jid,
+    });
+    const response = await promisify(this.client.GetLabelsByJid)(request);
+    const labels = parseJsonList(response);
+    return labels.map(this.toLabel);
+  }
+
+  public async chatsUnreadChat(chatId: string): Promise<any> {
+    const jid = toJID(this.ensureSuffix(chatId));
+    const request = new messages.ChatUnreadRequest({
+      session: this.session,
+      jid: jid,
+      read: false,
+    });
+    await promisify(this.client.MarkChatUnread)(request);
+    return { success: true };
+  }
+
+  public async putLabelsToChat(chatId: string, labels: LabelID[]) {
+    const jid = toJID(chatId);
+    const labelsIds = labels.map((label) => label.id);
+    const currentLabels = await this.getChatLabels(jid);
+    const currentLabelsIds = currentLabels.map((label) => label.id);
+    const addLabelsIds = lodash.difference(labelsIds, currentLabelsIds);
+    const removeLabelsIds = lodash.difference(currentLabelsIds, labelsIds);
+    for (const labelId of addLabelsIds) {
+      const request = new messages.ChatLabelRequest({
+        session: this.session,
+        labelId: labelId,
+        chatId: jid,
+      });
+      await promisify(this.client.AddChatLabel)(request);
+    }
+    for (const labelId of removeLabelsIds) {
+      const request = new messages.ChatLabelRequest({
+        session: this.session,
+        labelId: labelId,
+        chatId: jid,
+      });
+      await promisify(this.client.RemoveChatLabel)(request);
+    }
+  }
+
   //
   // END - Methods for API
   //
 
-  protected async processIncomingMessage(message, downloadMedia = true) {
+  protected shouldProcessIncomingMessage(message): boolean {
     // if there is no text or media message
     if (!message) return;
     if (!message.Message) return;
-    // Ignore reactions, we have dedicated handler for that
-    if (message.Message.reactionMessage) return;
-    // Ignore poll votes, we have dedicated handler for that
-    if (message.Message.pollUpdateMessage) return;
-    // Ignore protocol messages
-    if (message.Message.protocolMessage) return;
 
-    if (downloadMedia) {
-      try {
-        message = await this.downloadMedia(message);
-      } catch (e) {
-        this.logger.error('Failed when tried to download media for a message');
-        this.logger.error(e, e.stack);
-      }
+    const content = esm.b.normalizeMessageContent(message.Message);
+    // Ignore reactions, we have a dedicated handler for that
+    if (content.reactionMessage) return;
+    // Ignore poll votes, we have a dedicated handler for that
+    if (content.pollUpdateMessage) return;
+    // Ignore event response, we have a dedicated handler for that
+    if (content.encEventResponseMessage) return;
+    // Ignore protocol messages
+    if (content.protocolMessage) return;
+
+    const contentType = esm.b.getContentType(content);
+    // Ignore device sent message
+    if (contentType == 'deviceSentMessage') {
+      return;
     }
-    return this.toWAMessage(message);
+    const hasSomeContent = !!contentType;
+    if (!hasSomeContent) {
+      // Ignore key distribution messages
+      if (message?.Message?.senderKeyDistributionMessage) return;
+    }
+    return true;
   }
 
-  protected downloadMedia(message) {
+  protected async processIncomingMessage(message, downloadMedia = true) {
+    // Filter
+    if (!this.shouldProcessIncomingMessage(message)) {
+      return null;
+    }
+    // Convert
+    const wamessage = this.toWAMessage(message);
+    // Media
+    if (downloadMedia) {
+      const media = await this.downloadMediaSafe(message);
+      wamessage.media = media;
+    }
+    return wamessage;
+  }
+
+  protected async downloadMediaSafe(message) {
+    try {
+      return await this.downloadMedia(message);
+    } catch (e) {
+      this.logger.error('Failed when tried to download media for a message');
+      this.logger.error(e, e.stack);
+      return null;
+    }
+  }
+
+  protected async downloadMedia(message) {
     const processor = new GOWSEngineMediaProcessor(this);
-    return this.mediaManager.processMedia(processor, message, this.name);
+    const media = await this.mediaManager.processMedia(
+      processor,
+      message,
+      this.name,
+    );
+    return media;
   }
 
   protected toWAMessage(message): WAMessage {
     const fromToParticipant = getFromToParticipant(message);
     const id = buildMessageId(message);
-    const body = this.extractBody(message.Message);
-    const replyTo = null; // TODO: this.extractReplyTo(message.message);
-
-    let ack;
-    if (message.Status) {
-      ack = statusToAck(message.Status);
-    } else {
-      ack = message.Info.IsFromMe ? WAMessageAck.SERVER : WAMessageAck.DEVICE;
+    const body = extractBody(message.Message);
+    const replyTo = this.extractReplyTo(message.Message);
+    let ack = statusToAck(message.Status);
+    if (ack === WAMessageAck.ERROR) {
+      // GOWS error because of how golang treats it as null
+      // It'll be UNKNOWN instead of ERROR
+      ack = null;
     }
     const mediaContent = extractMediaContent(message.Message);
+    const source = this.getSourceDeviceByMsg(message);
 
     return {
       id: id,
       timestamp: parseTimestampToSeconds(message.Info.Timestamp),
       from: toCusFormat(fromToParticipant.from),
       fromMe: message.Info.IsFromMe,
+      source: source,
       body: body,
       to: toCusFormat(fromToParticipant.to),
       participant: toCusFormat(fromToParticipant.participant),
       // Media
       hasMedia: Boolean(mediaContent),
-      media: message.media || null,
+      media: null,
       mediaUrl: message.media?.url,
       // @ts-ignore
       ack: ack,
@@ -1348,19 +2041,98 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     };
   }
 
-  private extractBody(message) {
-    if (!message) {
+  private toPollVotePayload(event: any): PollVotePayload {
+    // Extract event creation message key from the message
+    const creationKey = event.Message?.pollUpdateMessage.pollCreationMessageKey;
+    const pollKey: proto.IMessageKey = {
+      remoteJid: creationKey.remoteJID,
+      fromMe: creationKey.fromMe,
+      id: creationKey.ID,
+      participant: creationKey.participant,
+    };
+    const voteKey: proto.IMessageKey = {
+      id: event.Info.ID,
+      remoteJid: event.Info.Chat,
+      participant: event.IsGroup ? event.Info.Sender : null,
+      fromMe: event.IsFromMe,
+    };
+    const key = fixPollCreationKey(voteKey, pollKey, this.me);
+    const fromToParticipant = getFromToParticipant(event);
+    const pollCreationKey = getDestination(key);
+    return {
+      poll: pollCreationKey,
+      vote: {
+        id: buildMessageId(event),
+        from: toCusFormat(fromToParticipant.from),
+        fromMe: event.Info.IsFromMe,
+        to: toCusFormat(fromToParticipant.to),
+        participant: toCusFormat(fromToParticipant.participant),
+        selectedOptions: event.Votes,
+        timestamp: event.Message.pollUpdateMessage.senderTimestampMS,
+      },
+      _data: event,
+    };
+  }
+
+  private toEventResponsePayload(event: any): EventResponsePayload {
+    const msg = this.toWAMessage(event);
+    let response: EventResponse | null = null;
+    if (event.EventResponse) {
+      response = {
+        response: ParseEventResponseType(event.EventResponse.response),
+        timestampMs: event.EventResponse.timestampMS,
+        extraGuestCount: event.EventResponse.extraGuestCount || 0,
+      };
+    }
+
+    // Extract event creation message key from the message
+    const message = event.Message || event.message;
+    const eventCreationMessageKey =
+      message?.encEventResponseMessage?.eventCreationMessageKey;
+    const key: WAMessageKey = {
+      remoteJid: eventCreationMessageKey.remoteJID,
+      fromMe: eventCreationMessageKey.fromMe,
+      id: eventCreationMessageKey.ID,
+      participant: eventCreationMessageKey.participant,
+    };
+    const eventCreationKey = getDestination(key);
+
+    return {
+      ...msg,
+      eventCreationKey: eventCreationKey,
+      eventResponse: response,
+      _data: event,
+    };
+  }
+
+  private getSourceDeviceByMsg(message): MessageSource {
+    if (!message.Info.IsFromMe) {
+      return MessageSource.APP;
+    }
+    // @ts-ignore
+    const myJid = this.me.jid;
+    const myDeviceId = extractDeviceId(myJid);
+    const sentDeviceId = extractDeviceId(message.Info.Sender);
+    return sentDeviceId === myDeviceId ? MessageSource.API : MessageSource.APP;
+  }
+
+  protected extractReplyTo(message): ReplyToMessage | null {
+    const msgType = esm.b.getContentType(message);
+    const contextInfo = message[msgType]?.contextInfo;
+    if (!contextInfo) {
       return null;
     }
-    let body = message.Conversation || message.conversation;
-    if (!body) {
-      body = message.extendedTextMessage?.text;
+    const quotedMessage = contextInfo.quotedMessage;
+    if (!quotedMessage) {
+      return null;
     }
-    if (!body) {
-      const media = extractMediaContent(message);
-      body = media?.caption;
-    }
-    return body;
+    const body = extractBody(quotedMessage);
+    return {
+      id: contextInfo.stanzaID,
+      participant: toCusFormat(contextInfo.participant),
+      body: body,
+      _data: quotedMessage,
+    };
   }
 
   public async getEngineInfo() {
@@ -1454,11 +2226,13 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     const fromToParticipant = getFromToParticipant(message);
     const reactionMessage = message.Message.reactionMessage;
     const messageId = this.buildMessageIdFromKey(reactionMessage.key);
+    const source = this.getSourceDeviceByMsg(message);
     const reaction: WAMessageReaction = {
       id: id,
       timestamp: parseTimestampToSeconds(message.Info.Timestamp),
       from: toCusFormat(fromToParticipant.from),
       fromMe: message.Info.IsFromMe,
+      source: source,
       to: toCusFormat(fromToParticipant.to),
       participant: toCusFormat(fromToParticipant.participant),
       reaction: {
@@ -1508,6 +2282,8 @@ export class GOWSEngineMediaProcessor implements IMediaEngineProcessor<any> {
       // double "session" it's not a mistake here
       session: this.session.session,
       message: data,
+      jid: message.Info.Chat,
+      messageId: message.Info.ID,
     });
     const response = await promisify(this.session.client.DownloadMedia)(
       request,
@@ -1532,6 +2308,7 @@ function getFromToParticipant(message) {
     from: info.Chat,
     to: info.IsGroup ? info.Sender : null,
     participant: info.IsGroup ? info.Sender : null,
+    fromMe: info.IsFromMe,
   };
 }
 
@@ -1575,4 +2352,72 @@ function parseTimestampToSeconds(timestamp: string): number {
     return ms;
   }
   return Math.floor(ms / 1000);
+}
+
+export function getMessageIdFromSerialized(serialized: string): string | null {
+  if (!serialized) {
+    return null;
+  }
+  const key = parseMessageIdSerialized(serialized, true);
+  return key.id;
+}
+
+/**
+ * Poll creation keys are a bit tricky — they contain the data that the receiver uses.
+ * When recipients respond to a poll, they send back THEIR `message.id`.
+ *
+ * For example,
+ * - If we send a poll and in our system the ID is "true_{chatId}_{ID}",
+ * - The corresponding `pollCreationKey` will be "false_{ourId}_{ID}" —
+ *   essentially the opposite of our message ID.
+ *
+ * The function inspects the key and,
+ * if it originates from us (based on `remoteJid` or `participant`),
+ * adjusts it to the correct value.
+ */
+
+function fixPollCreationKey(
+  vote: proto.IMessageKey,
+  poll: proto.IMessageKey,
+  me: MeInfo,
+): proto.IMessageKey {
+  // If the vote is from me, the pollCreationKey is already in my perspective
+  if (vote?.fromMe) {
+    return poll;
+  }
+  if (!me) {
+    return poll;
+  }
+  if (!poll) {
+    return poll;
+  }
+
+  // DM - my poll, not my vote
+  if (
+    toCusFormat(poll.remoteJid) == toCusFormat(me.id) ||
+    toCusFormat(poll.remoteJid) == toCusFormat(me.lid)
+  ) {
+    return {
+      id: poll.id,
+      remoteJid: vote.remoteJid,
+      fromMe: true,
+      participant: undefined,
+    };
+  }
+
+  // Many Participants Chat - my poll, not my vote
+  if (
+    toCusFormat(poll.participant) == toCusFormat(me.id) ||
+    toCusFormat(poll.participant) == toCusFormat(me.lid)
+  ) {
+    return {
+      id: poll.id,
+      remoteJid: vote.remoteJid,
+      fromMe: true,
+      participant: me.id,
+    };
+  }
+
+  // Other
+  return poll;
 }

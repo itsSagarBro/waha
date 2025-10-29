@@ -1,9 +1,9 @@
 import { Field, Schema } from '@waha/core/storage/Schema';
 import { IJsonQuery } from '@waha/core/storage/sql/IJsonQuery';
-import { ISQLEngine } from '@waha/core/storage/sql/ISQLEngine';
 import { PaginationParams } from '@waha/structures/pagination.dto';
 import { KnexPaginator } from '@waha/utils/Paginator';
-import Knex from 'knex';
+import { Knex } from 'knex';
+import * as lodash from 'lodash';
 
 export type Migration = string;
 
@@ -25,10 +25,7 @@ export class SqlKVRepository<Entity> {
     return [];
   }
 
-  constructor(
-    private engine: ISQLEngine,
-    protected knex: Knex.Knex,
-  ) {}
+  constructor(protected knex: Knex) {}
 
   get columns(): Field[] {
     return this.schema.columns;
@@ -48,7 +45,7 @@ export class SqlKVRepository<Entity> {
 
   protected async applyMigrations() {
     for (const migration of this.migrations) {
-      await this.engine.exec(migration);
+      await this.knex.raw(migration);
     }
   }
 
@@ -78,18 +75,25 @@ export class SqlKVRepository<Entity> {
     }
   }
 
-  private async upsertBatch(entities: Entity[]): Promise<void> {
-    const data = entities.map((entity) => this.dump(entity));
+  protected async upsertBatch(entities: Entity[]): Promise<void> {
+    const all = entities.map((entity) => this.dump(entity));
+    // make it unique by .id
+    const data = lodash.uniqBy(all, (d: any) => d.id);
+    if (data.length != all.length) {
+      console.warn(
+        `WARNING - Duplicated entities for upsert batch: all=${all.length}, data=${data.length}`,
+      );
+    }
     const columns = this.columns.map((c) => `"${c.fieldName}"`);
     const values = data.map((d) => Object.values(d)).flat();
     const sql = `INSERT INTO "${this.table}" (${columns.join(', ')})
                  VALUES ${data
                    .map(() => `(${columns.map(() => '?').join(', ')})`)
-                   .join(', ')}
-                 ON CONFLICT(id) DO UPDATE
-                     SET ${columns
-                       .map((column) => `${column} = excluded.${column}`)
-                       .join(', ')}`;
+                   .join(', ')} ON CONFLICT(id) DO
+    UPDATE
+      SET ${columns
+        .map((column) => `${column} = excluded.${column}`)
+        .join(', ')}`;
     try {
       await this.raw(sql, values);
     } catch (err) {
@@ -109,8 +113,43 @@ export class SqlKVRepository<Entity> {
     return this.all(query);
   }
 
-  getAllByIds(ids: string[]) {
-    return this.all(this.select().whereIn('id', ids));
+  async getCount(): Promise<number> {
+    const query = this.select().count({ count: 'id' });
+    const row = await query.first();
+    if (!row) {
+      return 0;
+    }
+    return parseInt(row.count, 10);
+  }
+
+  async getAllByIds(ids: string[]) {
+    const entitiesMap = await this.getEntitiesByIds(ids);
+    return Array.from(entitiesMap.values()).filter(
+      (entity) => entity !== null,
+    ) as Entity[];
+  }
+
+  async getEntitiesByIds(ids: string[]): Promise<Map<string, Entity | null>> {
+    if (ids.length === 0) {
+      return new Map();
+    }
+
+    const rows = await this.select().whereIn('id', ids);
+    const entitiesMap = new Map<string, Entity | null>();
+
+    // Initialize a map with null values for all requested IDs
+    for (const id of ids) {
+      entitiesMap.set(id, null);
+    }
+
+    // Fill in the map with found entities
+    for (const row of rows) {
+      if (row && row.id) {
+        entitiesMap.set(row.id, this.parse(row));
+      }
+    }
+
+    return entitiesMap;
   }
 
   getById(id: string): Promise<Entity | null> {
@@ -148,15 +187,15 @@ export class SqlKVRepository<Entity> {
    * SQL Implementation details
    */
   public async raw(sql: string, bindings: any[]): Promise<void> {
-    await this.engine.raw(sql, bindings);
+    await this.knex.raw(sql, bindings);
   }
 
   protected async run(query: Knex.QueryBuilder): Promise<void> {
-    await this.engine.run(query);
+    await query;
   }
 
   protected async get(query: Knex.QueryBuilder): Promise<Entity | null> {
-    const row = await this.engine.get(query);
+    const row = await query.first();
     if (!row) {
       return null;
     }
@@ -164,7 +203,7 @@ export class SqlKVRepository<Entity> {
   }
 
   public async all(query: Knex.QueryBuilder): Promise<Entity[]> {
-    const rows = await this.engine.all(query);
+    const rows = await query;
     return rows.map((row) => this.parse(row));
   }
 
@@ -187,8 +226,8 @@ export class SqlKVRepository<Entity> {
   /**
    * JSON helpers
    */
-  public filterJson(field: string, key: string): string {
-    return this.jsonQuery.filter(field, key);
+  public filterJson(field: string, key: string, value: any): [string, string] {
+    return this.jsonQuery.filter(field, key, value);
   }
 
   protected stringify(data: any): string {

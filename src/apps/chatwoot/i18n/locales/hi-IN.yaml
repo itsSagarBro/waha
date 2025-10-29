@@ -1,0 +1,382 @@
+# Hindi translations for ChatWoot integration
+locale.name: '🇮🇳 हिंदी (Hindi)'
+
+# बेस लोकैल कोड - यह एक मान्य BCP 47 लोकैल होना चाहिए
+# https://en.wikipedia.org/wiki/IETF_language_tag
+# WAHA इसे संख्याएँ, मुद्रा और दिनांक/समय प्रदर्शित करने के लिए उपयोग करता है।
+locale.base: 'hi-IN'
+
+app.inbox.contact.name: 'व्हाट्सएप इंटीग्रेशन'
+app.inbox.contact.avatar.url: 'https://raw.githubusercontent.com/devlikeapro/waha/core/logo.png'
+
+# date.toLocaleString की "options"
+# https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+datetime:
+  locales: hi-IN
+  day: 2-digit
+  month: 2-digit
+  year: numeric
+  hour: 2-digit
+  minute: 2-digit
+  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
+  timeZoneName: shortGeneric
+  # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  # timeZone: 'Asia/Kolkata'
+
+job.report.error: |-
+  ⚠️ **{{{header}}}**
+  {{#attempts.nextDelay}}
+  🔄 {{attempts.nextDelay}} सेकंड में पुनः प्रयास कर रहा है...
+  {{/attempts.nextDelay}}
+  {{^attempts.nextDelay}}
+  ❌ कोई और प्रयास नहीं बचा है। कृपया बाद में पुनः प्रयास करें।
+  {{/attempts.nextDelay}}
+  प्रयास: {{{attempts.current}}} / {{{attempts.max}}}
+  विवरण: [{{{details.text}}}]({{{details.url}}})
+  {{#error}}
+  ```
+
+  {{{error}}}
+  ```
+  {{/error}}
+
+job.report.succeeded: |-
+  ✅ **सफल**
+  प्रयास: {{{attempts.current}}} / {{{attempts.max}}}
+  विवरण: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.message.sending.error: व्हाट्सएप पर संदेश नहीं भेज सका।
+whatsapp.message.receiving.error: व्हाट्सएप से संदेश प्राप्त नहीं कर सका
+whatsapp.message.removing.error: व्हाट्सएप से संदेश हटा नहीं सका
+job.scheduled.error.header: निर्धारित कार्य निष्पादित करने में विफल रहा
+
+message.from.whatsapp: |-
+  {{{text}}}
+
+  📱 *व्हाट्सएप से भेजा गया*
+
+message.from.api: |-
+  {{{text}}}
+
+  📱 *API के माध्यम से भेजा गया*
+
+message.removed.in.whatsapp: |-
+  ❌ *यह संदेश व्हाट्सएप में हटा दिया गया था*
+
+message.edited.in.whatsapp: |-
+  {{{text}}}
+
+  ✏️ *व्हाट्सएप में संपादित*
+
+whatsapp.group.message: |-
+  👥 *{{{participant}}}*
+
+  {{{text}}}
+
+whatsapp.reaction.added: |-
+  *प्रतिक्रिया दी* {{{emoji}}}
+
+whatsapp.reaction.removed: |-
+  *प्रतिक्रिया हटा दी गई*
+
+whatsapp.contact.group.suffix: 'समूह'
+whatsapp.contact.channel.suffix: 'चैनल'
+whatsapp.contact.broadcast.suffix: 'प्रसारण सूची'
+# Aka Stories
+whatsapp.contact.status.name: 'स्थिति'
+
+app.connected.message: |-
+  🔗 **कनेक्टेड: व्हाट्सएप सत्र से ChatWoot इनबॉक्स**
+
+  ✅ व्हाट्सएप सत्र **{{{name}}}** सफलतापूर्वक इस ChatWoot इनबॉक्स से जुड़ गया है।
+
+  यह इनबॉक्स अब आपके **व्हाट्सएप खाते** से जुड़ा हुआ है। आप यहां से सीधे संदेश भेज और प्राप्त कर सकते हैं — बिल्कुल व्हाट्सएप का उपयोग करने जैसा, लेकिन ChatWoot के अंदर।
+
+  आप इस इनबॉक्स से जुड़े व्हाट्सएप सत्र को भी प्रबंधित कर सकते हैं। उपलब्ध कार्यों को देखने के लिए, इस चैट पर **help** भेजें।
+
+  📋 आप जो सामान्य कार्य कर सकते हैं:
+  - जांचें कि क्या व्हाट्सएप सत्र सक्रिय है
+  - व्हाट्सएप सत्र को पुनरारंभ या बंद करें
+  - लॉग आउट करें और नए QR कोड को स्कैन करके फिर से कनेक्ट करें
+
+  यदि सब कुछ काम कर रहा है, तो आप स्वतंत्र रूप से चैट कर पाएंगे। यदि आप चेतावनियां देखते हैं, तो आपको अपने व्हाट्सएप खाते को फिर से कनेक्ट करने की आवश्यकता हो सकती है।
+
+  चलिए शुरू करते हैं! 🚀
+
+app.disconnected.message: |-
+  🔌 **डिस्कनेक्टेड: व्हाट्सएप सत्र से ChatWoot इनबॉक्स**
+
+  ❌ व्हाट्सएप सत्र **{{{name}}}** इस ChatWoot इनबॉक्स से डिस्कनेक्ट हो गया है।
+
+  आप अब व्हाट्सएप से संदेश भेज या प्राप्त नहीं कर पाएंगे।
+
+  फिर से कनेक्ट करने के लिए, कृपया अपने प्रशासक से संपर्क करें।
+
+app.updated.message: |-
+  🔄 **अपडेटेड: व्हाट्सएप सत्र सेटिंग्स**
+
+  ✅ व्हाट्सएप सत्र **{{{name}}}** की सेटिंग्स अपडेट की गई हैं।
+
+app.commands.list: |-
+  आप निम्न कमांड में से एक भेजकर **व्हाट्सएप इंटीग्रेशन** का प्रबंधन कर सकते हैं:
+
+  🖥️ **सेशन**:
+  1. **status** - वर्तमान सत्र स्थिति प्राप्त करें।
+  2. **restart** - सत्र को पुनरारंभ करें - यह आपके व्हाट्सएप खाते को फिर से कनेक्ट करने का प्रयास करेगा।
+  3. **start** - सत्र शुरू करें।
+  4. **stop** - सत्र बंद करें।
+  5. **logout** - सत्र से लॉग आउट करें, ताकि आप QR कोड स्कैन कर सकें और सत्र को मरम्मत कर सकें।
+  6. **qr** - सत्र के लिए QR कोड प्राप्त करें।
+  7. **screenshot** - सत्र का स्क्रीनशॉट प्राप्त करें (केवल **WEBJS** इंजन में उपलब्ध)।
+  8. **help** - उपलब्ध कमांड।
+
+  {{#commands.server}}
+  ⚙️ सर्वर:
+  - **server status** - सर्वर संस्करण और स्थिति जानकारी प्राप्त करें।
+  - **server reboot** - सर्वर को सुचारू रूप से पुनरारंभ करें।
+  - **server reboot force** - सर्वर को जबरदस्ती पुनरारंभ करें।
+  {{/commands.server}}
+
+  इस वार्तालाप में **कमांड** (केस इनसेंसिटिव) या **कमांड नंबर** भेजें।
+
+app.commands.server.disabled: ⛔ **सर्वर कमांड अक्षम हैं**।
+
+  कृपया अपने व्यवस्थापक से संपर्क करें।
+
+  उपलब्ध कमांड की सूची पाने के लिए **help** भेजें।
+
+app.help.reminder: |-
+  उपलब्ध कमांड की सूची प्राप्त करने के लिए **help** भेजें।
+
+app.session.status.change: |-
+  {{{emoji}}} "{{{session}}}" सत्र {{{status}}} स्थिति में बदल गया
+
+app.session.current.status: |-
+  {{{emoji}}} **{{{session}}}** सत्र की स्थिति **{{{status}}}** में है
+  **व्हाट्सएप खाता:**
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.working: |-
+  ✅ यह ChatWoot इनबॉक्स **व्हाट्सएप खाते** से जुड़ा हुआ है और संदेश भेजने और प्राप्त करने के लिए तैयार है!
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.error: |-
+  ⚠️ **यह ChatWoot इनबॉक्स व्हाट्सएप खाते से जुड़ा हुआ है लेकिन संदेश भेजने और प्राप्त करने के लिए तैयार नहीं है!**
+
+  कृपया सत्र की स्थिति जांचें और इसे पुनरारंभ करने का प्रयास करें या लॉग आउट करें और QR कोड फिर से स्कैन करें।
+
+app.session.scan.qr.code: |-
+  ⚠️ **इस ChatWoot इनबॉक्स के साथ व्हाट्सएप खाता जोड़ने के लिए अपने फोन पर QR कोड स्कैन करें!**
+
+app.server.version.and.status: |-
+  **संस्करण:**
+  ```
+  {{{version}}}
+  ```
+
+  **स्थिति:**
+  ```
+  {{{status}}}
+  ```
+
+app.server.reboot: |-
+  सर्वर सुचारू रूप से पुनरारंभ हो रहा है...
+
+app.server.reboot.force: |-
+  सर्वर जबरदस्ती पुनरारंभ हो रहा है...
+
+app.logout.success: |-
+  ✅ खाता सफलतापूर्वक अनधिकृत किया गया!
+
+waha.new.version.available: |-
+  🔄 **नया संस्करण उपलब्ध!**
+
+  वर्तमान संस्करण: **{{{currentVersion}}}**
+  नया संस्करण: **{{{newVersion}}}**
+
+  👉 [**🆕 चेंजलॉग**]({{{changelogUrl}}}) में क्या नया है देखें
+
+waha.core.version.used: |-
+  ❤️ **WAHA का समर्थन करें!**
+
+  आप मुफ्त **WAHA Core** संस्करण का उपयोग कर रहे हैं। यदि आपको यह प्रोजेक्ट उपयोगी लगता है, तो कृपया इसके विकास का समर्थन करने पर विचार करें।
+
+  आपका समर्थन ही एकमात्र तरीका है जिससे हम अपडेट, फिक्स और नई सुविधाओं पर काम करना जारी रख सकते हैं।
+
+  [**🎁 हमें समर्थन दें**]({{{supportUrl}}})
+
+chatwoot.to.whatsapp.message.text: |-
+  {{{ content }}}
+
+chatwoot.to.whatsapp.message.media.caption: |-
+  {{#singleAttachment}}
+  {{#content}}
+  {{{ content }}}
+  {{/content}}
+  {{/singleAttachment}}
+
+whatsapp.to.chatwoot.message: |-
+  {{{payload.body}}}
+
+whatsapp.to.chatwoot.message.contacts: |-
+  👤 **साझा संपर्क**
+
+  {{#contacts}}
+  🪪 नाम: **{{fullName}}**
+  {{#phoneNumbers}}
+  - 📞 फ़ोन: **{{.}}**
+  {{/phoneNumbers}}
+
+  {{/contacts}}
+
+whatsapp.to.chatwoot.message.location: |-
+  {{#message}}
+  {{#locationMessage}}
+  📍 **साझा स्थान**
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **पता:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **वेबसाइट:** {{url}}
+  {{/url}}
+
+  🔗 **मानचित्र पर देखें:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/locationMessage}}
+
+  {{#liveLocationMessage}}
+  📍📡 **लाइव लोकेशन साझा की जा रही है**
+  रीयल-टाइम अपडेट देखने के लिए **WhatsApp** खोलें।
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **पता:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **वेबसाइट:** {{url}}
+  {{/url}}
+
+  🔗 **मानचित्र पर देखें:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/liveLocationMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.poll: |-
+  {{#poll}}
+  📊 **मतदान**
+
+  **{{name}}**
+  {{#options}}
+  - {{optionName}}
+  {{/options}}
+  {{/poll}}
+
+whatsapp.to.chatwoot.message.list: |-
+  {{#message.listMessage}}
+  {{#title}}
+  *{{{title}}}*
+  {{/title}}
+  {{#description}}
+  {{{description}}}
+  {{/description}}
+  {{#footerText}}
+  {{{footerText}}}
+  {{/footerText}}
+
+  {{#buttonText}}
+  {{{buttonText}}}
+  {{/buttonText}}
+  {{#sections}}
+  {{#title}}
+  {{{title}}}:
+  {{/title}}
+  {{#rows}}
+  {{#title}}
+  - {{{title}}}
+  {{/title}}
+  {{/rows}}
+
+  {{/sections}}
+  {{/message.listMessage}}
+
+whatsapp.to.chatwoot.message.event: |-
+  {{#message}}
+  {{#eventMessage}}
+  📅 **कार्यक्रम**
+
+  **{{name}}**
+  {{#description}}
+  {{description}}
+  {{/description}}
+
+  {{#location.name}}
+  📍 **स्थान:** {{location.name}}
+  {{/location.name}}
+  {{#startTime}}
+  🕐 **आरंभ:** {{startTime}}
+  {{/startTime}}
+  {{#endTime}}
+  🕐 **समाप्ति:** {{endTime}}
+  {{/endTime}}
+  {{#joinLink}}
+  🔗 **जुड़ने का लिंक:** [{{joinLink}}]({{joinLink}})
+  {{/joinLink}}
+  {{/eventMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.pix: |-
+  💳 **PIX - कॉपी और पेस्ट**
+
+  {{#pixData}}
+  {{#merchantName}}
+  **{{merchantName}}**
+  {{/merchantName}}
+
+  {{#key}}
+  **PIX कुंजी:** {{key}}
+  {{/key}}
+  {{#keyType}}
+  **प्रकार:** {{keyType}}
+  {{/keyType}}
+  {{#totalAmount}}
+  **राशि:** {{totalAmountFormatted}}
+  {{/totalAmount}}
+  {{#referenceId}}
+  **संदर्भ:** {{referenceId}}
+  {{/referenceId}}
+
+  💳 **PIX कॉपी और पेस्ट भेजा गया**
+  {{/pixData}}
+
+whatsapp.to.chatwoot.message.unsupported: |-
+  ⚠️ **इस प्रकार का संदेश ChatWoot में समर्थित नहीं है।**
+  📱 इसे देखने के लिए कृपया **WhatsApp** खोलें।
+
+  विवरण: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.to.chatwoot.message.facebook.ad: |-
+  📢 **फेसबुक विज्ञापन**
+
+  **शीर्षक:** {{{adData.title}}}
+
+  **विवरण:**
+  {{{adData.body}}}
+
+  **विज्ञापन लिंक:** [फेसबुक पर देखें]({{{adData.sourceUrl}}})
+  **विज्ञापन आईडी:** {{{adData.sourceId}}}
+
+  ---
+  💬 **ग्राहक संदेश:**
+  {{{payload.body}}}

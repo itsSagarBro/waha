@@ -1,6 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
+import { BasicAuthFunction } from '@waha/core/auth/basicAuth';
+import { DashboardConfigServiceCore } from '@waha/core/config/DashboardConfigServiceCore';
 import { Logger } from 'nestjs-pino';
 
 import { WhatsappConfigService } from '../config.service';
@@ -9,16 +11,22 @@ import { SwaggerConfigServiceCore } from './config/SwaggerConfigServiceCore';
 
 export class SwaggerConfiguratorCore {
   protected logger: any;
+  private config: SwaggerConfigServiceCore;
 
   constructor(protected app: INestApplication) {
     this.logger = app.get(Logger);
+    this.config = app.get(SwaggerConfigServiceCore);
   }
 
   get title() {
-    return 'WAHA - WhatsApp HTTP API';
+    return this.config.title || 'WAHA - WhatsApp HTTP API';
   }
 
   get description() {
+    if (this.config.description) {
+      return this.config.description;
+    }
+
     return (
       '<b>WhatsApp HTTP API</b> that you can run in a click!<br/>' +
       '<a href="/dashboard"><b>📊 Dashboard</b></a><br/>' +
@@ -43,10 +51,19 @@ export class SwaggerConfiguratorCore {
   }
 
   get externalDocUrl() {
-    return 'https://waha.devlike.pro/';
+    return this.config.externalDocUrl || 'https://waha.devlike.pro/';
   }
 
   configure(webhooks: any[]) {
+    if (!this.config.enabled) {
+      return;
+    }
+
+    const credentials = this.config.credentials;
+    if (credentials) {
+      this.setUpAuth(credentials);
+    }
+
     const app = this.app;
     const builder = new DocumentBuilder();
 
@@ -56,6 +73,7 @@ export class SwaggerConfiguratorCore {
       .setExternalDoc(this.title, this.externalDocUrl)
       .setVersion(VERSION.version)
       .addTag('🖥️ Sessions', 'Control WhatsApp sessions (accounts)')
+      .addTag('🧩 Apps', 'Applications (built-in integrations)')
       .addTag('🔑 Auth', 'Authentication')
       .addTag('🆔 Profile', 'Your profile information')
       .addTag('🖼️ Screenshot', 'Get screenshot of WhatsApp and show QR code')
@@ -71,10 +89,12 @@ export class SwaggerConfiguratorCore {
       )
       .addTag('👥 Groups', `Groups methods.<br>`)
       .addTag('✅ Presence', `Presence information`)
+      .addTag('📅 Events', `Event Message`)
       .addTag(
         '🏷️ Labels',
         'Labels - available only for WhatsApp Business accounts',
       )
+      .addTag('🖼️ Media', 'Media methods')
       .addTag('🔍 Observability', 'Other methods')
       .addTag('🗄️ Storage', 'Storage methods')
       .addApiKey({
@@ -160,5 +180,19 @@ export class SwaggerConfiguratorCore {
     // @ts-ignore
     document.webhooks = webhooks;
     return document;
+  }
+
+  setUpAuth(credentials: [string, string]): void {
+    const [username, password] = credentials;
+    const dashboardConfig = this.app.get(DashboardConfigServiceCore);
+    const exclude = [
+      '/api/',
+      dashboardConfig.dashboardUri,
+      '/health',
+      '/ws',
+      '/webhooks/',
+    ];
+    const authFunction = BasicAuthFunction(username, password, exclude);
+    this.app.use(authFunction);
   }
 }

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CallData } from '@waha/structures/calls.dto';
+import { EventResponsePayload } from '@waha/structures/events.dto';
 import { Label, LabelChatAssociation } from '@waha/structures/labels.dto';
 
 import { ChatArchiveEvent } from './chats.dto';
@@ -86,12 +87,33 @@ export class PollVote extends MessageDestination {
 export class PollVotePayload {
   vote: PollVote;
   poll: MessageDestination;
+  _data?: any;
 }
 
 export class WAMessageRevokedBody {
   after?: WAMessage;
   before?: WAMessage;
+
+  @ApiProperty({
+    description: 'ID of the message that was revoked',
+    example: 'A06CA7BB5DD8C8F705628CDB7E3A33C9',
+  })
+  revokedMessageId?: string;
+
   _data?: any;
+}
+
+export class WAMessageEditedBody extends WAMessage {
+  @ApiProperty({
+    description: 'ID of the original message that was edited',
+    example: 'A06CA7BB5DD8C8F705628CDB7E3A33C9',
+  })
+  editedMessageId?: string;
+}
+
+export class SessionStatusPoint {
+  status: WAHASessionStatus;
+  timestamp: number;
 }
 
 export class WASessionStatusBody {
@@ -101,13 +123,23 @@ export class WASessionStatusBody {
   name: string;
 
   status: WAHASessionStatus;
+
+  statuses: SessionStatusPoint[];
 }
 
-export class WAHAWebhook {
+export class WAHAWebhook<Payload = any> {
   @ApiProperty({
-    example: 'evt_01jcn4pjwwg47bwy2gsey6q5sx',
+    example: 'evt_01aaaaaaaaaaaaaaaaaaaaaaaa',
+    description:
+      'Unique identifier for the event - lower case ULID format. https://github.com/ulid/spec',
   })
   id: string;
+
+  @ApiProperty({
+    example: 1634567890123,
+    description: 'Unix timestamp (ms) for when the event was created.',
+  })
+  timestamp: number;
 
   @ApiProperty({
     example: 'default',
@@ -121,7 +153,7 @@ export class WAHAWebhook {
     },
     description: 'Metadata for the session.',
   })
-  metadata?: Map<string, string>;
+  metadata?: Record<string, string>;
 
   @ApiProperty({
     example: WAHAEngine.WEBJS,
@@ -134,10 +166,7 @@ export class WAHAWebhook {
 
   event: WAHAEvents;
 
-  payload:
-    | WAGroupPayload
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    | object;
+  payload: Payload;
 }
 
 export class WAHAWebhookSessionStatus extends WAHAWebhook {
@@ -194,6 +223,16 @@ export class WAHAWebhookMessageRevoked extends WAHAWebhook {
   event = WAHAEvents.MESSAGE_REVOKED;
 
   payload: WAMessageRevokedBody;
+}
+
+export class WAHAWebhookMessageEdited extends WAHAWebhook {
+  @ApiProperty({
+    description:
+      'The event is triggered when a user edits a previously sent message.',
+  })
+  event = WAHAEvents.MESSAGE_EDITED;
+
+  payload: WAMessageEditedBody;
 }
 
 export class WAHAWebhookStateChange extends WAHAWebhook {
@@ -334,6 +373,25 @@ export class WAHAWebhookLabelChatDeleted extends WAHAWebhook {
 export class EnginePayload {
   event: string;
   data: any;
+}
+
+export class WAHAWebhookEventResponse extends WAHAWebhook {
+  @ApiProperty({
+    description: 'The event is triggered when the event response is received.',
+  })
+  event = WAHAEvents.EVENT_RESPONSE;
+
+  payload: EventResponsePayload;
+}
+
+export class WAHAWebhookEventResponseFailed extends WAHAWebhook {
+  @ApiProperty({
+    description:
+      'The event is triggered when the event response is failed to decrypt.',
+  })
+  event = WAHAEvents.EVENT_RESPONSE_FAILED;
+
+  payload: EventResponsePayload;
 }
 
 export class WAHAWebhookEngineEvent extends WAHAWebhook {

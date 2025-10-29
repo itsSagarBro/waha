@@ -1,13 +1,20 @@
-import {
+import type {
   BaileysEventEmitter,
   Chat,
   Contact,
   proto,
 } from '@adiwajshing/baileys';
-import { GroupMetadata } from '@adiwajshing/baileys/lib/Types/GroupMetadata';
-import { Label } from '@adiwajshing/baileys/lib/Types/Label';
-import { GetChatMessagesFilter } from '@waha/structures/chats.dto';
-import { PaginationParams } from '@waha/structures/pagination.dto';
+import type { GroupMetadata } from '@adiwajshing/baileys/lib/Types/GroupMetadata';
+import type { Label } from '@adiwajshing/baileys/lib/Types/Label';
+import {
+  GetChatMessagesFilter,
+  OverviewFilter,
+} from '@waha/structures/chats.dto';
+import { LidToPhoneNumber } from '@waha/structures/lids.dto';
+import {
+  LimitOffsetParams,
+  PaginationParams,
+} from '@waha/structures/pagination.dto';
 
 export interface INowebStore {
   presences: any;
@@ -28,7 +35,13 @@ export interface INowebStore {
 
   getMessageById(chatId: string, messageId: string): Promise<any>;
 
-  getChats(pagination: PaginationParams, broadcast: boolean): Promise<Chat[]>;
+  getChats(
+    pagination: PaginationParams,
+    broadcast: boolean,
+    filter?: OverviewFilter,
+  ): Promise<Chat[]>;
+
+  getChat(jid: string): Promise<Chat | null>;
 
   getContacts(pagination: PaginationParams): Promise<Contact[]>;
 
@@ -45,4 +58,13 @@ export interface INowebStore {
   getGroups(pagination: PaginationParams): Promise<GroupMetadata[]>;
 
   resetGroupsCache(): void;
+
+  // Lid Repository methods
+  getAllLids(pagination?: LimitOffsetParams): Promise<LidToPhoneNumber[]>;
+
+  getLidsCount(): Promise<number>;
+
+  findPNByLid(lid: string): Promise<string | null>;
+
+  findLidByPN(pn: string): Promise<string | null>;
 }

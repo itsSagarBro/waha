@@ -7,12 +7,12 @@ services:
     ports:
       - '3000:3000/tcp'
     volumes:
-      - './.sessions:/app/.sessions'
-      - './.media:/app/.media'
+      - './sessions:/app/.sessions'
+      - './media:/app/.media'
     environment:
-      - WHATSAPP_API_KEY=321
-      - WAHA_DASHBOARD_USERNAME=waha
-      - WAHA_DASHBOARD_PASSWORD=waha
+      - WAHA_API_KEY=321
+      - WAHA_DASHBOARD_USERNAME=admin
+      - WAHA_DASHBOARD_PASSWORD=admin
       - WHATSAPP_DEFAULT_ENGINE=WEBJS
       - WAHA_PRINT_QR=False
       - WAHA_MEDIA_STORAGE=LOCAL

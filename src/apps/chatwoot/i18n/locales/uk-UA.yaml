@@ -1,0 +1,382 @@
+# Ukrainian translations for ChatWoot integration
+locale.name: '🇺🇦 Українська (Ukrainian)'
+
+# Базовий код локалі - має бути чинною локаллю BCP 47
+# https://en.wikipedia.org/wiki/IETF_language_tag
+# WAHA використовує його для форматування чисел, валют і дати/часу
+locale.base: 'uk-UA'
+
+app.inbox.contact.name: 'Інтеграція WhatsApp'
+app.inbox.contact.avatar.url: 'https://raw.githubusercontent.com/devlikeapro/waha/core/logo.png'
+
+# "параметри" з date.toLocaleString
+# https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
+datetime:
+  locales: uk-UA
+  day: 2-digit
+  month: 2-digit
+  year: numeric
+  hour: 2-digit
+  minute: 2-digit
+  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
+  timeZoneName: shortGeneric
+  # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  # timeZone: 'Europe/Kyiv'
+
+job.report.error: |-
+  ⚠️ **{{{header}}}**
+  {{#attempts.nextDelay}}
+  🔄 Повторна спроба через {{attempts.nextDelay}} секунд...
+  {{/attempts.nextDelay}}
+  {{^attempts.nextDelay}}
+  ❌ Більше спроб не залишилось. Будь ласка, спробуйте пізніше.
+  {{/attempts.nextDelay}}
+  Спроба: {{{attempts.current}}} / {{{attempts.max}}}
+  Деталі: [{{{details.text}}}]({{{details.url}}})
+  {{#error}}
+  ```
+
+  {{{error}}}
+  ```
+  {{/error}}
+
+job.report.succeeded: |-
+  ✅ **Успішно**
+  Спроба: {{{attempts.current}}} / {{{attempts.max}}}
+  Деталі: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.message.sending.error: Не вдалося надіслати повідомлення у WhatsApp.
+whatsapp.message.receiving.error: Не вдалося отримати повідомлення з WhatsApp
+whatsapp.message.removing.error: Не вдалося видалити повідомлення з WhatsApp
+job.scheduled.error.header: Заплановане завдання не вдалося виконати
+
+message.from.whatsapp: |-
+  {{{text}}}
+
+  📱 *Надіслано з WhatsApp*
+
+message.from.api: |-
+  {{{text}}}
+
+  📱 *Надіслано через API*
+
+message.removed.in.whatsapp: |-
+  ❌ *Це повідомлення було видалено у WhatsApp*
+
+message.edited.in.whatsapp: |-
+  {{{text}}}
+
+  ✏️ *Відредаговано у WhatsApp*
+
+whatsapp.group.message: |-
+  👥 *{{{participant}}}*
+
+  {{{text}}}
+
+whatsapp.reaction.added: |-
+  *Реакція* {{{emoji}}}
+
+whatsapp.reaction.removed: |-
+  *Реакцію видалено*
+
+whatsapp.contact.group.suffix: 'Група'
+whatsapp.contact.channel.suffix: 'Канал'
+whatsapp.contact.broadcast.suffix: 'Список розсилки'
+# Aka Stories
+whatsapp.contact.status.name: 'Статус'
+
+app.connected.message: |-
+  🔗 **ПІДКЛЮЧЕНО: Сесія WhatsApp до Вхідних ChatWoot**
+
+  ✅ Сесія WhatsApp **{{{name}}}** була успішно підключена до цих Вхідних ChatWoot.
+
+  Ці вхідні тепер пов'язані з вашим **Обліковим записом WhatsApp**. Ви можете надсилати та отримувати повідомлення безпосередньо звідси — так само, як використовуючи WhatsApp, але всередині ChatWoot.
+
+  Ви також можете керувати сесією WhatsApp, пов'язаною з цими вхідними. Щоб переглянути доступні дії, надішліть **help** у цей чат.
+
+  📋 Загальні дії, які ви можете виконати:
+  - Перевірити, чи активна сесія WhatsApp
+  - Перезапустити або Зупинити сесію WhatsApp
+  - Вийти та повторно підключитися, відсканувавши новий QR-код
+
+  Якщо все працює, ви зможете вільно спілкуватися. Якщо ви бачите попередження, можливо, вам потрібно повторно підключити свій обліковий запис WhatsApp.
+
+  Давайте почнемо! 🚀
+
+app.disconnected.message: |-
+  🔌 **ВІДКЛЮЧЕНО: Сесія WhatsApp від Вхідних ChatWoot**
+
+  ❌ Сесія WhatsApp **{{{name}}}** була відключена від цих Вхідних ChatWoot.
+
+  Ви більше не зможете надсилати або отримувати повідомлення з WhatsApp.
+
+  Щоб повторно підключитися, зверніться до свого адміністратора.
+
+app.updated.message: |-
+  🔄 **ОНОВЛЕНО: Налаштування сесії WhatsApp**
+
+  ✅ Налаштування для сесії WhatsApp **{{{name}}}** були оновлені.
+
+app.commands.list: |-
+  Ви можете керувати **Інтеграцією WhatsApp**, надіславши одну з наступних команд:
+
+  🖥️ **Сесія**:
+  1. **status** - отримати поточний статус сесії.
+  2. **restart** - перезапустити сесію - це спробує повторно підключити ваш обліковий запис WhatsApp.
+  3. **start** - запустити сесію.
+  4. **stop** - зупинити сесію.
+  5. **logout** - вийти з сесії, щоб ви могли відсканувати QR-код і відновити сесію.
+  6. **qr** - отримати QR-код для сесії.
+  7. **screenshot** - отримати знімок екрану сесії (доступно лише в двигуні **WEBJS**).
+  8. **help** - доступні команди.
+
+  {{#commands.server}}
+  ⚙️ Сервер:
+  - **server status** - отримати інформацію про версію та статус сервера.
+  - **server reboot** - перезавантажити сервер плавно.
+  - **server reboot force** - примусово перезавантажити сервер.
+  {{/commands.server}}
+
+  Надішліть **команду** (без урахування регістру) або **номер команди** у цю розмову.
+
+app.commands.server.disabled: ⛔ **Команди сервера вимкнені**.
+
+  Будь ласка, зв’яжіться з вашим адміністратором.
+
+  Надішліть **help**, щоб отримати список доступних команд.
+
+app.help.reminder: |-
+  Надішліть **help**, щоб отримати список доступних команд.
+
+app.session.status.change: |-
+  {{{emoji}}} Сесія "{{{session}}}" перейшла у статус {{{status}}}
+
+app.session.current.status: |-
+  {{{emoji}}} Статус сесії **{{{session}}}** - **{{{status}}}**
+  **Обліковий запис WhatsApp:**
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.working: |-
+  ✅ Ці Вхідні ChatWoot пов'язані з **Обліковим записом WhatsApp** і готові надсилати та отримувати повідомлення!
+
+  📱 **{{{name}}} ({{{id}}})**
+
+app.session.status.error: |-
+  ⚠️ **Ці Вхідні ChatWoot пов'язані з Обліковим записом WhatsApp, але НЕ готові надсилати та отримувати повідомлення!**
+
+  Будь ласка, перевірте статус сесії та спробуйте перезапустити її або вийдіть і відскануйте QR-код знову.
+
+app.session.scan.qr.code: |-
+  ⚠️ **Відскануйте QR-код на вашому телефоні, щоб пов'язати Обліковий запис WhatsApp з цими Вхідними ChatWoot!**
+
+app.server.version.and.status: |-
+  **Версія:**
+  ```
+  {{{version}}}
+  ```
+
+  **Статус:**
+  ```
+  {{{status}}}
+  ```
+
+app.server.reboot: |-
+  Сервер плавно перезавантажується...
+
+app.server.reboot.force: |-
+  Сервер примусово перезавантажується...
+
+app.logout.success: |-
+  ✅ Обліковий запис успішно деавторизовано!
+
+waha.new.version.available: |-
+  🔄 **Доступна нова версія!**
+
+  Поточна версія: **{{{currentVersion}}}**
+  Нова версія: **{{{newVersion}}}**
+
+  👉 Перевірте, що нового у [**🆕 Журналі змін**]({{{changelogUrl}}})
+
+waha.core.version.used: |-
+  ❤️ **Підтримайте WAHA!**
+
+  Ви використовуєте безкоштовну версію **WAHA Core**. Якщо ви вважаєте цей проект корисним, будь ласка, розгляньте можливість підтримати його розробку.
+
+  Ваша підтримка - єдиний спосіб, яким ми можемо продовжувати працювати над оновленнями, виправленнями та новими функціями.
+
+  [**🎁 Підтримайте нас**]({{{supportUrl}}})
+
+chatwoot.to.whatsapp.message.text: |-
+  {{{ content }}}
+
+chatwoot.to.whatsapp.message.media.caption: |-
+  {{#singleAttachment}}
+  {{#content}}
+  {{{ content }}}
+  {{/content}}
+  {{/singleAttachment}}
+
+whatsapp.to.chatwoot.message: |-
+  {{{payload.body}}}
+
+whatsapp.to.chatwoot.message.contacts: |-
+  👤 **Надісланий контакт(и)**
+
+  {{#contacts}}
+  🪪 Ім’я: **{{fullName}}**
+  {{#phoneNumbers}}
+  - 📞 Телефон: **{{.}}**
+  {{/phoneNumbers}}
+
+  {{/contacts}}
+
+whatsapp.to.chatwoot.message.location: |-
+  {{#message}}
+  {{#locationMessage}}
+  📍 **Надіслана локація**
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **Адреса:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **Вебсайт:** {{url}}
+  {{/url}}
+
+  🔗 **Переглянути на карті:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/locationMessage}}
+
+  {{#liveLocationMessage}}
+  📍📡 **Надсилання геолокації в реальному часі**
+  Відкрийте **WhatsApp**, щоб побачити оновлення в реальному часі.
+
+  {{#name}}
+  **{{name}}**
+  {{/name}}
+
+  {{#address}}
+  📍 **Адреса:** {{address}}
+  {{/address}}
+
+  {{#url}}
+  🌐 **Вебсайт:** {{url}}
+  {{/url}}
+
+  🔗 **Переглянути на карті:** https://www.google.com/maps?q={{degreesLatitude}},{{degreesLongitude}}
+  {{#caption}}{{caption}}{{/caption}}
+  {{/liveLocationMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.poll: |-
+  {{#poll}}
+  📊 **Опитування**
+
+  **{{name}}**
+  {{#options}}
+  - {{optionName}}
+  {{/options}}
+  {{/poll}}
+
+whatsapp.to.chatwoot.message.list: |-
+  {{#message.listMessage}}
+  {{#title}}
+  *{{{title}}}*
+  {{/title}}
+  {{#description}}
+  {{{description}}}
+  {{/description}}
+  {{#footerText}}
+  {{{footerText}}}
+  {{/footerText}}
+
+  {{#buttonText}}
+  {{{buttonText}}}
+  {{/buttonText}}
+  {{#sections}}
+  {{#title}}
+  {{{title}}}:
+  {{/title}}
+  {{#rows}}
+  {{#title}}
+  - {{{title}}}
+  {{/title}}
+  {{/rows}}
+
+  {{/sections}}
+  {{/message.listMessage}}
+
+whatsapp.to.chatwoot.message.event: |-
+  {{#message}}
+  {{#eventMessage}}
+  📅 **Подія**
+
+  **{{name}}**
+  {{#description}}
+  {{description}}
+  {{/description}}
+
+  {{#location.name}}
+  📍 **Місце:** {{location.name}}
+  {{/location.name}}
+  {{#startTime}}
+  🕐 **Початок:** {{startTime}}
+  {{/startTime}}
+  {{#endTime}}
+  🕐 **Завершення:** {{endTime}}
+  {{/endTime}}
+  {{#joinLink}}
+  🔗 **Посилання для приєднання:** [{{joinLink}}]({{joinLink}})
+  {{/joinLink}}
+  {{/eventMessage}}
+  {{/message}}
+
+whatsapp.to.chatwoot.message.pix: |-
+  💳 **PIX - Копіювати та Вставити**
+
+  {{#pixData}}
+  {{#merchantName}}
+  **{{merchantName}}**
+  {{/merchantName}}
+
+  {{#key}}
+  **Ключ PIX:** {{key}}
+  {{/key}}
+  {{#keyType}}
+  **Тип:** {{keyType}}
+  {{/keyType}}
+  {{#totalAmount}}
+  **Сума:** {{totalAmountFormatted}}
+  {{/totalAmount}}
+  {{#referenceId}}
+  **Референс:** {{referenceId}}
+  {{/referenceId}}
+
+  💳 **PIX Копіювати та Вставити надіслано**
+  {{/pixData}}
+
+whatsapp.to.chatwoot.message.unsupported: |-
+  ⚠️ **Цей тип повідомлення не підтримується в ChatWoot.**
+  📱 Будь ласка, відкрийте **WhatsApp**, щоб переглянути.
+
+  Подробиці: [{{{details.text}}}]({{{details.url}}})
+
+whatsapp.to.chatwoot.message.facebook.ad: |-
+  📢 **РЕКЛАМА FACEBOOK**
+
+  **Заголовок:** {{{adData.title}}}
+
+  **Опис:**
+  {{{adData.body}}}
+
+  **Посилання на рекламу:** [Переглянути у Facebook]({{{adData.sourceUrl}}})
+  **Ідентифікатор реклами:** {{{adData.sourceId}}}
+
+  ---
+  💬 **Повідомлення клієнта:**
+  {{{payload.body}}}

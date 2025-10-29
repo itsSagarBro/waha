@@ -239,6 +239,73 @@ export namespace messages {
             return OptionalUInt64.deserialize(bytes);
         }
     }
+    export class OptionalInt64 extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            value?: number;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("value" in data && data.value != undefined) {
+                    this.value = data.value;
+                }
+            }
+        }
+        get value() {
+            return pb_1.Message.getFieldWithDefault(this, 1, 0) as number;
+        }
+        set value(value: number) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        static fromObject(data: {
+            value?: number;
+        }): OptionalInt64 {
+            const message = new OptionalInt64({});
+            if (data.value != null) {
+                message.value = data.value;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                value?: number;
+            } = {};
+            if (this.value != null) {
+                data.value = this.value;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.value != 0)
+                writer.writeInt64(1, this.value);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): OptionalInt64 {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new OptionalInt64();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.value = reader.readInt64();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): OptionalInt64 {
+            return OptionalInt64.deserialize(bytes);
+        }
+    }
     export class OptionalBool extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
@@ -304,6 +371,73 @@ export namespace messages {
         }
         static deserializeBinary(bytes: Uint8Array): OptionalBool {
             return OptionalBool.deserialize(bytes);
+        }
+    }
+    export class OptionalDouble extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            value?: number;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("value" in data && data.value != undefined) {
+                    this.value = data.value;
+                }
+            }
+        }
+        get value() {
+            return pb_1.Message.getFieldWithDefault(this, 1, 0) as number;
+        }
+        set value(value: number) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        static fromObject(data: {
+            value?: number;
+        }): OptionalDouble {
+            const message = new OptionalDouble({});
+            if (data.value != null) {
+                message.value = data.value;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                value?: number;
+            } = {};
+            if (this.value != null) {
+                data.value = this.value;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.value != 0)
+                writer.writeDouble(1, this.value);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): OptionalDouble {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new OptionalDouble();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.value = reader.readDouble();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): OptionalDouble {
+            return OptionalDouble.deserialize(bytes);
         }
     }
     export class JidRequest extends pb_1.Message {
@@ -1168,13 +1302,151 @@ export namespace messages {
             return SessionProxyConfig.deserialize(bytes);
         }
     }
-    export class SessionConfig extends pb_1.Message {
+    export class SessionIgnoreJidsConfig extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
+            status?: boolean;
+            groups?: boolean;
+            newsletters?: boolean;
+            broadcast?: boolean;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("status" in data && data.status != undefined) {
+                    this.status = data.status;
+                }
+                if ("groups" in data && data.groups != undefined) {
+                    this.groups = data.groups;
+                }
+                if ("newsletters" in data && data.newsletters != undefined) {
+                    this.newsletters = data.newsletters;
+                }
+                if ("broadcast" in data && data.broadcast != undefined) {
+                    this.broadcast = data.broadcast;
+                }
+            }
+        }
+        get status() {
+            return pb_1.Message.getFieldWithDefault(this, 1, false) as boolean;
+        }
+        set status(value: boolean) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get groups() {
+            return pb_1.Message.getFieldWithDefault(this, 2, false) as boolean;
+        }
+        set groups(value: boolean) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get newsletters() {
+            return pb_1.Message.getFieldWithDefault(this, 3, false) as boolean;
+        }
+        set newsletters(value: boolean) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get broadcast() {
+            return pb_1.Message.getFieldWithDefault(this, 4, false) as boolean;
+        }
+        set broadcast(value: boolean) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        static fromObject(data: {
+            status?: boolean;
+            groups?: boolean;
+            newsletters?: boolean;
+            broadcast?: boolean;
+        }): SessionIgnoreJidsConfig {
+            const message = new SessionIgnoreJidsConfig({});
+            if (data.status != null) {
+                message.status = data.status;
+            }
+            if (data.groups != null) {
+                message.groups = data.groups;
+            }
+            if (data.newsletters != null) {
+                message.newsletters = data.newsletters;
+            }
+            if (data.broadcast != null) {
+                message.broadcast = data.broadcast;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                status?: boolean;
+                groups?: boolean;
+                newsletters?: boolean;
+                broadcast?: boolean;
+            } = {};
+            if (this.status != null) {
+                data.status = this.status;
+            }
+            if (this.groups != null) {
+                data.groups = this.groups;
+            }
+            if (this.newsletters != null) {
+                data.newsletters = this.newsletters;
+            }
+            if (this.broadcast != null) {
+                data.broadcast = this.broadcast;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.status != false)
+                writer.writeBool(1, this.status);
+            if (this.groups != false)
+                writer.writeBool(2, this.groups);
+            if (this.newsletters != false)
+                writer.writeBool(3, this.newsletters);
+            if (this.broadcast != false)
+                writer.writeBool(4, this.broadcast);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): SessionIgnoreJidsConfig {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new SessionIgnoreJidsConfig();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.status = reader.readBool();
+                        break;
+                    case 2:
+                        message.groups = reader.readBool();
+                        break;
+                    case 3:
+                        message.newsletters = reader.readBool();
+                        break;
+                    case 4:
+                        message.broadcast = reader.readBool();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): SessionIgnoreJidsConfig {
+            return SessionIgnoreJidsConfig.deserialize(bytes);
+        }
+    }
+    export class SessionConfig extends pb_1.Message {
+        #one_of_decls: number[][] = [[4]];
+        constructor(data?: any[] | ({
             store?: SessionStoreConfig;
             log?: SessionLogConfig;
             proxy?: SessionProxyConfig;
-        }) {
+        } & (({
+            ignore?: SessionIgnoreJidsConfig;
+        })))) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
             if (!Array.isArray(data) && typeof data == "object") {
@@ -1186,6 +1458,9 @@ export namespace messages {
                 }
                 if ("proxy" in data && data.proxy != undefined) {
                     this.proxy = data.proxy;
+                }
+                if ("ignore" in data && data.ignore != undefined) {
+                    this.ignore = data.ignore;
                 }
             }
         }
@@ -1216,10 +1491,29 @@ export namespace messages {
         get has_proxy() {
             return pb_1.Message.getField(this, 3) != null;
         }
+        get ignore() {
+            return pb_1.Message.getWrapperField(this, SessionIgnoreJidsConfig, 4) as SessionIgnoreJidsConfig;
+        }
+        set ignore(value: SessionIgnoreJidsConfig) {
+            pb_1.Message.setOneofWrapperField(this, 4, this.#one_of_decls[0], value);
+        }
+        get has_ignore() {
+            return pb_1.Message.getField(this, 4) != null;
+        }
+        get _ignore() {
+            const cases: {
+                [index: number]: "none" | "ignore";
+            } = {
+                0: "none",
+                4: "ignore"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [4])];
+        }
         static fromObject(data: {
             store?: ReturnType<typeof SessionStoreConfig.prototype.toObject>;
             log?: ReturnType<typeof SessionLogConfig.prototype.toObject>;
             proxy?: ReturnType<typeof SessionProxyConfig.prototype.toObject>;
+            ignore?: ReturnType<typeof SessionIgnoreJidsConfig.prototype.toObject>;
         }): SessionConfig {
             const message = new SessionConfig({});
             if (data.store != null) {
@@ -1231,6 +1525,9 @@ export namespace messages {
             if (data.proxy != null) {
                 message.proxy = SessionProxyConfig.fromObject(data.proxy);
             }
+            if (data.ignore != null) {
+                message.ignore = SessionIgnoreJidsConfig.fromObject(data.ignore);
+            }
             return message;
         }
         toObject() {
@@ -1238,6 +1535,7 @@ export namespace messages {
                 store?: ReturnType<typeof SessionStoreConfig.prototype.toObject>;
                 log?: ReturnType<typeof SessionLogConfig.prototype.toObject>;
                 proxy?: ReturnType<typeof SessionProxyConfig.prototype.toObject>;
+                ignore?: ReturnType<typeof SessionIgnoreJidsConfig.prototype.toObject>;
             } = {};
             if (this.store != null) {
                 data.store = this.store.toObject();
@@ -1247,6 +1545,9 @@ export namespace messages {
             }
             if (this.proxy != null) {
                 data.proxy = this.proxy.toObject();
+            }
+            if (this.ignore != null) {
+                data.ignore = this.ignore.toObject();
             }
             return data;
         }
@@ -1260,6 +1561,8 @@ export namespace messages {
                 writer.writeMessage(2, this.log, () => this.log.serialize(writer));
             if (this.has_proxy)
                 writer.writeMessage(3, this.proxy, () => this.proxy.serialize(writer));
+            if (this.has_ignore)
+                writer.writeMessage(4, this.ignore, () => this.ignore.serialize(writer));
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -1277,6 +1580,9 @@ export namespace messages {
                         break;
                     case 3:
                         reader.readMessage(message.proxy, () => message.proxy = SessionProxyConfig.deserialize(reader));
+                        break;
+                    case 4:
+                        reader.readMessage(message.ignore, () => message.ignore = SessionIgnoreJidsConfig.deserialize(reader));
                         break;
                     default: reader.skipField();
                 }
@@ -2380,6 +2686,7 @@ export namespace messages {
             type?: MediaType;
             mimetype?: string;
             audio?: AudioInfo;
+            filename?: string;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -2395,6 +2702,9 @@ export namespace messages {
                 }
                 if ("audio" in data && data.audio != undefined) {
                     this.audio = data.audio;
+                }
+                if ("filename" in data && data.filename != undefined) {
+                    this.filename = data.filename;
                 }
             }
         }
@@ -2425,11 +2735,18 @@ export namespace messages {
         get has_audio() {
             return pb_1.Message.getField(this, 4) != null;
         }
+        get filename() {
+            return pb_1.Message.getFieldWithDefault(this, 5, "") as string;
+        }
+        set filename(value: string) {
+            pb_1.Message.setField(this, 5, value);
+        }
         static fromObject(data: {
             content?: Uint8Array;
             type?: MediaType;
             mimetype?: string;
             audio?: ReturnType<typeof AudioInfo.prototype.toObject>;
+            filename?: string;
         }): Media {
             const message = new Media({});
             if (data.content != null) {
@@ -2444,6 +2761,9 @@ export namespace messages {
             if (data.audio != null) {
                 message.audio = AudioInfo.fromObject(data.audio);
             }
+            if (data.filename != null) {
+                message.filename = data.filename;
+            }
             return message;
         }
         toObject() {
@@ -2452,6 +2772,7 @@ export namespace messages {
                 type?: MediaType;
                 mimetype?: string;
                 audio?: ReturnType<typeof AudioInfo.prototype.toObject>;
+                filename?: string;
             } = {};
             if (this.content != null) {
                 data.content = this.content;
@@ -2464,6 +2785,9 @@ export namespace messages {
             }
             if (this.audio != null) {
                 data.audio = this.audio.toObject();
+            }
+            if (this.filename != null) {
+                data.filename = this.filename;
             }
             return data;
         }
@@ -2479,6 +2803,8 @@ export namespace messages {
                 writer.writeString(3, this.mimetype);
             if (this.has_audio)
                 writer.writeMessage(4, this.audio, () => this.audio.serialize(writer));
+            if (this.filename.length)
+                writer.writeString(5, this.filename);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -2500,6 +2826,9 @@ export namespace messages {
                     case 4:
                         reader.readMessage(message.audio, () => message.audio = AudioInfo.deserialize(reader));
                         break;
+                    case 5:
+                        message.filename = reader.readString();
+                        break;
                     default: reader.skipField();
                 }
             }
@@ -2512,6 +2841,708 @@ export namespace messages {
             return Media.deserialize(bytes);
         }
     }
+    export class LinkPreview extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            url?: string;
+            title?: string;
+            description?: string;
+            image?: Uint8Array;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("url" in data && data.url != undefined) {
+                    this.url = data.url;
+                }
+                if ("title" in data && data.title != undefined) {
+                    this.title = data.title;
+                }
+                if ("description" in data && data.description != undefined) {
+                    this.description = data.description;
+                }
+                if ("image" in data && data.image != undefined) {
+                    this.image = data.image;
+                }
+            }
+        }
+        get url() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set url(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get title() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set title(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get description() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set description(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get image() {
+            return pb_1.Message.getFieldWithDefault(this, 4, new Uint8Array(0)) as Uint8Array;
+        }
+        set image(value: Uint8Array) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        static fromObject(data: {
+            url?: string;
+            title?: string;
+            description?: string;
+            image?: Uint8Array;
+        }): LinkPreview {
+            const message = new LinkPreview({});
+            if (data.url != null) {
+                message.url = data.url;
+            }
+            if (data.title != null) {
+                message.title = data.title;
+            }
+            if (data.description != null) {
+                message.description = data.description;
+            }
+            if (data.image != null) {
+                message.image = data.image;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                url?: string;
+                title?: string;
+                description?: string;
+                image?: Uint8Array;
+            } = {};
+            if (this.url != null) {
+                data.url = this.url;
+            }
+            if (this.title != null) {
+                data.title = this.title;
+            }
+            if (this.description != null) {
+                data.description = this.description;
+            }
+            if (this.image != null) {
+                data.image = this.image;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.url.length)
+                writer.writeString(1, this.url);
+            if (this.title.length)
+                writer.writeString(2, this.title);
+            if (this.description.length)
+                writer.writeString(3, this.description);
+            if (this.image.length)
+                writer.writeBytes(4, this.image);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): LinkPreview {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new LinkPreview();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.url = reader.readString();
+                        break;
+                    case 2:
+                        message.title = reader.readString();
+                        break;
+                    case 3:
+                        message.description = reader.readString();
+                        break;
+                    case 4:
+                        message.image = reader.readBytes();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): LinkPreview {
+            return LinkPreview.deserialize(bytes);
+        }
+    }
+    export class vCardContact extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            displayName?: string;
+            vcard?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("displayName" in data && data.displayName != undefined) {
+                    this.displayName = data.displayName;
+                }
+                if ("vcard" in data && data.vcard != undefined) {
+                    this.vcard = data.vcard;
+                }
+            }
+        }
+        get displayName() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set displayName(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get vcard() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set vcard(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        static fromObject(data: {
+            displayName?: string;
+            vcard?: string;
+        }): vCardContact {
+            const message = new vCardContact({});
+            if (data.displayName != null) {
+                message.displayName = data.displayName;
+            }
+            if (data.vcard != null) {
+                message.vcard = data.vcard;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                displayName?: string;
+                vcard?: string;
+            } = {};
+            if (this.displayName != null) {
+                data.displayName = this.displayName;
+            }
+            if (this.vcard != null) {
+                data.vcard = this.vcard;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.displayName.length)
+                writer.writeString(1, this.displayName);
+            if (this.vcard.length)
+                writer.writeString(3, this.vcard);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): vCardContact {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new vCardContact();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.displayName = reader.readString();
+                        break;
+                    case 3:
+                        message.vcard = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): vCardContact {
+            return vCardContact.deserialize(bytes);
+        }
+    }
+    export class EventLocation extends pb_1.Message {
+        #one_of_decls: number[][] = [[2], [3]];
+        constructor(data?: any[] | ({
+            name?: string;
+        } & (({
+            degreesLongitude?: number;
+        }) | ({
+            degreesLatitude?: number;
+        })))) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("name" in data && data.name != undefined) {
+                    this.name = data.name;
+                }
+                if ("degreesLongitude" in data && data.degreesLongitude != undefined) {
+                    this.degreesLongitude = data.degreesLongitude;
+                }
+                if ("degreesLatitude" in data && data.degreesLatitude != undefined) {
+                    this.degreesLatitude = data.degreesLatitude;
+                }
+            }
+        }
+        get name() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set name(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get degreesLongitude() {
+            return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
+        }
+        set degreesLongitude(value: number) {
+            pb_1.Message.setOneofField(this, 2, this.#one_of_decls[0], value);
+        }
+        get has_degreesLongitude() {
+            return pb_1.Message.getField(this, 2) != null;
+        }
+        get degreesLatitude() {
+            return pb_1.Message.getFieldWithDefault(this, 3, 0) as number;
+        }
+        set degreesLatitude(value: number) {
+            pb_1.Message.setOneofField(this, 3, this.#one_of_decls[1], value);
+        }
+        get has_degreesLatitude() {
+            return pb_1.Message.getField(this, 3) != null;
+        }
+        get _degreesLongitude() {
+            const cases: {
+                [index: number]: "none" | "degreesLongitude";
+            } = {
+                0: "none",
+                2: "degreesLongitude"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [2])];
+        }
+        get _degreesLatitude() {
+            const cases: {
+                [index: number]: "none" | "degreesLatitude";
+            } = {
+                0: "none",
+                3: "degreesLatitude"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [3])];
+        }
+        static fromObject(data: {
+            name?: string;
+            degreesLongitude?: number;
+            degreesLatitude?: number;
+        }): EventLocation {
+            const message = new EventLocation({});
+            if (data.name != null) {
+                message.name = data.name;
+            }
+            if (data.degreesLongitude != null) {
+                message.degreesLongitude = data.degreesLongitude;
+            }
+            if (data.degreesLatitude != null) {
+                message.degreesLatitude = data.degreesLatitude;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                name?: string;
+                degreesLongitude?: number;
+                degreesLatitude?: number;
+            } = {};
+            if (this.name != null) {
+                data.name = this.name;
+            }
+            if (this.degreesLongitude != null) {
+                data.degreesLongitude = this.degreesLongitude;
+            }
+            if (this.degreesLatitude != null) {
+                data.degreesLatitude = this.degreesLatitude;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.name.length)
+                writer.writeString(1, this.name);
+            if (this.has_degreesLongitude)
+                writer.writeDouble(2, this.degreesLongitude);
+            if (this.has_degreesLatitude)
+                writer.writeDouble(3, this.degreesLatitude);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): EventLocation {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new EventLocation();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.name = reader.readString();
+                        break;
+                    case 2:
+                        message.degreesLongitude = reader.readDouble();
+                        break;
+                    case 3:
+                        message.degreesLatitude = reader.readDouble();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): EventLocation {
+            return EventLocation.deserialize(bytes);
+        }
+    }
+    export class Location extends pb_1.Message {
+        #one_of_decls: number[][] = [[1]];
+        constructor(data?: any[] | ({
+            degreesLongitude?: number;
+            degreesLatitude?: number;
+        } & (({
+            name?: string;
+        })))) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("name" in data && data.name != undefined) {
+                    this.name = data.name;
+                }
+                if ("degreesLongitude" in data && data.degreesLongitude != undefined) {
+                    this.degreesLongitude = data.degreesLongitude;
+                }
+                if ("degreesLatitude" in data && data.degreesLatitude != undefined) {
+                    this.degreesLatitude = data.degreesLatitude;
+                }
+            }
+        }
+        get name() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set name(value: string) {
+            pb_1.Message.setOneofField(this, 1, this.#one_of_decls[0], value);
+        }
+        get has_name() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get degreesLongitude() {
+            return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
+        }
+        set degreesLongitude(value: number) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get degreesLatitude() {
+            return pb_1.Message.getFieldWithDefault(this, 3, 0) as number;
+        }
+        set degreesLatitude(value: number) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get _name() {
+            const cases: {
+                [index: number]: "none" | "name";
+            } = {
+                0: "none",
+                1: "name"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [1])];
+        }
+        static fromObject(data: {
+            name?: string;
+            degreesLongitude?: number;
+            degreesLatitude?: number;
+        }): Location {
+            const message = new Location({});
+            if (data.name != null) {
+                message.name = data.name;
+            }
+            if (data.degreesLongitude != null) {
+                message.degreesLongitude = data.degreesLongitude;
+            }
+            if (data.degreesLatitude != null) {
+                message.degreesLatitude = data.degreesLatitude;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                name?: string;
+                degreesLongitude?: number;
+                degreesLatitude?: number;
+            } = {};
+            if (this.name != null) {
+                data.name = this.name;
+            }
+            if (this.degreesLongitude != null) {
+                data.degreesLongitude = this.degreesLongitude;
+            }
+            if (this.degreesLatitude != null) {
+                data.degreesLatitude = this.degreesLatitude;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_name)
+                writer.writeString(1, this.name);
+            if (this.degreesLongitude != 0)
+                writer.writeDouble(2, this.degreesLongitude);
+            if (this.degreesLatitude != 0)
+                writer.writeDouble(3, this.degreesLatitude);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): Location {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new Location();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.name = reader.readString();
+                        break;
+                    case 2:
+                        message.degreesLongitude = reader.readDouble();
+                        break;
+                    case 3:
+                        message.degreesLatitude = reader.readDouble();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): Location {
+            return Location.deserialize(bytes);
+        }
+    }
+    export class EventMessage extends pb_1.Message {
+        #one_of_decls: number[][] = [[2], [4]];
+        constructor(data?: any[] | ({
+            name?: string;
+            startTime?: number;
+            extraGuestsAllowed?: boolean;
+            location?: EventLocation;
+        } & (({
+            description?: string;
+        }) | ({
+            endTime?: number;
+        })))) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("name" in data && data.name != undefined) {
+                    this.name = data.name;
+                }
+                if ("description" in data && data.description != undefined) {
+                    this.description = data.description;
+                }
+                if ("startTime" in data && data.startTime != undefined) {
+                    this.startTime = data.startTime;
+                }
+                if ("endTime" in data && data.endTime != undefined) {
+                    this.endTime = data.endTime;
+                }
+                if ("extraGuestsAllowed" in data && data.extraGuestsAllowed != undefined) {
+                    this.extraGuestsAllowed = data.extraGuestsAllowed;
+                }
+                if ("location" in data && data.location != undefined) {
+                    this.location = data.location;
+                }
+            }
+        }
+        get name() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set name(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get description() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set description(value: string) {
+            pb_1.Message.setOneofField(this, 2, this.#one_of_decls[0], value);
+        }
+        get has_description() {
+            return pb_1.Message.getField(this, 2) != null;
+        }
+        get startTime() {
+            return pb_1.Message.getFieldWithDefault(this, 3, 0) as number;
+        }
+        set startTime(value: number) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get endTime() {
+            return pb_1.Message.getFieldWithDefault(this, 4, 0) as number;
+        }
+        set endTime(value: number) {
+            pb_1.Message.setOneofField(this, 4, this.#one_of_decls[1], value);
+        }
+        get has_endTime() {
+            return pb_1.Message.getField(this, 4) != null;
+        }
+        get extraGuestsAllowed() {
+            return pb_1.Message.getFieldWithDefault(this, 5, false) as boolean;
+        }
+        set extraGuestsAllowed(value: boolean) {
+            pb_1.Message.setField(this, 5, value);
+        }
+        get location() {
+            return pb_1.Message.getWrapperField(this, EventLocation, 6) as EventLocation;
+        }
+        set location(value: EventLocation) {
+            pb_1.Message.setWrapperField(this, 6, value);
+        }
+        get has_location() {
+            return pb_1.Message.getField(this, 6) != null;
+        }
+        get _description() {
+            const cases: {
+                [index: number]: "none" | "description";
+            } = {
+                0: "none",
+                2: "description"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [2])];
+        }
+        get _endTime() {
+            const cases: {
+                [index: number]: "none" | "endTime";
+            } = {
+                0: "none",
+                4: "endTime"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [4])];
+        }
+        static fromObject(data: {
+            name?: string;
+            description?: string;
+            startTime?: number;
+            endTime?: number;
+            extraGuestsAllowed?: boolean;
+            location?: ReturnType<typeof EventLocation.prototype.toObject>;
+        }): EventMessage {
+            const message = new EventMessage({});
+            if (data.name != null) {
+                message.name = data.name;
+            }
+            if (data.description != null) {
+                message.description = data.description;
+            }
+            if (data.startTime != null) {
+                message.startTime = data.startTime;
+            }
+            if (data.endTime != null) {
+                message.endTime = data.endTime;
+            }
+            if (data.extraGuestsAllowed != null) {
+                message.extraGuestsAllowed = data.extraGuestsAllowed;
+            }
+            if (data.location != null) {
+                message.location = EventLocation.fromObject(data.location);
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                name?: string;
+                description?: string;
+                startTime?: number;
+                endTime?: number;
+                extraGuestsAllowed?: boolean;
+                location?: ReturnType<typeof EventLocation.prototype.toObject>;
+            } = {};
+            if (this.name != null) {
+                data.name = this.name;
+            }
+            if (this.description != null) {
+                data.description = this.description;
+            }
+            if (this.startTime != null) {
+                data.startTime = this.startTime;
+            }
+            if (this.endTime != null) {
+                data.endTime = this.endTime;
+            }
+            if (this.extraGuestsAllowed != null) {
+                data.extraGuestsAllowed = this.extraGuestsAllowed;
+            }
+            if (this.location != null) {
+                data.location = this.location.toObject();
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.name.length)
+                writer.writeString(1, this.name);
+            if (this.has_description)
+                writer.writeString(2, this.description);
+            if (this.startTime != 0)
+                writer.writeInt64(3, this.startTime);
+            if (this.has_endTime)
+                writer.writeInt64(4, this.endTime);
+            if (this.extraGuestsAllowed != false)
+                writer.writeBool(5, this.extraGuestsAllowed);
+            if (this.has_location)
+                writer.writeMessage(6, this.location, () => this.location.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): EventMessage {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new EventMessage();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.name = reader.readString();
+                        break;
+                    case 2:
+                        message.description = reader.readString();
+                        break;
+                    case 3:
+                        message.startTime = reader.readInt64();
+                        break;
+                    case 4:
+                        message.endTime = reader.readInt64();
+                        break;
+                    case 5:
+                        message.extraGuestsAllowed = reader.readBool();
+                        break;
+                    case 6:
+                        reader.readMessage(message.location, () => message.location = EventLocation.deserialize(reader));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): EventMessage {
+            return EventMessage.deserialize(bytes);
+        }
+    }
     export class MessageRequest extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
@@ -2521,9 +3552,21 @@ export namespace messages {
             media?: Media;
             backgroundColor?: OptionalString;
             font?: OptionalUInt32;
+            linkPreview?: boolean;
+            linkPreviewHighQuality?: boolean;
+            replyTo?: string;
+            id?: string;
+            participants?: string[];
+            preview?: LinkPreview;
+            contacts?: vCardContact[];
+            event?: EventMessage;
+            poll?: PollMessage;
+            list?: ListMessage;
+            location?: Location;
+            pollVote?: PollVoteMessage;
         }) {
             super();
-            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [11, 13], this.#one_of_decls);
             if (!Array.isArray(data) && typeof data == "object") {
                 if ("session" in data && data.session != undefined) {
                     this.session = data.session;
@@ -2542,6 +3585,42 @@ export namespace messages {
                 }
                 if ("font" in data && data.font != undefined) {
                     this.font = data.font;
+                }
+                if ("linkPreview" in data && data.linkPreview != undefined) {
+                    this.linkPreview = data.linkPreview;
+                }
+                if ("linkPreviewHighQuality" in data && data.linkPreviewHighQuality != undefined) {
+                    this.linkPreviewHighQuality = data.linkPreviewHighQuality;
+                }
+                if ("replyTo" in data && data.replyTo != undefined) {
+                    this.replyTo = data.replyTo;
+                }
+                if ("id" in data && data.id != undefined) {
+                    this.id = data.id;
+                }
+                if ("participants" in data && data.participants != undefined) {
+                    this.participants = data.participants;
+                }
+                if ("preview" in data && data.preview != undefined) {
+                    this.preview = data.preview;
+                }
+                if ("contacts" in data && data.contacts != undefined) {
+                    this.contacts = data.contacts;
+                }
+                if ("event" in data && data.event != undefined) {
+                    this.event = data.event;
+                }
+                if ("poll" in data && data.poll != undefined) {
+                    this.poll = data.poll;
+                }
+                if ("list" in data && data.list != undefined) {
+                    this.list = data.list;
+                }
+                if ("location" in data && data.location != undefined) {
+                    this.location = data.location;
+                }
+                if ("pollVote" in data && data.pollVote != undefined) {
+                    this.pollVote = data.pollVote;
                 }
             }
         }
@@ -2593,6 +3672,96 @@ export namespace messages {
         get has_font() {
             return pb_1.Message.getField(this, 6) != null;
         }
+        get linkPreview() {
+            return pb_1.Message.getFieldWithDefault(this, 7, false) as boolean;
+        }
+        set linkPreview(value: boolean) {
+            pb_1.Message.setField(this, 7, value);
+        }
+        get linkPreviewHighQuality() {
+            return pb_1.Message.getFieldWithDefault(this, 8, false) as boolean;
+        }
+        set linkPreviewHighQuality(value: boolean) {
+            pb_1.Message.setField(this, 8, value);
+        }
+        get replyTo() {
+            return pb_1.Message.getFieldWithDefault(this, 9, "") as string;
+        }
+        set replyTo(value: string) {
+            pb_1.Message.setField(this, 9, value);
+        }
+        get id() {
+            return pb_1.Message.getFieldWithDefault(this, 10, "") as string;
+        }
+        set id(value: string) {
+            pb_1.Message.setField(this, 10, value);
+        }
+        get participants() {
+            return pb_1.Message.getFieldWithDefault(this, 11, []) as string[];
+        }
+        set participants(value: string[]) {
+            pb_1.Message.setField(this, 11, value);
+        }
+        get preview() {
+            return pb_1.Message.getWrapperField(this, LinkPreview, 12) as LinkPreview;
+        }
+        set preview(value: LinkPreview) {
+            pb_1.Message.setWrapperField(this, 12, value);
+        }
+        get has_preview() {
+            return pb_1.Message.getField(this, 12) != null;
+        }
+        get contacts() {
+            return pb_1.Message.getRepeatedWrapperField(this, vCardContact, 13) as vCardContact[];
+        }
+        set contacts(value: vCardContact[]) {
+            pb_1.Message.setRepeatedWrapperField(this, 13, value);
+        }
+        get event() {
+            return pb_1.Message.getWrapperField(this, EventMessage, 14) as EventMessage;
+        }
+        set event(value: EventMessage) {
+            pb_1.Message.setWrapperField(this, 14, value);
+        }
+        get has_event() {
+            return pb_1.Message.getField(this, 14) != null;
+        }
+        get poll() {
+            return pb_1.Message.getWrapperField(this, PollMessage, 15) as PollMessage;
+        }
+        set poll(value: PollMessage) {
+            pb_1.Message.setWrapperField(this, 15, value);
+        }
+        get has_poll() {
+            return pb_1.Message.getField(this, 15) != null;
+        }
+        get list() {
+            return pb_1.Message.getWrapperField(this, ListMessage, 16) as ListMessage;
+        }
+        set list(value: ListMessage) {
+            pb_1.Message.setWrapperField(this, 16, value);
+        }
+        get has_list() {
+            return pb_1.Message.getField(this, 16) != null;
+        }
+        get location() {
+            return pb_1.Message.getWrapperField(this, Location, 17) as Location;
+        }
+        set location(value: Location) {
+            pb_1.Message.setWrapperField(this, 17, value);
+        }
+        get has_location() {
+            return pb_1.Message.getField(this, 17) != null;
+        }
+        get pollVote() {
+            return pb_1.Message.getWrapperField(this, PollVoteMessage, 18) as PollVoteMessage;
+        }
+        set pollVote(value: PollVoteMessage) {
+            pb_1.Message.setWrapperField(this, 18, value);
+        }
+        get has_pollVote() {
+            return pb_1.Message.getField(this, 18) != null;
+        }
         static fromObject(data: {
             session?: ReturnType<typeof Session.prototype.toObject>;
             jid?: string;
@@ -2600,6 +3769,18 @@ export namespace messages {
             media?: ReturnType<typeof Media.prototype.toObject>;
             backgroundColor?: ReturnType<typeof OptionalString.prototype.toObject>;
             font?: ReturnType<typeof OptionalUInt32.prototype.toObject>;
+            linkPreview?: boolean;
+            linkPreviewHighQuality?: boolean;
+            replyTo?: string;
+            id?: string;
+            participants?: string[];
+            preview?: ReturnType<typeof LinkPreview.prototype.toObject>;
+            contacts?: ReturnType<typeof vCardContact.prototype.toObject>[];
+            event?: ReturnType<typeof EventMessage.prototype.toObject>;
+            poll?: ReturnType<typeof PollMessage.prototype.toObject>;
+            list?: ReturnType<typeof ListMessage.prototype.toObject>;
+            location?: ReturnType<typeof Location.prototype.toObject>;
+            pollVote?: ReturnType<typeof PollVoteMessage.prototype.toObject>;
         }): MessageRequest {
             const message = new MessageRequest({});
             if (data.session != null) {
@@ -2620,6 +3801,42 @@ export namespace messages {
             if (data.font != null) {
                 message.font = OptionalUInt32.fromObject(data.font);
             }
+            if (data.linkPreview != null) {
+                message.linkPreview = data.linkPreview;
+            }
+            if (data.linkPreviewHighQuality != null) {
+                message.linkPreviewHighQuality = data.linkPreviewHighQuality;
+            }
+            if (data.replyTo != null) {
+                message.replyTo = data.replyTo;
+            }
+            if (data.id != null) {
+                message.id = data.id;
+            }
+            if (data.participants != null) {
+                message.participants = data.participants;
+            }
+            if (data.preview != null) {
+                message.preview = LinkPreview.fromObject(data.preview);
+            }
+            if (data.contacts != null) {
+                message.contacts = data.contacts.map(item => vCardContact.fromObject(item));
+            }
+            if (data.event != null) {
+                message.event = EventMessage.fromObject(data.event);
+            }
+            if (data.poll != null) {
+                message.poll = PollMessage.fromObject(data.poll);
+            }
+            if (data.list != null) {
+                message.list = ListMessage.fromObject(data.list);
+            }
+            if (data.location != null) {
+                message.location = Location.fromObject(data.location);
+            }
+            if (data.pollVote != null) {
+                message.pollVote = PollVoteMessage.fromObject(data.pollVote);
+            }
             return message;
         }
         toObject() {
@@ -2630,6 +3847,18 @@ export namespace messages {
                 media?: ReturnType<typeof Media.prototype.toObject>;
                 backgroundColor?: ReturnType<typeof OptionalString.prototype.toObject>;
                 font?: ReturnType<typeof OptionalUInt32.prototype.toObject>;
+                linkPreview?: boolean;
+                linkPreviewHighQuality?: boolean;
+                replyTo?: string;
+                id?: string;
+                participants?: string[];
+                preview?: ReturnType<typeof LinkPreview.prototype.toObject>;
+                contacts?: ReturnType<typeof vCardContact.prototype.toObject>[];
+                event?: ReturnType<typeof EventMessage.prototype.toObject>;
+                poll?: ReturnType<typeof PollMessage.prototype.toObject>;
+                list?: ReturnType<typeof ListMessage.prototype.toObject>;
+                location?: ReturnType<typeof Location.prototype.toObject>;
+                pollVote?: ReturnType<typeof PollVoteMessage.prototype.toObject>;
             } = {};
             if (this.session != null) {
                 data.session = this.session.toObject();
@@ -2649,6 +3878,42 @@ export namespace messages {
             if (this.font != null) {
                 data.font = this.font.toObject();
             }
+            if (this.linkPreview != null) {
+                data.linkPreview = this.linkPreview;
+            }
+            if (this.linkPreviewHighQuality != null) {
+                data.linkPreviewHighQuality = this.linkPreviewHighQuality;
+            }
+            if (this.replyTo != null) {
+                data.replyTo = this.replyTo;
+            }
+            if (this.id != null) {
+                data.id = this.id;
+            }
+            if (this.participants != null) {
+                data.participants = this.participants;
+            }
+            if (this.preview != null) {
+                data.preview = this.preview.toObject();
+            }
+            if (this.contacts != null) {
+                data.contacts = this.contacts.map((item: vCardContact) => item.toObject());
+            }
+            if (this.event != null) {
+                data.event = this.event.toObject();
+            }
+            if (this.poll != null) {
+                data.poll = this.poll.toObject();
+            }
+            if (this.list != null) {
+                data.list = this.list.toObject();
+            }
+            if (this.location != null) {
+                data.location = this.location.toObject();
+            }
+            if (this.pollVote != null) {
+                data.pollVote = this.pollVote.toObject();
+            }
             return data;
         }
         serialize(): Uint8Array;
@@ -2667,6 +3932,30 @@ export namespace messages {
                 writer.writeMessage(5, this.backgroundColor, () => this.backgroundColor.serialize(writer));
             if (this.has_font)
                 writer.writeMessage(6, this.font, () => this.font.serialize(writer));
+            if (this.linkPreview != false)
+                writer.writeBool(7, this.linkPreview);
+            if (this.linkPreviewHighQuality != false)
+                writer.writeBool(8, this.linkPreviewHighQuality);
+            if (this.replyTo.length)
+                writer.writeString(9, this.replyTo);
+            if (this.id.length)
+                writer.writeString(10, this.id);
+            if (this.participants.length)
+                writer.writeRepeatedString(11, this.participants);
+            if (this.has_preview)
+                writer.writeMessage(12, this.preview, () => this.preview.serialize(writer));
+            if (this.contacts.length)
+                writer.writeRepeatedMessage(13, this.contacts, (item: vCardContact) => item.serialize(writer));
+            if (this.has_event)
+                writer.writeMessage(14, this.event, () => this.event.serialize(writer));
+            if (this.has_poll)
+                writer.writeMessage(15, this.poll, () => this.poll.serialize(writer));
+            if (this.has_list)
+                writer.writeMessage(16, this.list, () => this.list.serialize(writer));
+            if (this.has_location)
+                writer.writeMessage(17, this.location, () => this.location.serialize(writer));
+            if (this.has_pollVote)
+                writer.writeMessage(18, this.pollVote, () => this.pollVote.serialize(writer));
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -2694,6 +3983,42 @@ export namespace messages {
                     case 6:
                         reader.readMessage(message.font, () => message.font = OptionalUInt32.deserialize(reader));
                         break;
+                    case 7:
+                        message.linkPreview = reader.readBool();
+                        break;
+                    case 8:
+                        message.linkPreviewHighQuality = reader.readBool();
+                        break;
+                    case 9:
+                        message.replyTo = reader.readString();
+                        break;
+                    case 10:
+                        message.id = reader.readString();
+                        break;
+                    case 11:
+                        pb_1.Message.addToRepeatedField(message, 11, reader.readString());
+                        break;
+                    case 12:
+                        reader.readMessage(message.preview, () => message.preview = LinkPreview.deserialize(reader));
+                        break;
+                    case 13:
+                        reader.readMessage(message.contacts, () => pb_1.Message.addToRepeatedWrapperField(message, 13, vCardContact.deserialize(reader), vCardContact));
+                        break;
+                    case 14:
+                        reader.readMessage(message.event, () => message.event = EventMessage.deserialize(reader));
+                        break;
+                    case 15:
+                        reader.readMessage(message.poll, () => message.poll = PollMessage.deserialize(reader));
+                        break;
+                    case 16:
+                        reader.readMessage(message.list, () => message.list = ListMessage.deserialize(reader));
+                        break;
+                    case 17:
+                        reader.readMessage(message.location, () => message.location = Location.deserialize(reader));
+                        break;
+                    case 18:
+                        reader.readMessage(message.pollVote, () => message.pollVote = PollVoteMessage.deserialize(reader));
+                        break;
                     default: reader.skipField();
                 }
             }
@@ -2704,6 +4029,407 @@ export namespace messages {
         }
         static deserializeBinary(bytes: Uint8Array): MessageRequest {
             return MessageRequest.deserialize(bytes);
+        }
+    }
+    export class Row extends pb_1.Message {
+        #one_of_decls: number[][] = [[2]];
+        constructor(data?: any[] | ({
+            title?: string;
+            rowId?: string;
+        } & (({
+            description?: string;
+        })))) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("title" in data && data.title != undefined) {
+                    this.title = data.title;
+                }
+                if ("description" in data && data.description != undefined) {
+                    this.description = data.description;
+                }
+                if ("rowId" in data && data.rowId != undefined) {
+                    this.rowId = data.rowId;
+                }
+            }
+        }
+        get title() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set title(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get description() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set description(value: string) {
+            pb_1.Message.setOneofField(this, 2, this.#one_of_decls[0], value);
+        }
+        get has_description() {
+            return pb_1.Message.getField(this, 2) != null;
+        }
+        get rowId() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set rowId(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get _description() {
+            const cases: {
+                [index: number]: "none" | "description";
+            } = {
+                0: "none",
+                2: "description"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [2])];
+        }
+        static fromObject(data: {
+            title?: string;
+            description?: string;
+            rowId?: string;
+        }): Row {
+            const message = new Row({});
+            if (data.title != null) {
+                message.title = data.title;
+            }
+            if (data.description != null) {
+                message.description = data.description;
+            }
+            if (data.rowId != null) {
+                message.rowId = data.rowId;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                title?: string;
+                description?: string;
+                rowId?: string;
+            } = {};
+            if (this.title != null) {
+                data.title = this.title;
+            }
+            if (this.description != null) {
+                data.description = this.description;
+            }
+            if (this.rowId != null) {
+                data.rowId = this.rowId;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.title.length)
+                writer.writeString(1, this.title);
+            if (this.has_description)
+                writer.writeString(2, this.description);
+            if (this.rowId.length)
+                writer.writeString(3, this.rowId);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): Row {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new Row();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.title = reader.readString();
+                        break;
+                    case 2:
+                        message.description = reader.readString();
+                        break;
+                    case 3:
+                        message.rowId = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): Row {
+            return Row.deserialize(bytes);
+        }
+    }
+    export class Section extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            title?: string;
+            rows?: Row[];
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [2], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("title" in data && data.title != undefined) {
+                    this.title = data.title;
+                }
+                if ("rows" in data && data.rows != undefined) {
+                    this.rows = data.rows;
+                }
+            }
+        }
+        get title() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set title(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get rows() {
+            return pb_1.Message.getRepeatedWrapperField(this, Row, 2) as Row[];
+        }
+        set rows(value: Row[]) {
+            pb_1.Message.setRepeatedWrapperField(this, 2, value);
+        }
+        static fromObject(data: {
+            title?: string;
+            rows?: ReturnType<typeof Row.prototype.toObject>[];
+        }): Section {
+            const message = new Section({});
+            if (data.title != null) {
+                message.title = data.title;
+            }
+            if (data.rows != null) {
+                message.rows = data.rows.map(item => Row.fromObject(item));
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                title?: string;
+                rows?: ReturnType<typeof Row.prototype.toObject>[];
+            } = {};
+            if (this.title != null) {
+                data.title = this.title;
+            }
+            if (this.rows != null) {
+                data.rows = this.rows.map((item: Row) => item.toObject());
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.title.length)
+                writer.writeString(1, this.title);
+            if (this.rows.length)
+                writer.writeRepeatedMessage(2, this.rows, (item: Row) => item.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): Section {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new Section();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.title = reader.readString();
+                        break;
+                    case 2:
+                        reader.readMessage(message.rows, () => pb_1.Message.addToRepeatedWrapperField(message, 2, Row.deserialize(reader), Row));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): Section {
+            return Section.deserialize(bytes);
+        }
+    }
+    export class ListMessage extends pb_1.Message {
+        #one_of_decls: number[][] = [[2], [3]];
+        constructor(data?: any[] | ({
+            title?: string;
+            button?: string;
+            sections?: Section[];
+        } & (({
+            description?: string;
+        }) | ({
+            footer?: string;
+        })))) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [5], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("title" in data && data.title != undefined) {
+                    this.title = data.title;
+                }
+                if ("description" in data && data.description != undefined) {
+                    this.description = data.description;
+                }
+                if ("footer" in data && data.footer != undefined) {
+                    this.footer = data.footer;
+                }
+                if ("button" in data && data.button != undefined) {
+                    this.button = data.button;
+                }
+                if ("sections" in data && data.sections != undefined) {
+                    this.sections = data.sections;
+                }
+            }
+        }
+        get title() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set title(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get description() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set description(value: string) {
+            pb_1.Message.setOneofField(this, 2, this.#one_of_decls[0], value);
+        }
+        get has_description() {
+            return pb_1.Message.getField(this, 2) != null;
+        }
+        get footer() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set footer(value: string) {
+            pb_1.Message.setOneofField(this, 3, this.#one_of_decls[1], value);
+        }
+        get has_footer() {
+            return pb_1.Message.getField(this, 3) != null;
+        }
+        get button() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set button(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        get sections() {
+            return pb_1.Message.getRepeatedWrapperField(this, Section, 5) as Section[];
+        }
+        set sections(value: Section[]) {
+            pb_1.Message.setRepeatedWrapperField(this, 5, value);
+        }
+        get _description() {
+            const cases: {
+                [index: number]: "none" | "description";
+            } = {
+                0: "none",
+                2: "description"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [2])];
+        }
+        get _footer() {
+            const cases: {
+                [index: number]: "none" | "footer";
+            } = {
+                0: "none",
+                3: "footer"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [3])];
+        }
+        static fromObject(data: {
+            title?: string;
+            description?: string;
+            footer?: string;
+            button?: string;
+            sections?: ReturnType<typeof Section.prototype.toObject>[];
+        }): ListMessage {
+            const message = new ListMessage({});
+            if (data.title != null) {
+                message.title = data.title;
+            }
+            if (data.description != null) {
+                message.description = data.description;
+            }
+            if (data.footer != null) {
+                message.footer = data.footer;
+            }
+            if (data.button != null) {
+                message.button = data.button;
+            }
+            if (data.sections != null) {
+                message.sections = data.sections.map(item => Section.fromObject(item));
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                title?: string;
+                description?: string;
+                footer?: string;
+                button?: string;
+                sections?: ReturnType<typeof Section.prototype.toObject>[];
+            } = {};
+            if (this.title != null) {
+                data.title = this.title;
+            }
+            if (this.description != null) {
+                data.description = this.description;
+            }
+            if (this.footer != null) {
+                data.footer = this.footer;
+            }
+            if (this.button != null) {
+                data.button = this.button;
+            }
+            if (this.sections != null) {
+                data.sections = this.sections.map((item: Section) => item.toObject());
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.title.length)
+                writer.writeString(1, this.title);
+            if (this.has_description)
+                writer.writeString(2, this.description);
+            if (this.has_footer)
+                writer.writeString(3, this.footer);
+            if (this.button.length)
+                writer.writeString(4, this.button);
+            if (this.sections.length)
+                writer.writeRepeatedMessage(5, this.sections, (item: Section) => item.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ListMessage {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ListMessage();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.title = reader.readString();
+                        break;
+                    case 2:
+                        message.description = reader.readString();
+                        break;
+                    case 3:
+                        message.footer = reader.readString();
+                        break;
+                    case 4:
+                        message.button = reader.readString();
+                        break;
+                    case 5:
+                        reader.readMessage(message.sections, () => pb_1.Message.addToRepeatedWrapperField(message, 5, Section.deserialize(reader), Section));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): ListMessage {
+            return ListMessage.deserialize(bytes);
         }
     }
     export class MessageReaction extends pb_1.Message {
@@ -2873,6 +4599,7 @@ export namespace messages {
         constructor(data?: any[] | {
             id?: string;
             timestamp?: number;
+            message?: Json;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -2882,6 +4609,9 @@ export namespace messages {
                 }
                 if ("timestamp" in data && data.timestamp != undefined) {
                     this.timestamp = data.timestamp;
+                }
+                if ("message" in data && data.message != undefined) {
+                    this.message = data.message;
                 }
             }
         }
@@ -2897,9 +4627,19 @@ export namespace messages {
         set timestamp(value: number) {
             pb_1.Message.setField(this, 2, value);
         }
+        get message() {
+            return pb_1.Message.getWrapperField(this, Json, 3) as Json;
+        }
+        set message(value: Json) {
+            pb_1.Message.setWrapperField(this, 3, value);
+        }
+        get has_message() {
+            return pb_1.Message.getField(this, 3) != null;
+        }
         static fromObject(data: {
             id?: string;
             timestamp?: number;
+            message?: ReturnType<typeof Json.prototype.toObject>;
         }): MessageResponse {
             const message = new MessageResponse({});
             if (data.id != null) {
@@ -2908,18 +4648,25 @@ export namespace messages {
             if (data.timestamp != null) {
                 message.timestamp = data.timestamp;
             }
+            if (data.message != null) {
+                message.message = Json.fromObject(data.message);
+            }
             return message;
         }
         toObject() {
             const data: {
                 id?: string;
                 timestamp?: number;
+                message?: ReturnType<typeof Json.prototype.toObject>;
             } = {};
             if (this.id != null) {
                 data.id = this.id;
             }
             if (this.timestamp != null) {
                 data.timestamp = this.timestamp;
+            }
+            if (this.message != null) {
+                data.message = this.message.toObject();
             }
             return data;
         }
@@ -2931,6 +4678,8 @@ export namespace messages {
                 writer.writeString(1, this.id);
             if (this.timestamp != 0)
                 writer.writeInt64(2, this.timestamp);
+            if (this.has_message)
+                writer.writeMessage(3, this.message, () => this.message.serialize(writer));
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -2946,6 +4695,9 @@ export namespace messages {
                     case 2:
                         message.timestamp = reader.readInt64();
                         break;
+                    case 3:
+                        reader.readMessage(message.message, () => message.message = Json.deserialize(reader));
+                        break;
                     default: reader.skipField();
                 }
             }
@@ -2956,6 +4708,73 @@ export namespace messages {
         }
         static deserializeBinary(bytes: Uint8Array): MessageResponse {
             return MessageResponse.deserialize(bytes);
+        }
+    }
+    export class NewMessageIDResponse extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            id?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("id" in data && data.id != undefined) {
+                    this.id = data.id;
+                }
+            }
+        }
+        get id() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set id(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        static fromObject(data: {
+            id?: string;
+        }): NewMessageIDResponse {
+            const message = new NewMessageIDResponse({});
+            if (data.id != null) {
+                message.id = data.id;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                id?: string;
+            } = {};
+            if (this.id != null) {
+                data.id = this.id;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.id.length)
+                writer.writeString(1, this.id);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): NewMessageIDResponse {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new NewMessageIDResponse();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.id = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): NewMessageIDResponse {
+            return NewMessageIDResponse.deserialize(bytes);
         }
     }
     export class ProfilePictureRequest extends pb_1.Message {
@@ -3116,6 +4935,168 @@ export namespace messages {
         }
         static deserializeBinary(bytes: Uint8Array): ProfilePictureResponse {
             return ProfilePictureResponse.deserialize(bytes);
+        }
+    }
+    export class ButtonReplyRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            jid?: string;
+            selectedDisplayText?: string;
+            selectedButtonID?: string;
+            replyTo?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("jid" in data && data.jid != undefined) {
+                    this.jid = data.jid;
+                }
+                if ("selectedDisplayText" in data && data.selectedDisplayText != undefined) {
+                    this.selectedDisplayText = data.selectedDisplayText;
+                }
+                if ("selectedButtonID" in data && data.selectedButtonID != undefined) {
+                    this.selectedButtonID = data.selectedButtonID;
+                }
+                if ("replyTo" in data && data.replyTo != undefined) {
+                    this.replyTo = data.replyTo;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get jid() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set jid(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get selectedDisplayText() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set selectedDisplayText(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get selectedButtonID() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set selectedButtonID(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        get replyTo() {
+            return pb_1.Message.getFieldWithDefault(this, 5, "") as string;
+        }
+        set replyTo(value: string) {
+            pb_1.Message.setField(this, 5, value);
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            jid?: string;
+            selectedDisplayText?: string;
+            selectedButtonID?: string;
+            replyTo?: string;
+        }): ButtonReplyRequest {
+            const message = new ButtonReplyRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.jid != null) {
+                message.jid = data.jid;
+            }
+            if (data.selectedDisplayText != null) {
+                message.selectedDisplayText = data.selectedDisplayText;
+            }
+            if (data.selectedButtonID != null) {
+                message.selectedButtonID = data.selectedButtonID;
+            }
+            if (data.replyTo != null) {
+                message.replyTo = data.replyTo;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                jid?: string;
+                selectedDisplayText?: string;
+                selectedButtonID?: string;
+                replyTo?: string;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.jid != null) {
+                data.jid = this.jid;
+            }
+            if (this.selectedDisplayText != null) {
+                data.selectedDisplayText = this.selectedDisplayText;
+            }
+            if (this.selectedButtonID != null) {
+                data.selectedButtonID = this.selectedButtonID;
+            }
+            if (this.replyTo != null) {
+                data.replyTo = this.replyTo;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.jid.length)
+                writer.writeString(2, this.jid);
+            if (this.selectedDisplayText.length)
+                writer.writeString(3, this.selectedDisplayText);
+            if (this.selectedButtonID.length)
+                writer.writeString(4, this.selectedButtonID);
+            if (this.replyTo.length)
+                writer.writeString(5, this.replyTo);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ButtonReplyRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ButtonReplyRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        message.jid = reader.readString();
+                        break;
+                    case 3:
+                        message.selectedDisplayText = reader.readString();
+                        break;
+                    case 4:
+                        message.selectedButtonID = reader.readString();
+                        break;
+                    case 5:
+                        message.replyTo = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): ButtonReplyRequest {
+            return ButtonReplyRequest.deserialize(bytes);
         }
     }
     export class PresenceRequest extends pb_1.Message {
@@ -3428,9 +5409,10 @@ export namespace messages {
             sender?: string;
             messageId?: string;
             type?: ReceiptType;
+            messageIds?: string[];
         }) {
             super();
-            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [6], this.#one_of_decls);
             if (!Array.isArray(data) && typeof data == "object") {
                 if ("session" in data && data.session != undefined) {
                     this.session = data.session;
@@ -3446,6 +5428,9 @@ export namespace messages {
                 }
                 if ("type" in data && data.type != undefined) {
                     this.type = data.type;
+                }
+                if ("messageIds" in data && data.messageIds != undefined) {
+                    this.messageIds = data.messageIds;
                 }
             }
         }
@@ -3482,12 +5467,19 @@ export namespace messages {
         set type(value: ReceiptType) {
             pb_1.Message.setField(this, 5, value);
         }
+        get messageIds() {
+            return pb_1.Message.getFieldWithDefault(this, 6, []) as string[];
+        }
+        set messageIds(value: string[]) {
+            pb_1.Message.setField(this, 6, value);
+        }
         static fromObject(data: {
             session?: ReturnType<typeof Session.prototype.toObject>;
             jid?: string;
             sender?: string;
             messageId?: string;
             type?: ReceiptType;
+            messageIds?: string[];
         }): MarkReadRequest {
             const message = new MarkReadRequest({});
             if (data.session != null) {
@@ -3505,6 +5497,9 @@ export namespace messages {
             if (data.type != null) {
                 message.type = data.type;
             }
+            if (data.messageIds != null) {
+                message.messageIds = data.messageIds;
+            }
             return message;
         }
         toObject() {
@@ -3514,6 +5509,7 @@ export namespace messages {
                 sender?: string;
                 messageId?: string;
                 type?: ReceiptType;
+                messageIds?: string[];
             } = {};
             if (this.session != null) {
                 data.session = this.session.toObject();
@@ -3529,6 +5525,9 @@ export namespace messages {
             }
             if (this.type != null) {
                 data.type = this.type;
+            }
+            if (this.messageIds != null) {
+                data.messageIds = this.messageIds;
             }
             return data;
         }
@@ -3546,6 +5545,8 @@ export namespace messages {
                 writer.writeString(4, this.messageId);
             if (this.type != ReceiptType.READ)
                 writer.writeEnum(5, this.type);
+            if (this.messageIds.length)
+                writer.writeRepeatedString(6, this.messageIds);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -3569,6 +5570,9 @@ export namespace messages {
                         break;
                     case 5:
                         message.type = reader.readEnum();
+                        break;
+                    case 6:
+                        pb_1.Message.addToRepeatedField(message, 6, reader.readString());
                         break;
                     default: reader.skipField();
                 }
@@ -3673,6 +5677,122 @@ export namespace messages {
         }
         static deserializeBinary(bytes: Uint8Array): CheckPhonesRequest {
             return CheckPhonesRequest.deserialize(bytes);
+        }
+    }
+    export class ChatUnreadRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            jid?: string;
+            read?: boolean;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("jid" in data && data.jid != undefined) {
+                    this.jid = data.jid;
+                }
+                if ("read" in data && data.read != undefined) {
+                    this.read = data.read;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get jid() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set jid(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get read() {
+            return pb_1.Message.getFieldWithDefault(this, 3, false) as boolean;
+        }
+        set read(value: boolean) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            jid?: string;
+            read?: boolean;
+        }): ChatUnreadRequest {
+            const message = new ChatUnreadRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.jid != null) {
+                message.jid = data.jid;
+            }
+            if (data.read != null) {
+                message.read = data.read;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                jid?: string;
+                read?: boolean;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.jid != null) {
+                data.jid = this.jid;
+            }
+            if (this.read != null) {
+                data.read = this.read;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.jid.length)
+                writer.writeString(2, this.jid);
+            if (this.read != false)
+                writer.writeBool(3, this.read);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ChatUnreadRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ChatUnreadRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        message.jid = reader.readString();
+                        break;
+                    case 3:
+                        message.read = reader.readBool();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): ChatUnreadRequest {
+            return ChatUnreadRequest.deserialize(bytes);
         }
     }
     export class PhoneInfo extends pb_1.Message {
@@ -3853,6 +5973,353 @@ export namespace messages {
         }
         static deserializeBinary(bytes: Uint8Array): CheckPhonesResponse {
             return CheckPhonesResponse.deserialize(bytes);
+        }
+    }
+    export class RevokeMessageRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            jid?: string;
+            sender?: string;
+            messageId?: string;
+            participants?: string[];
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [5], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("jid" in data && data.jid != undefined) {
+                    this.jid = data.jid;
+                }
+                if ("sender" in data && data.sender != undefined) {
+                    this.sender = data.sender;
+                }
+                if ("messageId" in data && data.messageId != undefined) {
+                    this.messageId = data.messageId;
+                }
+                if ("participants" in data && data.participants != undefined) {
+                    this.participants = data.participants;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get jid() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set jid(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get sender() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set sender(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get messageId() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set messageId(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        get participants() {
+            return pb_1.Message.getFieldWithDefault(this, 5, []) as string[];
+        }
+        set participants(value: string[]) {
+            pb_1.Message.setField(this, 5, value);
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            jid?: string;
+            sender?: string;
+            messageId?: string;
+            participants?: string[];
+        }): RevokeMessageRequest {
+            const message = new RevokeMessageRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.jid != null) {
+                message.jid = data.jid;
+            }
+            if (data.sender != null) {
+                message.sender = data.sender;
+            }
+            if (data.messageId != null) {
+                message.messageId = data.messageId;
+            }
+            if (data.participants != null) {
+                message.participants = data.participants;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                jid?: string;
+                sender?: string;
+                messageId?: string;
+                participants?: string[];
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.jid != null) {
+                data.jid = this.jid;
+            }
+            if (this.sender != null) {
+                data.sender = this.sender;
+            }
+            if (this.messageId != null) {
+                data.messageId = this.messageId;
+            }
+            if (this.participants != null) {
+                data.participants = this.participants;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.jid.length)
+                writer.writeString(2, this.jid);
+            if (this.sender.length)
+                writer.writeString(3, this.sender);
+            if (this.messageId.length)
+                writer.writeString(4, this.messageId);
+            if (this.participants.length)
+                writer.writeRepeatedString(5, this.participants);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): RevokeMessageRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new RevokeMessageRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        message.jid = reader.readString();
+                        break;
+                    case 3:
+                        message.sender = reader.readString();
+                        break;
+                    case 4:
+                        message.messageId = reader.readString();
+                        break;
+                    case 5:
+                        pb_1.Message.addToRepeatedField(message, 5, reader.readString());
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): RevokeMessageRequest {
+            return RevokeMessageRequest.deserialize(bytes);
+        }
+    }
+    export class EditMessageRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            jid?: string;
+            messageId?: string;
+            text?: string;
+            linkPreview?: boolean;
+            linkPreviewHighQuality?: boolean;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("jid" in data && data.jid != undefined) {
+                    this.jid = data.jid;
+                }
+                if ("messageId" in data && data.messageId != undefined) {
+                    this.messageId = data.messageId;
+                }
+                if ("text" in data && data.text != undefined) {
+                    this.text = data.text;
+                }
+                if ("linkPreview" in data && data.linkPreview != undefined) {
+                    this.linkPreview = data.linkPreview;
+                }
+                if ("linkPreviewHighQuality" in data && data.linkPreviewHighQuality != undefined) {
+                    this.linkPreviewHighQuality = data.linkPreviewHighQuality;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get jid() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set jid(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get messageId() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set messageId(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        get text() {
+            return pb_1.Message.getFieldWithDefault(this, 5, "") as string;
+        }
+        set text(value: string) {
+            pb_1.Message.setField(this, 5, value);
+        }
+        get linkPreview() {
+            return pb_1.Message.getFieldWithDefault(this, 6, false) as boolean;
+        }
+        set linkPreview(value: boolean) {
+            pb_1.Message.setField(this, 6, value);
+        }
+        get linkPreviewHighQuality() {
+            return pb_1.Message.getFieldWithDefault(this, 7, false) as boolean;
+        }
+        set linkPreviewHighQuality(value: boolean) {
+            pb_1.Message.setField(this, 7, value);
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            jid?: string;
+            messageId?: string;
+            text?: string;
+            linkPreview?: boolean;
+            linkPreviewHighQuality?: boolean;
+        }): EditMessageRequest {
+            const message = new EditMessageRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.jid != null) {
+                message.jid = data.jid;
+            }
+            if (data.messageId != null) {
+                message.messageId = data.messageId;
+            }
+            if (data.text != null) {
+                message.text = data.text;
+            }
+            if (data.linkPreview != null) {
+                message.linkPreview = data.linkPreview;
+            }
+            if (data.linkPreviewHighQuality != null) {
+                message.linkPreviewHighQuality = data.linkPreviewHighQuality;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                jid?: string;
+                messageId?: string;
+                text?: string;
+                linkPreview?: boolean;
+                linkPreviewHighQuality?: boolean;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.jid != null) {
+                data.jid = this.jid;
+            }
+            if (this.messageId != null) {
+                data.messageId = this.messageId;
+            }
+            if (this.text != null) {
+                data.text = this.text;
+            }
+            if (this.linkPreview != null) {
+                data.linkPreview = this.linkPreview;
+            }
+            if (this.linkPreviewHighQuality != null) {
+                data.linkPreviewHighQuality = this.linkPreviewHighQuality;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.jid.length)
+                writer.writeString(2, this.jid);
+            if (this.messageId.length)
+                writer.writeString(4, this.messageId);
+            if (this.text.length)
+                writer.writeString(5, this.text);
+            if (this.linkPreview != false)
+                writer.writeBool(6, this.linkPreview);
+            if (this.linkPreviewHighQuality != false)
+                writer.writeBool(7, this.linkPreviewHighQuality);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): EditMessageRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new EditMessageRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        message.jid = reader.readString();
+                        break;
+                    case 4:
+                        message.messageId = reader.readString();
+                        break;
+                    case 5:
+                        message.text = reader.readString();
+                        break;
+                    case 6:
+                        message.linkPreview = reader.readBool();
+                        break;
+                    case 7:
+                        message.linkPreviewHighQuality = reader.readBool();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): EditMessageRequest {
+            return EditMessageRequest.deserialize(bytes);
         }
     }
     export class NewsletterListRequest extends pb_1.Message {
@@ -5457,6 +7924,8 @@ export namespace messages {
         constructor(data?: any[] | {
             session?: Session;
             message?: string;
+            jid?: string;
+            messageId?: string;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -5466,6 +7935,12 @@ export namespace messages {
                 }
                 if ("message" in data && data.message != undefined) {
                     this.message = data.message;
+                }
+                if ("jid" in data && data.jid != undefined) {
+                    this.jid = data.jid;
+                }
+                if ("messageId" in data && data.messageId != undefined) {
+                    this.messageId = data.messageId;
                 }
             }
         }
@@ -5484,9 +7959,23 @@ export namespace messages {
         set message(value: string) {
             pb_1.Message.setField(this, 2, value);
         }
+        get jid() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set jid(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get messageId() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set messageId(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
         static fromObject(data: {
             session?: ReturnType<typeof Session.prototype.toObject>;
             message?: string;
+            jid?: string;
+            messageId?: string;
         }): DownloadMediaRequest {
             const message = new DownloadMediaRequest({});
             if (data.session != null) {
@@ -5495,18 +7984,32 @@ export namespace messages {
             if (data.message != null) {
                 message.message = data.message;
             }
+            if (data.jid != null) {
+                message.jid = data.jid;
+            }
+            if (data.messageId != null) {
+                message.messageId = data.messageId;
+            }
             return message;
         }
         toObject() {
             const data: {
                 session?: ReturnType<typeof Session.prototype.toObject>;
                 message?: string;
+                jid?: string;
+                messageId?: string;
             } = {};
             if (this.session != null) {
                 data.session = this.session.toObject();
             }
             if (this.message != null) {
                 data.message = this.message;
+            }
+            if (this.jid != null) {
+                data.jid = this.jid;
+            }
+            if (this.messageId != null) {
+                data.messageId = this.messageId;
             }
             return data;
         }
@@ -5518,6 +8021,10 @@ export namespace messages {
                 writer.writeMessage(1, this.session, () => this.session.serialize(writer));
             if (this.message.length)
                 writer.writeString(2, this.message);
+            if (this.jid.length)
+                writer.writeString(3, this.jid);
+            if (this.messageId.length)
+                writer.writeString(4, this.messageId);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -5532,6 +8039,12 @@ export namespace messages {
                         break;
                     case 2:
                         message.message = reader.readString();
+                        break;
+                    case 3:
+                        message.jid = reader.readString();
+                        break;
+                    case 4:
+                        message.messageId = reader.readString();
                         break;
                     default: reader.skipField();
                 }
@@ -6032,6 +8545,7 @@ export namespace messages {
             timestampGte?: OptionalUInt64;
             timestampLte?: OptionalUInt64;
             fromMe?: OptionalBool;
+            status?: OptionalUInt32;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -6047,6 +8561,9 @@ export namespace messages {
                 }
                 if ("fromMe" in data && data.fromMe != undefined) {
                     this.fromMe = data.fromMe;
+                }
+                if ("status" in data && data.status != undefined) {
+                    this.status = data.status;
                 }
             }
         }
@@ -6086,11 +8603,21 @@ export namespace messages {
         get has_fromMe() {
             return pb_1.Message.getField(this, 4) != null;
         }
+        get status() {
+            return pb_1.Message.getWrapperField(this, OptionalUInt32, 5) as OptionalUInt32;
+        }
+        set status(value: OptionalUInt32) {
+            pb_1.Message.setWrapperField(this, 5, value);
+        }
+        get has_status() {
+            return pb_1.Message.getField(this, 5) != null;
+        }
         static fromObject(data: {
             jid?: ReturnType<typeof OptionalString.prototype.toObject>;
             timestampGte?: ReturnType<typeof OptionalUInt64.prototype.toObject>;
             timestampLte?: ReturnType<typeof OptionalUInt64.prototype.toObject>;
             fromMe?: ReturnType<typeof OptionalBool.prototype.toObject>;
+            status?: ReturnType<typeof OptionalUInt32.prototype.toObject>;
         }): MessageFilters {
             const message = new MessageFilters({});
             if (data.jid != null) {
@@ -6105,6 +8632,9 @@ export namespace messages {
             if (data.fromMe != null) {
                 message.fromMe = OptionalBool.fromObject(data.fromMe);
             }
+            if (data.status != null) {
+                message.status = OptionalUInt32.fromObject(data.status);
+            }
             return message;
         }
         toObject() {
@@ -6113,6 +8643,7 @@ export namespace messages {
                 timestampGte?: ReturnType<typeof OptionalUInt64.prototype.toObject>;
                 timestampLte?: ReturnType<typeof OptionalUInt64.prototype.toObject>;
                 fromMe?: ReturnType<typeof OptionalBool.prototype.toObject>;
+                status?: ReturnType<typeof OptionalUInt32.prototype.toObject>;
             } = {};
             if (this.jid != null) {
                 data.jid = this.jid.toObject();
@@ -6125,6 +8656,9 @@ export namespace messages {
             }
             if (this.fromMe != null) {
                 data.fromMe = this.fromMe.toObject();
+            }
+            if (this.status != null) {
+                data.status = this.status.toObject();
             }
             return data;
         }
@@ -6140,6 +8674,8 @@ export namespace messages {
                 writer.writeMessage(3, this.timestampLte, () => this.timestampLte.serialize(writer));
             if (this.has_fromMe)
                 writer.writeMessage(4, this.fromMe, () => this.fromMe.serialize(writer));
+            if (this.has_status)
+                writer.writeMessage(5, this.status, () => this.status.serialize(writer));
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -6160,6 +8696,9 @@ export namespace messages {
                         break;
                     case 4:
                         reader.readMessage(message.fromMe, () => message.fromMe = OptionalBool.deserialize(reader));
+                        break;
+                    case 5:
+                        reader.readMessage(message.status, () => message.status = OptionalUInt32.deserialize(reader));
                         break;
                     default: reader.skipField();
                 }
@@ -6295,6 +8834,145 @@ export namespace messages {
             return GetMessagesRequest.deserialize(bytes);
         }
     }
+    export class UpdateContactRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            jid?: string;
+            firstName?: string;
+            lastName?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("jid" in data && data.jid != undefined) {
+                    this.jid = data.jid;
+                }
+                if ("firstName" in data && data.firstName != undefined) {
+                    this.firstName = data.firstName;
+                }
+                if ("lastName" in data && data.lastName != undefined) {
+                    this.lastName = data.lastName;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get jid() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set jid(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get firstName() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set firstName(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get lastName() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set lastName(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            jid?: string;
+            firstName?: string;
+            lastName?: string;
+        }): UpdateContactRequest {
+            const message = new UpdateContactRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.jid != null) {
+                message.jid = data.jid;
+            }
+            if (data.firstName != null) {
+                message.firstName = data.firstName;
+            }
+            if (data.lastName != null) {
+                message.lastName = data.lastName;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                jid?: string;
+                firstName?: string;
+                lastName?: string;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.jid != null) {
+                data.jid = this.jid;
+            }
+            if (this.firstName != null) {
+                data.firstName = this.firstName;
+            }
+            if (this.lastName != null) {
+                data.lastName = this.lastName;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.jid.length)
+                writer.writeString(2, this.jid);
+            if (this.firstName.length)
+                writer.writeString(3, this.firstName);
+            if (this.lastName.length)
+                writer.writeString(4, this.lastName);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): UpdateContactRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new UpdateContactRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        message.jid = reader.readString();
+                        break;
+                    case 3:
+                        message.firstName = reader.readString();
+                        break;
+                    case 4:
+                        message.lastName = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): UpdateContactRequest {
+            return UpdateContactRequest.deserialize(bytes);
+        }
+    }
     export class GetContactsRequest extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
@@ -6417,12 +9095,80 @@ export namespace messages {
             return GetContactsRequest.deserialize(bytes);
         }
     }
+    export class ChatFilter extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            jids?: string[];
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [1], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("jids" in data && data.jids != undefined) {
+                    this.jids = data.jids;
+                }
+            }
+        }
+        get jids() {
+            return pb_1.Message.getFieldWithDefault(this, 1, []) as string[];
+        }
+        set jids(value: string[]) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        static fromObject(data: {
+            jids?: string[];
+        }): ChatFilter {
+            const message = new ChatFilter({});
+            if (data.jids != null) {
+                message.jids = data.jids;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                jids?: string[];
+            } = {};
+            if (this.jids != null) {
+                data.jids = this.jids;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.jids.length)
+                writer.writeRepeatedString(1, this.jids);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ChatFilter {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ChatFilter();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        pb_1.Message.addToRepeatedField(message, 1, reader.readString());
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): ChatFilter {
+            return ChatFilter.deserialize(bytes);
+        }
+    }
     export class GetChatsRequest extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
             session?: Session;
             sortBy?: SortBy;
             pagination?: Pagination;
+            filter?: ChatFilter;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -6435,6 +9181,9 @@ export namespace messages {
                 }
                 if ("pagination" in data && data.pagination != undefined) {
                     this.pagination = data.pagination;
+                }
+                if ("filter" in data && data.filter != undefined) {
+                    this.filter = data.filter;
                 }
             }
         }
@@ -6465,10 +9214,20 @@ export namespace messages {
         get has_pagination() {
             return pb_1.Message.getField(this, 3) != null;
         }
+        get filter() {
+            return pb_1.Message.getWrapperField(this, ChatFilter, 4) as ChatFilter;
+        }
+        set filter(value: ChatFilter) {
+            pb_1.Message.setWrapperField(this, 4, value);
+        }
+        get has_filter() {
+            return pb_1.Message.getField(this, 4) != null;
+        }
         static fromObject(data: {
             session?: ReturnType<typeof Session.prototype.toObject>;
             sortBy?: ReturnType<typeof SortBy.prototype.toObject>;
             pagination?: ReturnType<typeof Pagination.prototype.toObject>;
+            filter?: ReturnType<typeof ChatFilter.prototype.toObject>;
         }): GetChatsRequest {
             const message = new GetChatsRequest({});
             if (data.session != null) {
@@ -6480,6 +9239,9 @@ export namespace messages {
             if (data.pagination != null) {
                 message.pagination = Pagination.fromObject(data.pagination);
             }
+            if (data.filter != null) {
+                message.filter = ChatFilter.fromObject(data.filter);
+            }
             return message;
         }
         toObject() {
@@ -6487,6 +9249,7 @@ export namespace messages {
                 session?: ReturnType<typeof Session.prototype.toObject>;
                 sortBy?: ReturnType<typeof SortBy.prototype.toObject>;
                 pagination?: ReturnType<typeof Pagination.prototype.toObject>;
+                filter?: ReturnType<typeof ChatFilter.prototype.toObject>;
             } = {};
             if (this.session != null) {
                 data.session = this.session.toObject();
@@ -6496,6 +9259,9 @@ export namespace messages {
             }
             if (this.pagination != null) {
                 data.pagination = this.pagination.toObject();
+            }
+            if (this.filter != null) {
+                data.filter = this.filter.toObject();
             }
             return data;
         }
@@ -6509,6 +9275,8 @@ export namespace messages {
                 writer.writeMessage(2, this.sortBy, () => this.sortBy.serialize(writer));
             if (this.has_pagination)
                 writer.writeMessage(3, this.pagination, () => this.pagination.serialize(writer));
+            if (this.has_filter)
+                writer.writeMessage(4, this.filter, () => this.filter.serialize(writer));
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -6527,6 +9295,9 @@ export namespace messages {
                     case 3:
                         reader.readMessage(message.pagination, () => message.pagination = Pagination.deserialize(reader));
                         break;
+                    case 4:
+                        reader.readMessage(message.filter, () => message.filter = ChatFilter.deserialize(reader));
+                        break;
                     default: reader.skipField();
                 }
             }
@@ -6537,6 +9308,922 @@ export namespace messages {
         }
         static deserializeBinary(bytes: Uint8Array): GetChatsRequest {
             return GetChatsRequest.deserialize(bytes);
+        }
+    }
+    export class GetLabelsRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+        }): GetLabelsRequest {
+            const message = new GetLabelsRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): GetLabelsRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new GetLabelsRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): GetLabelsRequest {
+            return GetLabelsRequest.deserialize(bytes);
+        }
+    }
+    export class Label extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            id?: string;
+            name?: string;
+            color?: number;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("id" in data && data.id != undefined) {
+                    this.id = data.id;
+                }
+                if ("name" in data && data.name != undefined) {
+                    this.name = data.name;
+                }
+                if ("color" in data && data.color != undefined) {
+                    this.color = data.color;
+                }
+            }
+        }
+        get id() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set id(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get name() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set name(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get color() {
+            return pb_1.Message.getFieldWithDefault(this, 4, 0) as number;
+        }
+        set color(value: number) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        static fromObject(data: {
+            id?: string;
+            name?: string;
+            color?: number;
+        }): Label {
+            const message = new Label({});
+            if (data.id != null) {
+                message.id = data.id;
+            }
+            if (data.name != null) {
+                message.name = data.name;
+            }
+            if (data.color != null) {
+                message.color = data.color;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                id?: string;
+                name?: string;
+                color?: number;
+            } = {};
+            if (this.id != null) {
+                data.id = this.id;
+            }
+            if (this.name != null) {
+                data.name = this.name;
+            }
+            if (this.color != null) {
+                data.color = this.color;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.id.length)
+                writer.writeString(1, this.id);
+            if (this.name.length)
+                writer.writeString(2, this.name);
+            if (this.color != 0)
+                writer.writeInt32(4, this.color);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): Label {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new Label();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.id = reader.readString();
+                        break;
+                    case 2:
+                        message.name = reader.readString();
+                        break;
+                    case 4:
+                        message.color = reader.readInt32();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): Label {
+            return Label.deserialize(bytes);
+        }
+    }
+    export class UpsertLabelRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            label?: Label;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("label" in data && data.label != undefined) {
+                    this.label = data.label;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get label() {
+            return pb_1.Message.getWrapperField(this, Label, 2) as Label;
+        }
+        set label(value: Label) {
+            pb_1.Message.setWrapperField(this, 2, value);
+        }
+        get has_label() {
+            return pb_1.Message.getField(this, 2) != null;
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            label?: ReturnType<typeof Label.prototype.toObject>;
+        }): UpsertLabelRequest {
+            const message = new UpsertLabelRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.label != null) {
+                message.label = Label.fromObject(data.label);
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                label?: ReturnType<typeof Label.prototype.toObject>;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.label != null) {
+                data.label = this.label.toObject();
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.has_label)
+                writer.writeMessage(2, this.label, () => this.label.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): UpsertLabelRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new UpsertLabelRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        reader.readMessage(message.label, () => message.label = Label.deserialize(reader));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): UpsertLabelRequest {
+            return UpsertLabelRequest.deserialize(bytes);
+        }
+    }
+    export class DeleteLabelRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            label?: Label;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("label" in data && data.label != undefined) {
+                    this.label = data.label;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get label() {
+            return pb_1.Message.getWrapperField(this, Label, 2) as Label;
+        }
+        set label(value: Label) {
+            pb_1.Message.setWrapperField(this, 2, value);
+        }
+        get has_label() {
+            return pb_1.Message.getField(this, 2) != null;
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            label?: ReturnType<typeof Label.prototype.toObject>;
+        }): DeleteLabelRequest {
+            const message = new DeleteLabelRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.label != null) {
+                message.label = Label.fromObject(data.label);
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                label?: ReturnType<typeof Label.prototype.toObject>;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.label != null) {
+                data.label = this.label.toObject();
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.has_label)
+                writer.writeMessage(2, this.label, () => this.label.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): DeleteLabelRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new DeleteLabelRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        reader.readMessage(message.label, () => message.label = Label.deserialize(reader));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): DeleteLabelRequest {
+            return DeleteLabelRequest.deserialize(bytes);
+        }
+    }
+    export class ChatLabelRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            chatId?: string;
+            labelId?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("chatId" in data && data.chatId != undefined) {
+                    this.chatId = data.chatId;
+                }
+                if ("labelId" in data && data.labelId != undefined) {
+                    this.labelId = data.labelId;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get chatId() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set chatId(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get labelId() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set labelId(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            chatId?: string;
+            labelId?: string;
+        }): ChatLabelRequest {
+            const message = new ChatLabelRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.chatId != null) {
+                message.chatId = data.chatId;
+            }
+            if (data.labelId != null) {
+                message.labelId = data.labelId;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                chatId?: string;
+                labelId?: string;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.chatId != null) {
+                data.chatId = this.chatId;
+            }
+            if (this.labelId != null) {
+                data.labelId = this.labelId;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.chatId.length)
+                writer.writeString(2, this.chatId);
+            if (this.labelId.length)
+                writer.writeString(3, this.labelId);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ChatLabelRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ChatLabelRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        message.chatId = reader.readString();
+                        break;
+                    case 3:
+                        message.labelId = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): ChatLabelRequest {
+            return ChatLabelRequest.deserialize(bytes);
+        }
+    }
+    export class CancelEventMessageRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            jid?: string;
+            messageId?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("jid" in data && data.jid != undefined) {
+                    this.jid = data.jid;
+                }
+                if ("messageId" in data && data.messageId != undefined) {
+                    this.messageId = data.messageId;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get jid() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set jid(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get messageId() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set messageId(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            jid?: string;
+            messageId?: string;
+        }): CancelEventMessageRequest {
+            const message = new CancelEventMessageRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.jid != null) {
+                message.jid = data.jid;
+            }
+            if (data.messageId != null) {
+                message.messageId = data.messageId;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                jid?: string;
+                messageId?: string;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.jid != null) {
+                data.jid = this.jid;
+            }
+            if (this.messageId != null) {
+                data.messageId = this.messageId;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.jid.length)
+                writer.writeString(2, this.jid);
+            if (this.messageId.length)
+                writer.writeString(4, this.messageId);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): CancelEventMessageRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new CancelEventMessageRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        message.jid = reader.readString();
+                        break;
+                    case 4:
+                        message.messageId = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): CancelEventMessageRequest {
+            return CancelEventMessageRequest.deserialize(bytes);
+        }
+    }
+    export class GetLidsRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+        }): GetLidsRequest {
+            const message = new GetLidsRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): GetLidsRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new GetLidsRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): GetLidsRequest {
+            return GetLidsRequest.deserialize(bytes);
+        }
+    }
+    export class PollMessage extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            name?: string;
+            options?: string[];
+            multipleAnswers?: boolean;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [2], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("name" in data && data.name != undefined) {
+                    this.name = data.name;
+                }
+                if ("options" in data && data.options != undefined) {
+                    this.options = data.options;
+                }
+                if ("multipleAnswers" in data && data.multipleAnswers != undefined) {
+                    this.multipleAnswers = data.multipleAnswers;
+                }
+            }
+        }
+        get name() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set name(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get options() {
+            return pb_1.Message.getFieldWithDefault(this, 2, []) as string[];
+        }
+        set options(value: string[]) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get multipleAnswers() {
+            return pb_1.Message.getFieldWithDefault(this, 3, false) as boolean;
+        }
+        set multipleAnswers(value: boolean) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        static fromObject(data: {
+            name?: string;
+            options?: string[];
+            multipleAnswers?: boolean;
+        }): PollMessage {
+            const message = new PollMessage({});
+            if (data.name != null) {
+                message.name = data.name;
+            }
+            if (data.options != null) {
+                message.options = data.options;
+            }
+            if (data.multipleAnswers != null) {
+                message.multipleAnswers = data.multipleAnswers;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                name?: string;
+                options?: string[];
+                multipleAnswers?: boolean;
+            } = {};
+            if (this.name != null) {
+                data.name = this.name;
+            }
+            if (this.options != null) {
+                data.options = this.options;
+            }
+            if (this.multipleAnswers != null) {
+                data.multipleAnswers = this.multipleAnswers;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.name.length)
+                writer.writeString(1, this.name);
+            if (this.options.length)
+                writer.writeRepeatedString(2, this.options);
+            if (this.multipleAnswers != false)
+                writer.writeBool(3, this.multipleAnswers);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): PollMessage {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new PollMessage();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.name = reader.readString();
+                        break;
+                    case 2:
+                        pb_1.Message.addToRepeatedField(message, 2, reader.readString());
+                        break;
+                    case 3:
+                        message.multipleAnswers = reader.readBool();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): PollMessage {
+            return PollMessage.deserialize(bytes);
+        }
+    }
+    export class PollVoteMessage extends pb_1.Message {
+        #one_of_decls: number[][] = [[2]];
+        constructor(data?: any[] | ({
+            pollMessageId?: string;
+            options?: string[];
+        } & (({
+            pollServerId?: number;
+        })))) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [3], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("pollMessageId" in data && data.pollMessageId != undefined) {
+                    this.pollMessageId = data.pollMessageId;
+                }
+                if ("pollServerId" in data && data.pollServerId != undefined) {
+                    this.pollServerId = data.pollServerId;
+                }
+                if ("options" in data && data.options != undefined) {
+                    this.options = data.options;
+                }
+            }
+        }
+        get pollMessageId() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set pollMessageId(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get pollServerId() {
+            return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
+        }
+        set pollServerId(value: number) {
+            pb_1.Message.setOneofField(this, 2, this.#one_of_decls[0], value);
+        }
+        get has_pollServerId() {
+            return pb_1.Message.getField(this, 2) != null;
+        }
+        get options() {
+            return pb_1.Message.getFieldWithDefault(this, 3, []) as string[];
+        }
+        set options(value: string[]) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get _pollServerId() {
+            const cases: {
+                [index: number]: "none" | "pollServerId";
+            } = {
+                0: "none",
+                2: "pollServerId"
+            };
+            return cases[pb_1.Message.computeOneofCase(this, [2])];
+        }
+        static fromObject(data: {
+            pollMessageId?: string;
+            pollServerId?: number;
+            options?: string[];
+        }): PollVoteMessage {
+            const message = new PollVoteMessage({});
+            if (data.pollMessageId != null) {
+                message.pollMessageId = data.pollMessageId;
+            }
+            if (data.pollServerId != null) {
+                message.pollServerId = data.pollServerId;
+            }
+            if (data.options != null) {
+                message.options = data.options;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                pollMessageId?: string;
+                pollServerId?: number;
+                options?: string[];
+            } = {};
+            if (this.pollMessageId != null) {
+                data.pollMessageId = this.pollMessageId;
+            }
+            if (this.pollServerId != null) {
+                data.pollServerId = this.pollServerId;
+            }
+            if (this.options != null) {
+                data.options = this.options;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.pollMessageId.length)
+                writer.writeString(1, this.pollMessageId);
+            if (this.has_pollServerId)
+                writer.writeInt64(2, this.pollServerId);
+            if (this.options.length)
+                writer.writeRepeatedString(3, this.options);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): PollVoteMessage {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new PollVoteMessage();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.pollMessageId = reader.readString();
+                        break;
+                    case 2:
+                        message.pollServerId = reader.readInt64();
+                        break;
+                    case 3:
+                        pb_1.Message.addToRepeatedField(message, 3, reader.readString());
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): PollVoteMessage {
+            return PollVoteMessage.deserialize(bytes);
         }
     }
     interface GrpcUnaryServiceInterface<P, R> {
@@ -6659,6 +10346,42 @@ export namespace messages {
                 requestDeserialize: (bytes: Buffer) => SetProfilePictureRequest.deserialize(new Uint8Array(bytes)),
                 responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
                 responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
+            },
+            GetAllLids: {
+                path: "/messages.MessageService/GetAllLids",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: GetLidsRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => GetLidsRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: JsonList) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => JsonList.deserialize(new Uint8Array(bytes))
+            },
+            GetLidsCount: {
+                path: "/messages.MessageService/GetLidsCount",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: Session) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => Session.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: OptionalUInt64) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => OptionalUInt64.deserialize(new Uint8Array(bytes))
+            },
+            FindPNByLid: {
+                path: "/messages.MessageService/FindPNByLid",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: EntityByIdRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => EntityByIdRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: OptionalString) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => OptionalString.deserialize(new Uint8Array(bytes))
+            },
+            FindLIDByPhoneNumber: {
+                path: "/messages.MessageService/FindLIDByPhoneNumber",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: EntityByIdRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => EntityByIdRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: OptionalString) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => OptionalString.deserialize(new Uint8Array(bytes))
             },
             FetchGroups: {
                 path: "/messages.MessageService/FetchGroups",
@@ -6795,24 +10518,6 @@ export namespace messages {
                 responseSerialize: (message: JsonList) => Buffer.from(message.serialize()),
                 responseDeserialize: (bytes: Buffer) => JsonList.deserialize(new Uint8Array(bytes))
             },
-            SendMessage: {
-                path: "/messages.MessageService/SendMessage",
-                requestStream: false,
-                responseStream: false,
-                requestSerialize: (message: MessageRequest) => Buffer.from(message.serialize()),
-                requestDeserialize: (bytes: Buffer) => MessageRequest.deserialize(new Uint8Array(bytes)),
-                responseSerialize: (message: MessageResponse) => Buffer.from(message.serialize()),
-                responseDeserialize: (bytes: Buffer) => MessageResponse.deserialize(new Uint8Array(bytes))
-            },
-            SendReaction: {
-                path: "/messages.MessageService/SendReaction",
-                requestStream: false,
-                responseStream: false,
-                requestSerialize: (message: MessageReaction) => Buffer.from(message.serialize()),
-                requestDeserialize: (bytes: Buffer) => MessageReaction.deserialize(new Uint8Array(bytes)),
-                responseSerialize: (message: MessageResponse) => Buffer.from(message.serialize()),
-                responseDeserialize: (bytes: Buffer) => MessageResponse.deserialize(new Uint8Array(bytes))
-            },
             GetProfilePicture: {
                 path: "/messages.MessageService/GetProfilePicture",
                 requestStream: false,
@@ -6849,6 +10554,51 @@ export namespace messages {
                 responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
                 responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
             },
+            CheckPhones: {
+                path: "/messages.MessageService/CheckPhones",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: CheckPhonesRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => CheckPhonesRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: CheckPhonesResponse) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => CheckPhonesResponse.deserialize(new Uint8Array(bytes))
+            },
+            MarkChatUnread: {
+                path: "/messages.MessageService/MarkChatUnread",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: ChatUnreadRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => ChatUnreadRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
+            },
+            GenerateNewMessageID: {
+                path: "/messages.MessageService/GenerateNewMessageID",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: Session) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => Session.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: NewMessageIDResponse) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => NewMessageIDResponse.deserialize(new Uint8Array(bytes))
+            },
+            SendMessage: {
+                path: "/messages.MessageService/SendMessage",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: MessageRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => MessageRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: MessageResponse) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => MessageResponse.deserialize(new Uint8Array(bytes))
+            },
+            SendReaction: {
+                path: "/messages.MessageService/SendReaction",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: MessageReaction) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => MessageReaction.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: MessageResponse) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => MessageResponse.deserialize(new Uint8Array(bytes))
+            },
             MarkRead: {
                 path: "/messages.MessageService/MarkRead",
                 requestStream: false,
@@ -6858,14 +10608,32 @@ export namespace messages {
                 responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
                 responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
             },
-            CheckPhones: {
-                path: "/messages.MessageService/CheckPhones",
+            EditMessage: {
+                path: "/messages.MessageService/EditMessage",
                 requestStream: false,
                 responseStream: false,
-                requestSerialize: (message: CheckPhonesRequest) => Buffer.from(message.serialize()),
-                requestDeserialize: (bytes: Buffer) => CheckPhonesRequest.deserialize(new Uint8Array(bytes)),
-                responseSerialize: (message: CheckPhonesResponse) => Buffer.from(message.serialize()),
-                responseDeserialize: (bytes: Buffer) => CheckPhonesResponse.deserialize(new Uint8Array(bytes))
+                requestSerialize: (message: EditMessageRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => EditMessageRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: MessageResponse) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => MessageResponse.deserialize(new Uint8Array(bytes))
+            },
+            RevokeMessage: {
+                path: "/messages.MessageService/RevokeMessage",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: RevokeMessageRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => RevokeMessageRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: MessageResponse) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => MessageResponse.deserialize(new Uint8Array(bytes))
+            },
+            SendButtonReply: {
+                path: "/messages.MessageService/SendButtonReply",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: ButtonReplyRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => ButtonReplyRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: MessageResponse) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => MessageResponse.deserialize(new Uint8Array(bytes))
             },
             GetSubscribedNewsletters: {
                 path: "/messages.MessageService/GetSubscribedNewsletters",
@@ -6939,6 +10707,105 @@ export namespace messages {
                 responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
                 responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
             },
+            GetLabels: {
+                path: "/messages.MessageService/GetLabels",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: GetLabelsRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => GetLabelsRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: JsonList) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => JsonList.deserialize(new Uint8Array(bytes))
+            },
+            UpsertLabel: {
+                path: "/messages.MessageService/UpsertLabel",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: UpsertLabelRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => UpsertLabelRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
+            },
+            DeleteLabel: {
+                path: "/messages.MessageService/DeleteLabel",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: DeleteLabelRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => DeleteLabelRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
+            },
+            AddChatLabel: {
+                path: "/messages.MessageService/AddChatLabel",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: ChatLabelRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => ChatLabelRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
+            },
+            RemoveChatLabel: {
+                path: "/messages.MessageService/RemoveChatLabel",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: ChatLabelRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => ChatLabelRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
+            },
+            GetLabelsByJid: {
+                path: "/messages.MessageService/GetLabelsByJid",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: EntityByIdRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => EntityByIdRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: JsonList) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => JsonList.deserialize(new Uint8Array(bytes))
+            },
+            GetChatsByLabelId: {
+                path: "/messages.MessageService/GetChatsByLabelId",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: EntityByIdRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => EntityByIdRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: JsonList) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => JsonList.deserialize(new Uint8Array(bytes))
+            },
+            UpdateContact: {
+                path: "/messages.MessageService/UpdateContact",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: UpdateContactRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => UpdateContactRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
+            },
+            GetContacts: {
+                path: "/messages.MessageService/GetContacts",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: GetContactsRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => GetContactsRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: JsonList) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => JsonList.deserialize(new Uint8Array(bytes))
+            },
+            GetContactById: {
+                path: "/messages.MessageService/GetContactById",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: EntityByIdRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => EntityByIdRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: Json) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => Json.deserialize(new Uint8Array(bytes))
+            },
+            CancelEventMessage: {
+                path: "/messages.MessageService/CancelEventMessage",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: CancelEventMessageRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => CancelEventMessageRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: MessageResponse) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => MessageResponse.deserialize(new Uint8Array(bytes))
+            },
             DownloadMedia: {
                 path: "/messages.MessageService/DownloadMedia",
                 requestStream: false,
@@ -6966,24 +10833,6 @@ export namespace messages {
                 responseSerialize: (message: JsonList) => Buffer.from(message.serialize()),
                 responseDeserialize: (bytes: Buffer) => JsonList.deserialize(new Uint8Array(bytes))
             },
-            GetContacts: {
-                path: "/messages.MessageService/GetContacts",
-                requestStream: false,
-                responseStream: false,
-                requestSerialize: (message: GetContactsRequest) => Buffer.from(message.serialize()),
-                requestDeserialize: (bytes: Buffer) => GetContactsRequest.deserialize(new Uint8Array(bytes)),
-                responseSerialize: (message: JsonList) => Buffer.from(message.serialize()),
-                responseDeserialize: (bytes: Buffer) => JsonList.deserialize(new Uint8Array(bytes))
-            },
-            GetContactById: {
-                path: "/messages.MessageService/GetContactById",
-                requestStream: false,
-                responseStream: false,
-                requestSerialize: (message: EntityByIdRequest) => Buffer.from(message.serialize()),
-                requestDeserialize: (bytes: Buffer) => EntityByIdRequest.deserialize(new Uint8Array(bytes)),
-                responseSerialize: (message: Json) => Buffer.from(message.serialize()),
-                responseDeserialize: (bytes: Buffer) => Json.deserialize(new Uint8Array(bytes))
-            },
             GetChats: {
                 path: "/messages.MessageService/GetChats",
                 requestStream: false,
@@ -7003,6 +10852,10 @@ export namespace messages {
         abstract SetProfileName(call: grpc_1.ServerUnaryCall<ProfileNameRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract SetProfileStatus(call: grpc_1.ServerUnaryCall<ProfileStatusRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract SetProfilePicture(call: grpc_1.ServerUnaryCall<SetProfilePictureRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract GetAllLids(call: grpc_1.ServerUnaryCall<GetLidsRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
+        abstract GetLidsCount(call: grpc_1.ServerUnaryCall<Session, OptionalUInt64>, callback: grpc_1.sendUnaryData<OptionalUInt64>): void;
+        abstract FindPNByLid(call: grpc_1.ServerUnaryCall<EntityByIdRequest, OptionalString>, callback: grpc_1.sendUnaryData<OptionalString>): void;
+        abstract FindLIDByPhoneNumber(call: grpc_1.ServerUnaryCall<EntityByIdRequest, OptionalString>, callback: grpc_1.sendUnaryData<OptionalString>): void;
         abstract FetchGroups(call: grpc_1.ServerUnaryCall<Session, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract GetGroups(call: grpc_1.ServerUnaryCall<Session, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
         abstract GetGroupInfo(call: grpc_1.ServerUnaryCall<JidRequest, Json>, callback: grpc_1.sendUnaryData<Json>): void;
@@ -7018,14 +10871,19 @@ export namespace messages {
         abstract SetGroupLocked(call: grpc_1.ServerUnaryCall<JidBoolRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract SetGroupAnnounce(call: grpc_1.ServerUnaryCall<JidBoolRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract UpdateGroupParticipants(call: grpc_1.ServerUnaryCall<UpdateParticipantsRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
-        abstract SendMessage(call: grpc_1.ServerUnaryCall<MessageRequest, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
-        abstract SendReaction(call: grpc_1.ServerUnaryCall<MessageReaction, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
         abstract GetProfilePicture(call: grpc_1.ServerUnaryCall<ProfilePictureRequest, ProfilePictureResponse>, callback: grpc_1.sendUnaryData<ProfilePictureResponse>): void;
         abstract SendPresence(call: grpc_1.ServerUnaryCall<PresenceRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract SendChatPresence(call: grpc_1.ServerUnaryCall<ChatPresenceRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract SubscribePresence(call: grpc_1.ServerUnaryCall<SubscribePresenceRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
-        abstract MarkRead(call: grpc_1.ServerUnaryCall<MarkReadRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract CheckPhones(call: grpc_1.ServerUnaryCall<CheckPhonesRequest, CheckPhonesResponse>, callback: grpc_1.sendUnaryData<CheckPhonesResponse>): void;
+        abstract MarkChatUnread(call: grpc_1.ServerUnaryCall<ChatUnreadRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract GenerateNewMessageID(call: grpc_1.ServerUnaryCall<Session, NewMessageIDResponse>, callback: grpc_1.sendUnaryData<NewMessageIDResponse>): void;
+        abstract SendMessage(call: grpc_1.ServerUnaryCall<MessageRequest, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
+        abstract SendReaction(call: grpc_1.ServerUnaryCall<MessageReaction, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
+        abstract MarkRead(call: grpc_1.ServerUnaryCall<MarkReadRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract EditMessage(call: grpc_1.ServerUnaryCall<EditMessageRequest, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
+        abstract RevokeMessage(call: grpc_1.ServerUnaryCall<RevokeMessageRequest, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
+        abstract SendButtonReply(call: grpc_1.ServerUnaryCall<ButtonReplyRequest, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
         abstract GetSubscribedNewsletters(call: grpc_1.ServerUnaryCall<NewsletterListRequest, NewsletterList>, callback: grpc_1.sendUnaryData<NewsletterList>): void;
         abstract GetNewsletterInfo(call: grpc_1.ServerUnaryCall<NewsletterInfoRequest, Newsletter>, callback: grpc_1.sendUnaryData<Newsletter>): void;
         abstract GetNewsletterMessagesByInvite(call: grpc_1.ServerUnaryCall<GetNewsletterMessagesByInviteRequest, Json>, callback: grpc_1.sendUnaryData<Json>): void;
@@ -7034,11 +10892,20 @@ export namespace messages {
         abstract CreateNewsletter(call: grpc_1.ServerUnaryCall<CreateNewsletterRequest, Newsletter>, callback: grpc_1.sendUnaryData<Newsletter>): void;
         abstract NewsletterToggleMute(call: grpc_1.ServerUnaryCall<NewsletterToggleMuteRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract NewsletterToggleFollow(call: grpc_1.ServerUnaryCall<NewsletterToggleFollowRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract GetLabels(call: grpc_1.ServerUnaryCall<GetLabelsRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
+        abstract UpsertLabel(call: grpc_1.ServerUnaryCall<UpsertLabelRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract DeleteLabel(call: grpc_1.ServerUnaryCall<DeleteLabelRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract AddChatLabel(call: grpc_1.ServerUnaryCall<ChatLabelRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract RemoveChatLabel(call: grpc_1.ServerUnaryCall<ChatLabelRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract GetLabelsByJid(call: grpc_1.ServerUnaryCall<EntityByIdRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
+        abstract GetChatsByLabelId(call: grpc_1.ServerUnaryCall<EntityByIdRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
+        abstract UpdateContact(call: grpc_1.ServerUnaryCall<UpdateContactRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
+        abstract GetContacts(call: grpc_1.ServerUnaryCall<GetContactsRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
+        abstract GetContactById(call: grpc_1.ServerUnaryCall<EntityByIdRequest, Json>, callback: grpc_1.sendUnaryData<Json>): void;
+        abstract CancelEventMessage(call: grpc_1.ServerUnaryCall<CancelEventMessageRequest, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
         abstract DownloadMedia(call: grpc_1.ServerUnaryCall<DownloadMediaRequest, DownloadMediaResponse>, callback: grpc_1.sendUnaryData<DownloadMediaResponse>): void;
         abstract GetMessageById(call: grpc_1.ServerUnaryCall<EntityByIdRequest, Json>, callback: grpc_1.sendUnaryData<Json>): void;
         abstract GetMessages(call: grpc_1.ServerUnaryCall<GetMessagesRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
-        abstract GetContacts(call: grpc_1.ServerUnaryCall<GetContactsRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
-        abstract GetContactById(call: grpc_1.ServerUnaryCall<EntityByIdRequest, Json>, callback: grpc_1.sendUnaryData<Json>): void;
         abstract GetChats(call: grpc_1.ServerUnaryCall<GetChatsRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
     }
     export class MessageServiceClient extends grpc_1.makeGenericClientConstructor(UnimplementedMessageServiceService.definition, "MessageService", {}) {
@@ -7068,6 +10935,18 @@ export namespace messages {
         };
         SetProfilePicture: GrpcUnaryServiceInterface<SetProfilePictureRequest, Empty> = (message: SetProfilePictureRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
             return super.SetProfilePicture(message, metadata, options, callback);
+        };
+        GetAllLids: GrpcUnaryServiceInterface<GetLidsRequest, JsonList> = (message: GetLidsRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
+            return super.GetAllLids(message, metadata, options, callback);
+        };
+        GetLidsCount: GrpcUnaryServiceInterface<Session, OptionalUInt64> = (message: Session, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<OptionalUInt64>, options?: grpc_1.CallOptions | grpc_1.requestCallback<OptionalUInt64>, callback?: grpc_1.requestCallback<OptionalUInt64>): grpc_1.ClientUnaryCall => {
+            return super.GetLidsCount(message, metadata, options, callback);
+        };
+        FindPNByLid: GrpcUnaryServiceInterface<EntityByIdRequest, OptionalString> = (message: EntityByIdRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<OptionalString>, options?: grpc_1.CallOptions | grpc_1.requestCallback<OptionalString>, callback?: grpc_1.requestCallback<OptionalString>): grpc_1.ClientUnaryCall => {
+            return super.FindPNByLid(message, metadata, options, callback);
+        };
+        FindLIDByPhoneNumber: GrpcUnaryServiceInterface<EntityByIdRequest, OptionalString> = (message: EntityByIdRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<OptionalString>, options?: grpc_1.CallOptions | grpc_1.requestCallback<OptionalString>, callback?: grpc_1.requestCallback<OptionalString>): grpc_1.ClientUnaryCall => {
+            return super.FindLIDByPhoneNumber(message, metadata, options, callback);
         };
         FetchGroups: GrpcUnaryServiceInterface<Session, Empty> = (message: Session, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
             return super.FetchGroups(message, metadata, options, callback);
@@ -7114,12 +10993,6 @@ export namespace messages {
         UpdateGroupParticipants: GrpcUnaryServiceInterface<UpdateParticipantsRequest, JsonList> = (message: UpdateParticipantsRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
             return super.UpdateGroupParticipants(message, metadata, options, callback);
         };
-        SendMessage: GrpcUnaryServiceInterface<MessageRequest, MessageResponse> = (message: MessageRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, callback?: grpc_1.requestCallback<MessageResponse>): grpc_1.ClientUnaryCall => {
-            return super.SendMessage(message, metadata, options, callback);
-        };
-        SendReaction: GrpcUnaryServiceInterface<MessageReaction, MessageResponse> = (message: MessageReaction, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, callback?: grpc_1.requestCallback<MessageResponse>): grpc_1.ClientUnaryCall => {
-            return super.SendReaction(message, metadata, options, callback);
-        };
         GetProfilePicture: GrpcUnaryServiceInterface<ProfilePictureRequest, ProfilePictureResponse> = (message: ProfilePictureRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<ProfilePictureResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<ProfilePictureResponse>, callback?: grpc_1.requestCallback<ProfilePictureResponse>): grpc_1.ClientUnaryCall => {
             return super.GetProfilePicture(message, metadata, options, callback);
         };
@@ -7132,11 +11005,32 @@ export namespace messages {
         SubscribePresence: GrpcUnaryServiceInterface<SubscribePresenceRequest, Empty> = (message: SubscribePresenceRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
             return super.SubscribePresence(message, metadata, options, callback);
         };
+        CheckPhones: GrpcUnaryServiceInterface<CheckPhonesRequest, CheckPhonesResponse> = (message: CheckPhonesRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<CheckPhonesResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<CheckPhonesResponse>, callback?: grpc_1.requestCallback<CheckPhonesResponse>): grpc_1.ClientUnaryCall => {
+            return super.CheckPhones(message, metadata, options, callback);
+        };
+        MarkChatUnread: GrpcUnaryServiceInterface<ChatUnreadRequest, Empty> = (message: ChatUnreadRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
+            return super.MarkChatUnread(message, metadata, options, callback);
+        };
+        GenerateNewMessageID: GrpcUnaryServiceInterface<Session, NewMessageIDResponse> = (message: Session, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<NewMessageIDResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<NewMessageIDResponse>, callback?: grpc_1.requestCallback<NewMessageIDResponse>): grpc_1.ClientUnaryCall => {
+            return super.GenerateNewMessageID(message, metadata, options, callback);
+        };
+        SendMessage: GrpcUnaryServiceInterface<MessageRequest, MessageResponse> = (message: MessageRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, callback?: grpc_1.requestCallback<MessageResponse>): grpc_1.ClientUnaryCall => {
+            return super.SendMessage(message, metadata, options, callback);
+        };
+        SendReaction: GrpcUnaryServiceInterface<MessageReaction, MessageResponse> = (message: MessageReaction, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, callback?: grpc_1.requestCallback<MessageResponse>): grpc_1.ClientUnaryCall => {
+            return super.SendReaction(message, metadata, options, callback);
+        };
         MarkRead: GrpcUnaryServiceInterface<MarkReadRequest, Empty> = (message: MarkReadRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
             return super.MarkRead(message, metadata, options, callback);
         };
-        CheckPhones: GrpcUnaryServiceInterface<CheckPhonesRequest, CheckPhonesResponse> = (message: CheckPhonesRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<CheckPhonesResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<CheckPhonesResponse>, callback?: grpc_1.requestCallback<CheckPhonesResponse>): grpc_1.ClientUnaryCall => {
-            return super.CheckPhones(message, metadata, options, callback);
+        EditMessage: GrpcUnaryServiceInterface<EditMessageRequest, MessageResponse> = (message: EditMessageRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, callback?: grpc_1.requestCallback<MessageResponse>): grpc_1.ClientUnaryCall => {
+            return super.EditMessage(message, metadata, options, callback);
+        };
+        RevokeMessage: GrpcUnaryServiceInterface<RevokeMessageRequest, MessageResponse> = (message: RevokeMessageRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, callback?: grpc_1.requestCallback<MessageResponse>): grpc_1.ClientUnaryCall => {
+            return super.RevokeMessage(message, metadata, options, callback);
+        };
+        SendButtonReply: GrpcUnaryServiceInterface<ButtonReplyRequest, MessageResponse> = (message: ButtonReplyRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, callback?: grpc_1.requestCallback<MessageResponse>): grpc_1.ClientUnaryCall => {
+            return super.SendButtonReply(message, metadata, options, callback);
         };
         GetSubscribedNewsletters: GrpcUnaryServiceInterface<NewsletterListRequest, NewsletterList> = (message: NewsletterListRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<NewsletterList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<NewsletterList>, callback?: grpc_1.requestCallback<NewsletterList>): grpc_1.ClientUnaryCall => {
             return super.GetSubscribedNewsletters(message, metadata, options, callback);
@@ -7162,6 +11056,39 @@ export namespace messages {
         NewsletterToggleFollow: GrpcUnaryServiceInterface<NewsletterToggleFollowRequest, Empty> = (message: NewsletterToggleFollowRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
             return super.NewsletterToggleFollow(message, metadata, options, callback);
         };
+        GetLabels: GrpcUnaryServiceInterface<GetLabelsRequest, JsonList> = (message: GetLabelsRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
+            return super.GetLabels(message, metadata, options, callback);
+        };
+        UpsertLabel: GrpcUnaryServiceInterface<UpsertLabelRequest, Empty> = (message: UpsertLabelRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
+            return super.UpsertLabel(message, metadata, options, callback);
+        };
+        DeleteLabel: GrpcUnaryServiceInterface<DeleteLabelRequest, Empty> = (message: DeleteLabelRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
+            return super.DeleteLabel(message, metadata, options, callback);
+        };
+        AddChatLabel: GrpcUnaryServiceInterface<ChatLabelRequest, Empty> = (message: ChatLabelRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
+            return super.AddChatLabel(message, metadata, options, callback);
+        };
+        RemoveChatLabel: GrpcUnaryServiceInterface<ChatLabelRequest, Empty> = (message: ChatLabelRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
+            return super.RemoveChatLabel(message, metadata, options, callback);
+        };
+        GetLabelsByJid: GrpcUnaryServiceInterface<EntityByIdRequest, JsonList> = (message: EntityByIdRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
+            return super.GetLabelsByJid(message, metadata, options, callback);
+        };
+        GetChatsByLabelId: GrpcUnaryServiceInterface<EntityByIdRequest, JsonList> = (message: EntityByIdRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
+            return super.GetChatsByLabelId(message, metadata, options, callback);
+        };
+        UpdateContact: GrpcUnaryServiceInterface<UpdateContactRequest, Empty> = (message: UpdateContactRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
+            return super.UpdateContact(message, metadata, options, callback);
+        };
+        GetContacts: GrpcUnaryServiceInterface<GetContactsRequest, JsonList> = (message: GetContactsRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
+            return super.GetContacts(message, metadata, options, callback);
+        };
+        GetContactById: GrpcUnaryServiceInterface<EntityByIdRequest, Json> = (message: EntityByIdRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Json>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Json>, callback?: grpc_1.requestCallback<Json>): grpc_1.ClientUnaryCall => {
+            return super.GetContactById(message, metadata, options, callback);
+        };
+        CancelEventMessage: GrpcUnaryServiceInterface<CancelEventMessageRequest, MessageResponse> = (message: CancelEventMessageRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<MessageResponse>, callback?: grpc_1.requestCallback<MessageResponse>): grpc_1.ClientUnaryCall => {
+            return super.CancelEventMessage(message, metadata, options, callback);
+        };
         DownloadMedia: GrpcUnaryServiceInterface<DownloadMediaRequest, DownloadMediaResponse> = (message: DownloadMediaRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<DownloadMediaResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<DownloadMediaResponse>, callback?: grpc_1.requestCallback<DownloadMediaResponse>): grpc_1.ClientUnaryCall => {
             return super.DownloadMedia(message, metadata, options, callback);
         };
@@ -7170,12 +11097,6 @@ export namespace messages {
         };
         GetMessages: GrpcUnaryServiceInterface<GetMessagesRequest, JsonList> = (message: GetMessagesRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
             return super.GetMessages(message, metadata, options, callback);
-        };
-        GetContacts: GrpcUnaryServiceInterface<GetContactsRequest, JsonList> = (message: GetContactsRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
-            return super.GetContacts(message, metadata, options, callback);
-        };
-        GetContactById: GrpcUnaryServiceInterface<EntityByIdRequest, Json> = (message: EntityByIdRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Json>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Json>, callback?: grpc_1.requestCallback<Json>): grpc_1.ClientUnaryCall => {
-            return super.GetContactById(message, metadata, options, callback);
         };
         GetChats: GrpcUnaryServiceInterface<GetChatsRequest, JsonList> = (message: GetChatsRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, options?: grpc_1.CallOptions | grpc_1.requestCallback<JsonList>, callback?: grpc_1.requestCallback<JsonList>): grpc_1.ClientUnaryCall => {
             return super.GetChats(message, metadata, options, callback);
